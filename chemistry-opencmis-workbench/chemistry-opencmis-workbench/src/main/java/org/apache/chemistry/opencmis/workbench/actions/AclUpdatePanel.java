@@ -50,8 +50,7 @@ public class AclUpdatePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         new AclEditorFrame(getClientModel(), getObject());
-        return false;
     }
 }

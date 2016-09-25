@@ -38,7 +38,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -60,6 +59,9 @@ import org.apache.chemistry.opencmis.workbench.icons.NewDocumentIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
+import org.apache.chemistry.opencmis.workbench.swing.WorkbenchFileChooser;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class CreateDocumentDialog extends CreateDialog {
 
@@ -177,9 +179,9 @@ public class CreateDocumentDialog extends CreateDialog {
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                JFileChooser fileChooser = new JFileChooser();
+                WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
                 int chooseResult = fileChooser.showDialog(filenameField, "Select");
-                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION) {
                     if (fileChooser.getSelectedFile().isFile()) {
                         setFile(fileChooser.getSelectedFile());
                     }
@@ -292,7 +294,7 @@ public class CreateDocumentDialog extends CreateDialog {
                     }
 
                     if (objectId != null) {
-                        getClientModel().loadObject(objectId.getId());
+                        LoadObjectWorker.loadObject(getOwner(), getClientModel(), objectId.getId());
                     }
 
                     thisDialog.setVisible(false);
@@ -301,12 +303,7 @@ public class CreateDocumentDialog extends CreateDialog {
                     ClientHelper.showError(null, e);
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-                    try {
-                        getClientModel().reloadFolder();
-                    } catch (Exception e) {
-                        ClientHelper.showError(null, e);
-                    }
+                    LoadFolderWorker.reloadFolder(getOwner(), getClientModel());
                 }
             }
         });

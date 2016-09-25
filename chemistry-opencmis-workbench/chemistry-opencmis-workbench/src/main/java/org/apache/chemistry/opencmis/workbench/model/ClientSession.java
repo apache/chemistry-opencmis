@@ -244,7 +244,7 @@ public class ClientSession {
                 authenticationProvider, cache, typeDefCache);
     }
 
-    public List<Repository> getRepositories() {
+    public synchronized List<Repository> getRepositories() {
         return repositories;
     }
 
@@ -256,7 +256,7 @@ public class ClientSession {
         return getSession();
     }
 
-    public Session getSession() {
+    public synchronized Session getSession() {
         return session;
     }
 
@@ -264,11 +264,11 @@ public class ClientSession {
         return Collections.unmodifiableMap(sessionParameters);
     }
 
-    public void setStartFolderId(String startFolderId) {
+    public synchronized void setStartFolderId(String startFolderId) {
         this.startFolderId = startFolderId;
     }
 
-    public String getStartFolderId() {
+    public synchronized String getStartFolderId() {
         if (startFolderId != null) {
             return startFolderId;
         } else {
@@ -276,7 +276,7 @@ public class ClientSession {
         }
     }
 
-    public int getMaxChildren() {
+    public synchronized int getMaxChildren() {
         return maxChildren;
     }
 

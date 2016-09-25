@@ -65,7 +65,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -78,18 +77,18 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.Rendition;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
-import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.swing.WorkbenchFileChooser;
+import org.apache.chemistry.opencmis.workbench.worker.OpenContentWorker;
+import org.apache.chemistry.opencmis.workbench.worker.StoreWorker;
+import org.apache.chemistry.opencmis.workbench.worker.TempFileContentWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +103,6 @@ public final class ClientHelper {
     public static final int ICON_BUTTON_ICON_SIZE = 16;
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientHelper.class);
-    private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final ImageIcon CMIS_ICON = getIcon("icon256.png");
     private static final List<BufferedImage> CMIS_ICON_LIST = new ArrayList<BufferedImage>();
@@ -125,12 +123,12 @@ public final class ClientHelper {
     private ClientHelper() {
     }
 
-    public static void logError(Exception ex) {
+    public static void logError(Throwable t) {
         if (LOG.isErrorEnabled()) {
-            LOG.error(ex.getClass().getSimpleName() + ": " + ex.getMessage(), ex);
+            LOG.error(t.getClass().getSimpleName() + ": " + t.getMessage(), t);
 
-            if (ex instanceof CmisBaseException) {
-                CmisBaseException cex = (CmisBaseException) ex;
+            if (t instanceof CmisBaseException) {
+                CmisBaseException cex = (CmisBaseException) t;
 
                 if (cex.getCode() != null) {
                     LOG.error("Error code: " + cex.getCode());
@@ -147,12 +145,12 @@ public final class ClientHelper {
         }
     }
 
-    public static void showError(Component parent, Exception ex) {
-        logError(ex);
+    public static void showError(Component parent, Throwable t) {
+        logError(t);
 
         JFrame frame = (parent == null ? null : (JFrame) SwingUtilities.getRoot(parent));
 
-        new ExceptionDialog(frame, ex);
+        new ExceptionDialog(frame, t);
     }
 
     public static boolean isMacOSX() {
@@ -243,45 +241,21 @@ public final class ClientHelper {
     }
 
     public static void download(Component component, CmisObject object, String streamId) {
-        ContentStream content = getContentStream(object, streamId);
-        if (content == null) {
-            return;
-        }
+        OpenContentWorker worker = new OpenContentWorker(null, object, streamId) {
+            @Override
+            protected void processStream(Component comp, ContentStream contentStream, String filename) {
+                WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
+                fileChooser.setSelectedFile(new File(filename));
 
-        String filename = content.getFileName();
-        if (filename == null) {
-            if (object instanceof Document) {
-                filename = ((Document) object).getContentStreamFileName();
-            } else {
-                filename = object.getName();
+                int chooseResult = fileChooser.showDialog(comp, "Download");
+                if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION) {
+                    (new StoreWorker(contentStream, fileChooser.getSelectedFile(), filename)).executeTask();
+                } else {
+                    IOUtils.closeQuietly(contentStream);
+                }
             }
-        }
-
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new File(filename));
-
-        int chooseResult = fileChooser.showDialog(component, "Download");
-        if (chooseResult == JFileChooser.APPROVE_OPTION) {
-            try {
-                storeStream(content.getStream(), fileChooser.getSelectedFile());
-            } catch (Exception e) {
-                showError(component, e);
-            }
-        }
-    }
-
-    public static void copy(Component component, File file) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new File(file.getName()));
-
-        int chooseResult = fileChooser.showDialog(component, "Download");
-        if (chooseResult == JFileChooser.APPROVE_OPTION) {
-            try {
-                storeStream(new FileInputStream(file), fileChooser.getSelectedFile());
-            } catch (Exception e) {
-                showError(component, e);
-            }
-        }
+        };
+        worker.executeTask();
     }
 
     public static void open(Component component, CmisObject object, String streamId) {
@@ -290,31 +264,51 @@ public final class ClientHelper {
             return;
         }
 
-        Desktop desktop = Desktop.getDesktop();
+        final Desktop desktop = Desktop.getDesktop();
 
         if (!desktop.isSupported(Desktop.Action.OPEN)) {
             download(component, object, streamId);
             return;
         }
 
-        File file = null;
-
-        try {
-            file = createTempFileFromDocument(object, streamId);
-        } catch (Exception e) {
-            showError(component, e);
-            return;
-        }
-
-        try {
-            desktop.open(file);
-        } catch (Exception e) {
-            if (e instanceof IOException) {
-                copy(component, file);
-            } else {
-                showError(component, e);
+        TempFileContentWorker worker = new TempFileContentWorker(component, object, streamId) {
+            @Override
+            protected void processTempFile(File file) {
+                try {
+                    desktop.open(file);
+                } catch (Exception e) {
+                    if (e instanceof IOException) {
+                        copy(file);
+                    } else {
+                        showError(e);
+                    }
+                }
             }
-        }
+
+            private void copy(File file) {
+                WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
+                fileChooser.setSelectedFile(new File(file.getName()));
+
+                int chooseResult = fileChooser.showDialog(getComponent(), "Download");
+                if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION && !file.equals(fileChooser.getSelectedFile())) {
+                    try {
+                        InputStream in = null;
+                        OutputStream out = null;
+                        try {
+                            in = new FileInputStream(file);
+                            out = new FileOutputStream(fileChooser.getSelectedFile());
+                            IOUtils.copy(in, out, 64 * 1024);
+                        } finally {
+                            IOUtils.closeQuietly(in);
+                            IOUtils.closeQuietly(out);
+                        }
+                    } catch (Exception e) {
+                        showError(e);
+                    }
+                }
+            }
+        };
+        worker.executeTask();
     }
 
     public static File createTempFile(String filename) {
@@ -329,78 +323,6 @@ public final class ClientHelper {
         tempFile.deleteOnExit();
 
         return tempFile;
-    }
-
-    public static File createTempFileFromDocument(CmisObject object, String streamId) throws IOException {
-        ContentStream content = getContentStream(object, streamId);
-        if (content == null) {
-            throw new IllegalArgumentException("No content!");
-        }
-
-        String filename = content.getFileName();
-        if ((filename == null) || (filename.length() == 0)) {
-            if (object instanceof Document) {
-                filename = ((Document) object).getContentStreamFileName();
-            }
-        }
-        if ((filename == null) || (filename.length() == 0)) {
-            filename = object.getName();
-        }
-        if ((filename == null) || (filename.length() == 0)) {
-            filename = "content";
-        }
-
-        String ext = MimeTypes.getExtension(content.getMimeType());
-        if (ext.length() > 0 && !filename.endsWith(ext)) {
-            filename = filename + ext;
-        }
-
-        File tempFile = ClientHelper.createTempFile(filename);
-        try {
-            storeStream(content.getStream(), tempFile);
-        } catch (CmisConstraintException e) {
-            // there is no content - leave the temp file empty
-        }
-
-        return tempFile;
-    }
-
-    private static void storeStream(InputStream in, File file) throws IOException {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
-            IOUtils.copy(new LoggingInputStream(in, file.getName()), out, BUFFER_SIZE);
-        } finally {
-            IOUtils.closeQuietly(in);
-            IOUtils.closeQuietly(out);
-        }
-    }
-
-    private static ContentStream getContentStream(CmisObject object, String streamId) {
-        if (object == null) {
-            return null;
-        }
-
-        if (object instanceof Document) {
-            return ((Document) object).getContentStream(streamId);
-        } else {
-            if (streamId == null) {
-                return null;
-            }
-
-            List<Rendition> renditions = object.getRenditions();
-            if (renditions == null) {
-                return null;
-            }
-
-            for (Rendition rendition : renditions) {
-                if (streamId.equals(rendition.getStreamId())) {
-                    return rendition.getContentStream();
-                }
-            }
-        }
-
-        return null;
     }
 
     public static void copyTableToClipboard(JTable table, boolean onlySelected) {

@@ -18,7 +18,6 @@
  */
 package org.apache.chemistry.opencmis.workbench;
 
-import java.awt.Cursor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -57,7 +56,6 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.workbench.icons.CheckedOutIcon;
 import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
 import org.apache.chemistry.opencmis.workbench.icons.FolderIcon;
@@ -69,6 +67,10 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
 import org.apache.chemistry.opencmis.workbench.swing.GregorianCalendarRenderer;
+import org.apache.chemistry.opencmis.workbench.worker.DeleteWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
+import org.apache.chemistry.opencmis.workbench.worker.TempFileContentWorker;
 
 public class FolderTable extends JTable implements FolderListener {
 
@@ -85,6 +87,9 @@ public class FolderTable extends JTable implements FolderListener {
     private Map<BaseTypeId, Icon> icons;
     private Icon checkedOutIcon;
     private Icon pwcIcon;
+
+    private JMenuItem downloadItem;
+    private JMenuItem deleteItem;
 
     public FolderTable(final ClientModel model) {
         super();
@@ -135,7 +140,7 @@ public class FolderTable extends JTable implements FolderListener {
         popup.addSeparator();
 
         // popup menu: delete
-        final JMenuItem deleteItem = new JMenuItem("Delete");
+        deleteItem = new JMenuItem("Delete");
         deleteItem.setEnabled(false);
         popup.add(deleteItem);
 
@@ -148,43 +153,21 @@ public class FolderTable extends JTable implements FolderListener {
                             JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {
-                        try {
-                            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                            if (model.getCurrentObject() instanceof Folder) {
-                                List<String> ids = ((Folder) model.getCurrentObject()).deleteTree(true,
-                                        UnfileObject.DELETE, true);
-
-                                if (ids != null && !ids.isEmpty()) {
-                                    StringBuilder sb = new StringBuilder(128);
-
-                                    sb.append("Delete tree failed! At least the following objects could not be deleted:\n");
-
-                                    for (String id : ids) {
-                                        sb.append('\n');
-                                        sb.append(id);
-                                    }
-
-                                    JOptionPane.showMessageDialog(FolderTable.this, sb.toString(), "Delete Tree",
-                                            JOptionPane.ERROR_MESSAGE);
-                                }
-                            } else {
-                                model.getCurrentObject().delete();
+                        DeleteWorker worker = new DeleteWorker(FolderTable.this, model.getCurrentObject()) {
+                            @Override
+                            protected void done() {
+                                super.done();
+                                LoadFolderWorker.reloadFolder(FolderTable.this, model);
                             }
-
-                            model.reloadFolder();
-                        } catch (Exception ex) {
-                            ClientHelper.showError(FolderTable.this, ex);
-                            return;
-                        } finally {
-                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                        }
+                        };
+                        worker.executeTask();
                     }
                 }
             }
         });
 
         // popup menu: download
-        final JMenuItem downloadItem = new JMenuItem("Download");
+        downloadItem = new JMenuItem("Download");
         downloadItem.setEnabled(false);
         popup.add(downloadItem);
 
@@ -208,26 +191,24 @@ public class FolderTable extends JTable implements FolderListener {
                 if (row > -1) {
                     String id = getModel().getValueAt(getRowSorter().convertRowIndexToModel(row), ID_COLUMN).toString();
 
-                    try {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        model.loadObject(id);
+                    LoadObjectWorker worker = new LoadObjectWorker(FolderTable.this, model, id) {
+                        @Override
+                        protected void done() {
+                            super.done();
 
-                        // enable or disable popup menu items
-                        if (model.getCurrentObject() != null && model.getCurrentObject().getAllowableActions() != null) {
-                            CmisObject object = model.getCurrentObject();
-                            deleteItem.setEnabled(object.hasAllowableAction(Action.CAN_DELETE_OBJECT)
-                                    || object.hasAllowableAction(Action.CAN_DELETE_TREE));
-                            downloadItem.setEnabled(object.hasAllowableAction(Action.CAN_GET_CONTENT_STREAM));
-                        } else {
-                            deleteItem.setEnabled(false);
-                            downloadItem.setEnabled(false);
+                            if (model.getCurrentObject() != null
+                                    && model.getCurrentObject().getAllowableActions() != null) {
+                                CmisObject object = model.getCurrentObject();
+                                deleteItem.setEnabled(object.hasAllowableAction(Action.CAN_DELETE_OBJECT)
+                                        || object.hasAllowableAction(Action.CAN_DELETE_TREE));
+                                downloadItem.setEnabled(object.hasAllowableAction(Action.CAN_GET_CONTENT_STREAM));
+                            } else {
+                                deleteItem.setEnabled(false);
+                                downloadItem.setEnabled(false);
+                            }
                         }
-                    } catch (Exception ex) {
-                        ClientHelper.showError(null, ex);
-                        return;
-                    } finally {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
+                    };
+                    worker.executeTask();
                 }
             }
         });
@@ -318,15 +299,7 @@ public class FolderTable extends JTable implements FolderListener {
                     ClientHelper.open(this.getParent(), object, null);
                 }
             } else if (object instanceof Folder) {
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    model.loadFolder(object.getId(), false);
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                    return;
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
+                LoadFolderWorker.loadFolderById(FolderTable.this, model, object.getId());
             }
         }
     }
@@ -418,7 +391,7 @@ public class FolderTable extends JTable implements FolderListener {
         }
     }
 
-    class FolderTransferHandler extends TransferHandler {
+    private class FolderTransferHandler extends TransferHandler {
 
         private static final long serialVersionUID = 1L;
 
@@ -451,8 +424,7 @@ public class FolderTable extends JTable implements FolderListener {
                 List<File> fileList = (List<File>) support.getTransferable().getTransferData(
                         DataFlavor.javaFileListFlavor);
 
-                if ((fileList == null) || (fileList.size() != 1) || (fileList.get(0) == null)
-                        || !fileList.get(0).isFile()) {
+                if (fileList == null || fileList.size() != 1 || fileList.get(0) == null || !fileList.get(0).isFile()) {
                     return false;
                 }
 
@@ -475,42 +447,38 @@ public class FolderTable extends JTable implements FolderListener {
         @Override
         protected Transferable createTransferable(JComponent c) {
             int row = getSelectedRow();
-            if ((row > -1) && (row < model.getCurrentChildren().size())) {
-                String id = getValueAt(row, ID_COLUMN).toString();
-                CmisObject object = model.getFromCurrentChildren(id);
-
-                if (object instanceof Document) {
-                    Document doc = (Document) object;
-
-                    File tempFile = null;
-                    try {
-                        tempFile = ClientHelper.createTempFileFromDocument(doc, null);
-                    } catch (Exception e) {
-                        ClientHelper.showError(null, e);
-                    }
-
-                    final File tempTransFile = tempFile;
-
-                    return new Transferable() {
-                        @Override
-                        public boolean isDataFlavorSupported(DataFlavor flavor) {
-                            return flavor == DataFlavor.javaFileListFlavor;
-                        }
-
-                        @Override
-                        public DataFlavor[] getTransferDataFlavors() {
-                            return new DataFlavor[] { DataFlavor.javaFileListFlavor };
-                        }
-
-                        @Override
-                        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-                            return Collections.singletonList(tempTransFile);
-                        }
-                    };
-                }
+            if (row < 0 || row >= model.getCurrentChildren().size()) {
+                return null;
             }
 
-            return null;
+            String id = getValueAt(row, ID_COLUMN).toString();
+            final CmisObject object = model.getFromCurrentChildren(id);
+            if (!(object instanceof Document)) {
+                return null;
+            }
+
+            return new Transferable() {
+                @Override
+                public boolean isDataFlavorSupported(DataFlavor flavor) {
+                    return flavor == DataFlavor.javaFileListFlavor;
+                }
+
+                @Override
+                public DataFlavor[] getTransferDataFlavors() {
+                    return new DataFlavor[] { DataFlavor.javaFileListFlavor };
+                }
+
+                @Override
+                public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                    try {
+                        TempFileContentWorker worker = new TempFileContentWorker(null, (Document) object);
+                        return Collections.singletonList(worker.executeSync());
+                    } catch (Exception e) {
+                        ClientHelper.showError(FolderTable.this, e);
+                        return null;
+                    }
+                }
+            };
         }
     }
 }

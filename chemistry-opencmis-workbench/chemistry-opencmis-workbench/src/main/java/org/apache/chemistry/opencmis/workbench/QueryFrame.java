@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -68,6 +69,8 @@ import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.icons.QueryIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.IdRenderer;
+import org.apache.chemistry.opencmis.workbench.worker.InfoWorkbenchWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class QueryFrame extends JFrame {
 
@@ -149,7 +152,7 @@ public class QueryFrame extends JFrame {
         queryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                doQuery();
+                (new QueryWorker(QueryFrame.this)).executeTask();
             }
         });
 
@@ -226,11 +229,8 @@ public class QueryFrame extends JFrame {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int column = resultsTable.columnAtPoint(e.getPoint());
                 if (row > -1 && resultsTable.getColumnClass(column) == ObjectIdImpl.class) {
-                    try {
-                        model.loadObject(((ObjectId) resultsTable.getValueAt(row, column)).getId());
-                    } catch (Exception ex) {
-                        ClientHelper.showError(QueryFrame.this, ex);
-                    }
+                    LoadObjectWorker.loadObject(QueryFrame.this.getOwner(), model,
+                            ((ObjectId) resultsTable.getValueAt(row, column)).getId());
                 }
             }
 
@@ -320,84 +320,6 @@ public class QueryFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             textArea.insert(((JMenuItem) e.getSource()).getText(), textArea.getCaretPosition());
-        }
-    }
-
-    private synchronized void doQuery() {
-        String text = queryText.getText();
-        text = text.replace('\n', ' ');
-
-        ItemIterable<QueryResult> results = null;
-
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-            int skipCount = 0;
-            try {
-                skipCountField.commitEdit();
-                skipCount = ((Number) skipCountField.getValue()).intValue();
-                if (skipCount < 0) {
-                    skipCount = 0;
-                    skipCountField.setValue(0);
-                }
-            } catch (Exception e) {
-                ClientHelper.showError(this, e);
-            }
-
-            int maxHits = 1000;
-            try {
-                maxHitsField.commitEdit();
-                maxHits = ((Number) maxHitsField.getValue()).intValue();
-                if (maxHits < 0) {
-                    maxHits = 0;
-                    maxHitsField.setValue(0);
-                }
-            } catch (Exception e) {
-                ClientHelper.showError(this, e);
-            }
-
-            results = model.query(text, searchAllVersionsCheckBox.isSelected(), maxHits);
-
-            ResultTableModel rtm = new ResultTableModel();
-
-            long startTime = System.currentTimeMillis();
-
-            int row = 0;
-            ItemIterable<QueryResult> page = results;
-            if (skipCount > 0) {
-                page = page.skipTo(skipCount);
-            }
-            page = page.getPage(maxHits);
-            for (QueryResult qr : page) {
-                rtm.setColumnCount(Math.max(rtm.getColumnCount(), qr.getProperties().size()));
-
-                for (PropertyData<?> prop : qr.getProperties()) {
-                    if (PropertyIds.OBJECT_ID.equals(prop.getId()) && (prop.getFirstValue() != null)) {
-                        rtm.setValue(row, prop.getQueryName(), new ObjectIdImpl(prop.getFirstValue().toString()));
-                    } else {
-                        rtm.setValue(row, prop.getQueryName(), prop.getValues());
-                    }
-                }
-
-                row++;
-            }
-            rtm.setRowCount(row);
-
-            long stopTime = System.currentTimeMillis();
-            float time = (stopTime - startTime) / 1000f;
-            String total = "<unknown>";
-            if (page.getTotalNumItems() >= 0) {
-                total = String.valueOf(page.getTotalNumItems());
-            }
-
-            queryTimeLabel.setText(" " + row + " hits, " + total + " total (" + time + " sec)");
-
-            resultsTable.setModel(rtm);
-        } catch (Exception ex) {
-            ClientHelper.showError(null, ex);
-            return;
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -592,6 +514,129 @@ public class QueryFrame extends JFrame {
             }
 
             return prepareRenderer;
+        }
+    }
+
+    private class QueryWorker extends InfoWorkbenchWorker {
+
+        // in
+        private String queryStatement;
+        private int skipCount = 0;
+        private int maxHits = 1000;
+        private boolean searchAllVersions = false;
+
+        // out
+        private ResultTableModel resultTableModel;
+        private String queryTimeStr;
+
+        public QueryWorker(Window parent) {
+            super(parent);
+        }
+
+        @Override
+        protected String getTitle() {
+            return "Query";
+        }
+
+        @Override
+        protected String getMessage() {
+            return "Executing query...";
+        }
+
+        @Override
+        public void executeTask() {
+            queryStatement = queryText.getText();
+            queryStatement = queryStatement.replace('\n', ' ');
+
+            try {
+                skipCountField.commitEdit();
+                skipCount = ((Number) skipCountField.getValue()).intValue();
+                if (skipCount < 0) {
+                    skipCount = 0;
+                    skipCountField.setValue(0);
+                }
+            } catch (Exception e) {
+                showError(e);
+            }
+
+            try {
+                maxHitsField.commitEdit();
+                maxHits = ((Number) maxHitsField.getValue()).intValue();
+                if (maxHits < 0) {
+                    maxHits = 0;
+                    maxHitsField.setValue(0);
+                }
+            } catch (Exception e) {
+                showError(e);
+            }
+
+            searchAllVersions = searchAllVersionsCheckBox.isSelected();
+
+            super.executeTask();
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            resultTableModel = new ResultTableModel();
+
+            long startTime = System.currentTimeMillis();
+
+            int row = 0;
+
+            ItemIterable<QueryResult> page = model.query(queryStatement, searchAllVersions, maxHits);
+            if (skipCount > 0) {
+                page = page.skipTo(skipCount);
+            }
+            page = page.getPage(maxHits);
+
+            if (isCancelled()) {
+                return null;
+            }
+
+            for (QueryResult qr : page) {
+                if (isCancelled()) {
+                    break;
+                }
+
+                resultTableModel.setColumnCount(Math.max(resultTableModel.getColumnCount(), qr.getProperties().size()));
+
+                for (PropertyData<?> prop : qr.getProperties()) {
+                    if (PropertyIds.OBJECT_ID.equals(prop.getId()) && (prop.getFirstValue() != null)) {
+                        resultTableModel.setValue(row, prop.getQueryName(), new ObjectIdImpl(prop.getFirstValue()
+                                .toString()));
+                    } else {
+                        resultTableModel.setValue(row, prop.getQueryName(), prop.getValues());
+                    }
+                }
+
+                row++;
+            }
+
+            if (!isCancelled()) {
+                resultTableModel.setRowCount(row);
+
+                long stopTime = System.currentTimeMillis();
+                float time = (stopTime - startTime) / 1000f;
+                String total = "<unknown>";
+                if (page.getTotalNumItems() >= 0) {
+                    total = String.valueOf(page.getTotalNumItems());
+                }
+
+                queryTimeStr = " " + row + " hits, " + total + " total (" + time + " sec)";
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void finializeTask() {
+            if (isCancelled()) {
+                queryTimeLabel.setText(" canceled");
+                resultsTable.setModel(new ResultTableModel());
+            } else {
+                queryTimeLabel.setText(queryTimeStr);
+                resultsTable.setModel(resultTableModel);
+            }
         }
     }
 }

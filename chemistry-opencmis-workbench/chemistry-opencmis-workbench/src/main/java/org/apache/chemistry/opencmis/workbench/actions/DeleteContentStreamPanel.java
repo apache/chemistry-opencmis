@@ -50,8 +50,8 @@ public class DeleteContentStreamPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         ((Document) getObject()).deleteContentStream(false);
-        return true;
+        reload(true);
     }
 }

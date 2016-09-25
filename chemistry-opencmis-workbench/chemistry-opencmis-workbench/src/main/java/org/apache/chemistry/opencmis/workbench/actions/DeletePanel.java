@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
+import org.apache.chemistry.opencmis.workbench.worker.DeleteWorker;
 
 public class DeletePanel extends ActionPanel {
 
@@ -55,8 +56,14 @@ public class DeletePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
-        getObject().delete(allVersionsBox.isSelected());
-        return false;
+    public void doAction() {
+        DeleteWorker worker = new DeleteWorker(this, getObject(), allVersionsBox.isSelected()) {
+            @Override
+            protected void done() {
+                super.done();
+                reload(false);
+            }
+        };
+        worker.executeTask();
     }
 }

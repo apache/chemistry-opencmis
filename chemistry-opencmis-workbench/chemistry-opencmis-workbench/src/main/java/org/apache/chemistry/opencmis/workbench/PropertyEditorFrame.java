@@ -76,6 +76,8 @@ import org.apache.chemistry.opencmis.workbench.icons.DownIcon;
 import org.apache.chemistry.opencmis.workbench.icons.RemoveIcon;
 import org.apache.chemistry.opencmis.workbench.icons.UpIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 /**
  * Simple property editor.
@@ -106,8 +108,9 @@ public class PropertyEditorFrame extends JFrame {
         setIconImages(ClientHelper.getCmisIconImages());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 1.5)));
-        setMinimumSize(new Dimension(300, 120));
+        setPreferredSize(WorkbenchScale.scaleDimension(new Dimension((int) (screenSize.getWidth() / 2),
+                (int) (screenSize.getHeight() / 1.5))));
+        setMinimumSize(WorkbenchScale.scaleDimension(new Dimension(300, 120)));
 
         setLayout(new BorderLayout());
 
@@ -169,6 +172,10 @@ public class PropertyEditorFrame extends JFrame {
             }
         }
 
+        final JPanel updateButtonPanel = new JPanel();
+        updateButtonPanel.setLayout(new BoxLayout(updateButtonPanel, BoxLayout.PAGE_AXIS));
+        updateButtonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3)));
+
         JButton updateButton = new JButton("Update");
         updateButton.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         updateButton.setDefaultCapable(true);
@@ -181,7 +188,13 @@ public class PropertyEditorFrame extends JFrame {
             }
         });
 
-        add(updateButton, BorderLayout.PAGE_END);
+        int height = 30;
+        height = Math.max(height, getFontMetrics(updateButton.getFont()).getHeight() + updateButton.getInsets().top
+                + updateButton.getInsets().bottom);
+        updateButton.setMaximumSize(WorkbenchScale.scaleDimension(new Dimension(Short.MAX_VALUE, height)));
+        updateButtonPanel.add(updateButton);
+
+        add(updateButtonPanel, BorderLayout.PAGE_END);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
@@ -210,12 +223,8 @@ public class PropertyEditorFrame extends JFrame {
             ObjectId newId = object.updateProperties(properties, false);
 
             if ((newId != null) && newId.getId().equals(model.getCurrentObject().getId())) {
-                try {
-                    model.reloadObject();
-                    model.reloadFolder();
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                }
+                LoadObjectWorker.reloadObject(this, model);
+                LoadFolderWorker.reloadFolder(getOwner(), model);
             }
 
             return true;

@@ -33,6 +33,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedExceptio
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class VersionTable extends AbstractDetailsTable {
 
@@ -67,7 +68,7 @@ public class VersionTable extends AbstractDetailsTable {
             boolean fetchVersions = (getObject().getAllowableActions() == null)
                     || (getObject().getAllowableActions().getAllowableActions() == null)
                     || doc.hasAllowableAction(Action.CAN_GET_ALL_VERSIONS);
-            
+
             if (fetchVersions) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -113,12 +114,8 @@ public class VersionTable extends AbstractDetailsTable {
             lock.readLock().unlock();
         }
 
-        try {
-            getClientModel().loadObject(versionId);
-            setTab(0);
-        } catch (Exception ex) {
-            ClientHelper.showError(this, ex);
-        }
+        LoadObjectWorker.loadObject(this, getClientModel(), versionId);
+        setTab(0);
     }
 
     @Override

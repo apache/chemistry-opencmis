@@ -66,6 +66,7 @@ public class RepositoryInfoFrame extends JFrame {
 
     private void createGUI() {
         setTitle(WINDOW_TITLE + " - " + model.getRepositoryName());
+        setIconImages(ClientHelper.getCmisIconImages());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setPreferredSize(new Dimension((int) (screenSize.getWidth() / 2.5), (int) (screenSize.getHeight() / 1.5)));
@@ -108,6 +109,7 @@ public class RepositoryInfoFrame extends JFrame {
             setupGUI();
 
             addLine("Name:", true).setText(repInfo.getName());
+            addSeparator();
             addLine("Id:").setText(repInfo.getId());
             addLine("Description:").setText(repInfo.getDescription());
             addLine("Vendor:").setText(repInfo.getVendorName());
@@ -131,6 +133,7 @@ public class RepositoryInfoFrame extends JFrame {
             if (repInfo.getCapabilities() != null) {
                 RepositoryCapabilities cap = repInfo.getCapabilities();
 
+                addSeparator();
                 addLine("Capabilities:", true).setText("");
 
                 addYesNoLabel("Get descendants supported:").setValue(is(cap.isGetDescendantsSupported()));
@@ -220,6 +223,7 @@ public class RepositoryInfoFrame extends JFrame {
             if (repInfo.getAclCapabilities() != null) {
                 AclCapabilities cap = repInfo.getAclCapabilities();
 
+                addSeparator();
                 addLine("ACL Capabilities:", true).setText("");
 
                 addLine("Supported permissions:").setText(str(cap.getSupportedPermissions()));
@@ -304,6 +308,8 @@ public class RepositoryInfoFrame extends JFrame {
             if (isNotEmpty(repInfo.getExtensions())) {
                 addComponent("Extensions:", new JScrollPane(new ExtensionsTree(repInfo.getExtensions())));
             }
+
+            regenerateGUI();
         }
 
         private void appendToString(StringBuilder sb, String str) {

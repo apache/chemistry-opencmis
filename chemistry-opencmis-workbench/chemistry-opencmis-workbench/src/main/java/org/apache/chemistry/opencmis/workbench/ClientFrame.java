@@ -62,6 +62,8 @@ import org.apache.chemistry.opencmis.workbench.icons.TypesIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 import org.apache.chemistry.opencmis.workbench.types.TypesFrame;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -419,8 +421,8 @@ public class ClientFrame extends JFrame implements WindowListener {
             try {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                model.loadFolder(clientSession.getStartFolderId(), false);
-                model.loadObject(clientSession.getStartFolderId());
+                LoadFolderWorker.loadFolderById(ClientFrame.this, model, clientSession.getStartFolderId());
+                LoadObjectWorker.loadObject(ClientFrame.this, model, clientSession.getStartFolderId());
 
                 toolbarButton[BUTTON_REPOSITORY_INFO].setEnabled(true);
                 toolbarButton[BUTTON_TYPES].setEnabled(true);

@@ -305,7 +305,7 @@ public class TckDialog {
             final JPanel runButtonPanel = new JPanel();
             runButtonPanel.setLayout(new BoxLayout(runButtonPanel, BoxLayout.PAGE_AXIS));
             runButtonPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3)));
-            runButton.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
+            runButton.setMaximumSize(WorkbenchScale.scaleDimension(new Dimension(Short.MAX_VALUE, height)));
             runButtonPanel.add(runButton);
 
             add(runButtonPanel, BorderLayout.PAGE_END);
@@ -542,8 +542,8 @@ public class TckDialog {
         }
 
         private void createGUI() {
-            setPreferredSize(new Dimension(500, 200));
-            setMinimumSize(new Dimension(500, 200));
+            setPreferredSize(WorkbenchScale.scaleDimension(new Dimension(500, 200)));
+            setMinimumSize(WorkbenchScale.scaleDimension(new Dimension(500, 200)));
 
             setLayout(new BorderLayout());
 

@@ -42,41 +42,41 @@ public class ExceptionDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final Exception exception;
+    private final Throwable throwable;
 
-    public ExceptionDialog(Frame owner, Exception exception) {
+    public ExceptionDialog(Frame owner, Throwable throwable) {
         super(owner, "Exception", true);
-        this.exception = exception;
+        this.throwable = throwable;
 
         createGUI();
     }
 
     private void createGUI() {
-        setMinimumSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(150)));
-        setPreferredSize(new Dimension(WorkbenchScale.scaleInt(600), WorkbenchScale.scaleInt(200)));
+        setMinimumSize(WorkbenchScale.scaleDimension(new Dimension(600, 150)));
+        setPreferredSize(WorkbenchScale.scaleDimension(new Dimension(600, 200)));
 
         setLayout(new BorderLayout());
 
         // exception name
         String exceptionName;
-        if (exception instanceof CmisBaseException) {
-            exceptionName = "CMIS Exception: <em>" + ((CmisBaseException) exception).getExceptionName() + "</em>";
+        if (throwable instanceof CmisBaseException) {
+            exceptionName = "CMIS Exception: <em>" + ((CmisBaseException) throwable).getExceptionName() + "</em>";
         } else {
-            exceptionName = "Exception: <em>" + exception.getClass().getSimpleName() + "</em>";
+            exceptionName = "Exception: <em>" + throwable.getClass().getSimpleName() + "</em>";
         }
 
         StringBuilder exceptionText = new StringBuilder(1024);
         exceptionText.append("<h2><font color=\"red\">" + exceptionName + "</font><br>");
-        ClientHelper.encodeHtml(exceptionText, exception.getMessage());
+        ClientHelper.encodeHtml(exceptionText, throwable.getMessage());
         exceptionText.append("</h2>");
-        if (exception.getCause() != null) {
+        if (throwable.getCause() != null) {
             exceptionText.append("<h3><font color=\"red\">Cause: <em>"
-                    + exception.getCause().getClass().getSimpleName() + "</em></font><br>");
-            ClientHelper.encodeHtml(exceptionText, exception.getCause().getMessage());
+                    + throwable.getCause().getClass().getSimpleName() + "</em></font><br>");
+            ClientHelper.encodeHtml(exceptionText, throwable.getCause().getMessage());
             exceptionText.append("</h3>");
         }
-        if (exception instanceof CmisBaseException) {
-            Map<String, String> additionalData = ((CmisBaseException) exception).getAdditionalData();
+        if (throwable instanceof CmisBaseException) {
+            Map<String, String> additionalData = ((CmisBaseException) throwable).getAdditionalData();
             if (additionalData != null && !additionalData.isEmpty()) {
                 exceptionText.append("<hr><br><b>Additional data:</b><br><table>");
                 for (Map.Entry<String, String> e : additionalData.entrySet()) {
@@ -89,7 +89,7 @@ public class ExceptionDialog extends JDialog {
                 exceptionText.append("</table>");
             }
 
-            String errorContent = ((CmisBaseException) exception).getErrorContent();
+            String errorContent = ((CmisBaseException) throwable).getErrorContent();
             if (errorContent != null && errorContent.length() > 0) {
                 exceptionText.append("<hr><br><b>Error Content:</b><br>");
                 ClientHelper.encodeHtml(exceptionText, errorContent);

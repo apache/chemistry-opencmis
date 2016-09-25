@@ -155,7 +155,7 @@ public class TypeDefinitionInfoPanel extends InfoPanel {
             extensionsTree.setData(null);
         }
 
-        revalidate();
+        regenerateGUI();
     }
 
     private void createGUI() {
@@ -181,6 +181,8 @@ public class TypeDefinitionInfoPanel extends InfoPanel {
         allowedSourceTypesField = addLine("Allowed Source Types:");
         allowedTargetTypesField = addLine("Allowed Target Types:");
         extensionsTree = addComponent("Extensions:", new InfoTreePane<List<CmisExtensionElement>>(new ExtensionsTree()));
+
+        regenerateGUI();
     }
 
     private boolean is(Boolean b) {

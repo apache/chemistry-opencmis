@@ -50,8 +50,8 @@ public class CheckOutPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         ((Document) getObject()).checkOut();
-        return true;
+        reload(true);
     }
 }

@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.workbench.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,7 +29,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -41,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public abstract class ActionPanel extends JPanel implements ActionListener {
 
@@ -118,16 +117,31 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             ((JButton) e.getSource()).requestFocusInWindow();
-            if (doAction()) {
-                model.reloadObject();
-            }
-            model.reloadFolder();
+            doAction();
         } catch (Exception ex) {
             ClientHelper.showError(null, ex);
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    protected void reload(final boolean reloadObject) {
+        final ClientModel model = getClientModel();
+
+        if (model.getCurrentFolder() != null) {
+            LoadObjectWorker worker = new LoadObjectWorker(ActionPanel.this, model, model.getCurrentFolder().getId()) {
+                @Override
+                protected void done() {
+                    super.done();
+                    if (reloadObject) {
+                        LoadObjectWorker.reloadObject(ActionPanel.this, model);
+                    }
+                }
+            };
+            worker.executeTask();
+        } else {
+            if (reloadObject) {
+                LoadObjectWorker.reloadObject(ActionPanel.this, model);
+            }
         }
     }
 
@@ -135,10 +149,7 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
     public abstract boolean isAllowed();
 
-    /**
-     * @return <code>true</code> if object should be reloaded.
-     */
-    public abstract boolean doAction() throws Exception;
+    public abstract void doAction() throws Exception;
 
     protected JPanel createFilenamePanel(final JTextField filenameField) {
         JPanel filePanel = new JPanel(new BorderLayout());
@@ -152,9 +163,9 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                JFileChooser fileChooser = new JFileChooser();
+                WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
                 int chooseResult = fileChooser.showDialog(filenameField, "Select");
-                if (chooseResult == JFileChooser.APPROVE_OPTION) {
+                if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION) {
                     if (fileChooser.getSelectedFile().isFile()) {
                         filenameField.setText(fileChooser.getSelectedFile().getAbsolutePath());
                     }

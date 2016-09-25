@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.AccessControlPrinc
 import org.apache.chemistry.opencmis.workbench.icons.AddIcon;
 import org.apache.chemistry.opencmis.workbench.icons.RemoveIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class AclEditorFrame extends JFrame {
 
@@ -294,7 +295,7 @@ public class AclEditorFrame extends JFrame {
                 }
 
                 object.applyAcl(adds, removes, aclPropagation);
-                model.reloadObject();
+                LoadObjectWorker.reloadObject(this, model);
             }
 
             return true;

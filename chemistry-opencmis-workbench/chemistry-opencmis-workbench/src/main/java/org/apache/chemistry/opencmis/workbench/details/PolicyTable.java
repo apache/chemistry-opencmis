@@ -22,8 +22,8 @@ import java.awt.event.MouseEvent;
 
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Policy;
-import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class PolicyTable extends AbstractDetailsTable {
 
@@ -43,13 +43,9 @@ public class PolicyTable extends AbstractDetailsTable {
             return;
         }
 
-        try {
-            getClientModel().loadObject(
-                    getObject().getPolicies().get(getRowSorter().convertRowIndexToModel(rowIndex)).getId());
-            setTab(0);
-        } catch (Exception ex) {
-            ClientHelper.showError(this, ex);
-        }
+        LoadObjectWorker.loadObject(this, getClientModel(),
+                getObject().getPolicies().get(getRowSorter().convertRowIndexToModel(rowIndex)).getId());
+        setTab(0);
     }
 
     @Override

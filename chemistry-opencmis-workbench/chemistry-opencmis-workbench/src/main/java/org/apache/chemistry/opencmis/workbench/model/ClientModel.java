@@ -78,19 +78,19 @@ public class ClientModel {
     public ClientModel() {
     }
 
-    public void addFolderListener(FolderListener listener) {
+    public synchronized void addFolderListener(FolderListener listener) {
         listenerList.add(FolderListener.class, listener);
     }
 
-    public void removeFolderListener(FolderListener listener) {
+    public synchronized void removeFolderListener(FolderListener listener) {
         listenerList.remove(FolderListener.class, listener);
     }
 
-    public void addObjectListener(ObjectListener listener) {
+    public synchronized void addObjectListener(ObjectListener listener) {
         listenerList.add(ObjectListener.class, listener);
     }
 
-    public void removeObjectListener(ObjectListener listener) {
+    public synchronized void removeObjectListener(ObjectListener listener) {
         listenerList.remove(ObjectListener.class, listener);
     }
 
@@ -106,12 +106,12 @@ public class ClientModel {
         return clientSession;
     }
 
-    public synchronized RepositoryInfo getRepositoryInfo() {
-        Session session = clientSession.getSession();
+    public RepositoryInfo getRepositoryInfo() {
+        Session session = getClientSession().getSession();
         return session.getRepositoryInfo();
     }
 
-    public synchronized String getRepositoryName() {
+    public String getRepositoryName() {
         try {
             return getRepositoryInfo().getName();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class ClientModel {
         }
     }
 
-    public synchronized boolean supportsQuery() {
+    public boolean supportsQuery() {
         try {
             RepositoryCapabilities cap = getRepositoryInfo().getCapabilities();
             if (cap == null) {
@@ -132,7 +132,7 @@ public class ClientModel {
         }
     }
 
-    public synchronized boolean supportsChangeLog() {
+    public boolean supportsChangeLog() {
         try {
             RepositoryCapabilities cap = getRepositoryInfo().getCapabilities();
             if (cap == null) {
@@ -145,21 +145,19 @@ public class ClientModel {
         }
     }
 
-    private synchronized void loadBaseTypes() {
-        if (baseTypes != null) {
-            return;
+    private synchronized List<ObjectType> getBaseTypes() {
+        if (baseTypes == null) {
+            baseTypes = new ArrayList<ObjectType>();
+            for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
+                baseTypes.add(type);
+            }
         }
 
-        baseTypes = new ArrayList<ObjectType>();
-        for (ObjectType type : clientSession.getSession().getTypeChildren(null, false)) {
-            baseTypes.add(type);
-        }
+        return baseTypes;
     }
 
-    public synchronized boolean supportsItems() {
-        loadBaseTypes();
-
-        for (ObjectType type : baseTypes) {
+    public boolean supportsItems() {
+        for (ObjectType type : getBaseTypes()) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_ITEM) {
                 return true;
             }
@@ -168,10 +166,8 @@ public class ClientModel {
         return false;
     }
 
-    public synchronized boolean supportsRelationships() {
-        loadBaseTypes();
-
-        for (ObjectType type : baseTypes) {
+    public boolean supportsRelationships() {
+        for (ObjectType type : getBaseTypes()) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_RELATIONSHIP) {
                 return true;
             }
@@ -180,10 +176,8 @@ public class ClientModel {
         return false;
     }
 
-    public synchronized boolean supportsPolicies() {
-        loadBaseTypes();
-
-        for (ObjectType type : baseTypes) {
+    public boolean supportsPolicies() {
+        for (ObjectType type : getBaseTypes()) {
             if (type.getBaseTypeId() == BaseTypeId.CMIS_POLICY) {
                 return true;
             }
@@ -192,9 +186,10 @@ public class ClientModel {
         return false;
     }
 
-    public synchronized ObjectId loadFolder(String folderId, boolean byPath) {
+    public ObjectId loadFolder(final String folderId, final boolean byPath) {
         try {
-            Session session = clientSession.getSession();
+            ClientSession myClientSession = getClientSession();
+            Session session = myClientSession.getSession();
             CmisObject selectedObject = null;
             CmisObject folderObject = null;
 
@@ -214,23 +209,24 @@ public class ClientModel {
             }
 
             if (folderObject == null) {
-                // selected object is unfiled, a relationship object, or the
-                // user is not allowed to see the parent folder
+                // selected object is unfiled, a relationship object, or
+                // the user is not allowed to see the parent folder
                 setCurrentFolder(null, Collections.<CmisObject> emptyList());
                 return selectedObject;
             }
 
             List<CmisObject> children = new ArrayList<CmisObject>();
 
-            if (clientSession.getMaxChildren() != 0) {
+            int maxChildren = myClientSession.getMaxChildren();
+            if (maxChildren != 0) {
                 // if maxChildren == 0 don't call getChildren()
-                ItemIterable<CmisObject> iter = ((Folder) folderObject).getChildren(clientSession
+                ItemIterable<CmisObject> iter = ((Folder) folderObject).getChildren(myClientSession
                         .getFolderOperationContext());
 
-                if (clientSession.getMaxChildren() > 0) {
+                if (myClientSession.getMaxChildren() > 0) {
                     // if maxChildren > 0 restrict number of children
                     // otherwise load all
-                    iter = iter.getPage(clientSession.getMaxChildren());
+                    iter = iter.getPage(maxChildren);
                 }
 
                 for (CmisObject child : iter) {
@@ -247,16 +243,10 @@ public class ClientModel {
         }
     }
 
-    public synchronized void reloadFolder() {
-        if (currentFolder != null) {
-            loadFolder(currentFolder.getId(), false);
-        }
-    }
-
-    public synchronized void loadObject(String objectId) {
+    public void loadObject(final String objectId) {
         try {
-            Session session = clientSession.getSession();
-            CmisObject object = session.getObject(objectId, clientSession.getObjectOperationContext());
+            Session session = getClientSession().getSession();
+            CmisObject object = session.getObject(objectId, getClientSession().getObjectOperationContext());
             object.refreshIfOld(OLD);
 
             setCurrentObject(object);
@@ -267,13 +257,15 @@ public class ClientModel {
     }
 
     public synchronized void reloadObject() {
-        if (currentObject == null) {
+        CmisObject myCurrentObject = getCurrentObject();
+        if (myCurrentObject == null) {
             return;
         }
 
+        ClientSession myClientSession = getClientSession();
         try {
-            Session session = clientSession.getSession();
-            CmisObject object = session.getObject(currentObject, clientSession.getObjectOperationContext());
+            Session session = myClientSession.getSession();
+            CmisObject object = session.getObject(myCurrentObject, myClientSession.getObjectOperationContext());
             object.refresh();
 
             setCurrentObject(object);
@@ -283,16 +275,16 @@ public class ClientModel {
         }
     }
 
-    public synchronized ItemIterable<QueryResult> query(String q, boolean searchAllVersions, int maxHits) {
+    public ItemIterable<QueryResult> query(String q, boolean searchAllVersions, int maxHits) {
         OperationContext queryContext = new OperationContextImpl(null, false, false, false, IncludeRelationships.NONE,
                 null, false, null, false, maxHits > 0 ? maxHits : 1);
 
-        Session session = clientSession.getSession();
+        Session session = getClientSession().getSession();
         return session.query(q, searchAllVersions, queryContext);
     }
 
-    public synchronized List<Tree<ObjectType>> getTypeDescendants() {
-        Session session = clientSession.getSession();
+    public List<Tree<ObjectType>> getTypeDescendants() {
+        Session session = getClientSession().getSession();
         return session.getTypeDescendants(null, -1, true);
     }
 
@@ -303,16 +295,15 @@ public class ClientModel {
             InputStream stream = new LoggingInputStream(new BufferedInputStream(new FileInputStream(file), 512 * 1024),
                     file.getName());
 
-            content = clientSession.getSession().getObjectFactory()
+            content = getClientSession().getSession().getObjectFactory()
                     .createContentStream(file.getName(), file.length(), MimeTypes.getMIMEType(file), stream);
         }
 
         return content;
     }
 
-    public synchronized ObjectId createDocument(String name, String type, String filename,
-            Map<String, Object> additionalProperties, VersioningState versioningState, boolean unfiled)
-            throws FileNotFoundException {
+    public ObjectId createDocument(String name, String type, String filename, Map<String, Object> additionalProperties,
+            VersioningState versioningState, boolean unfiled) throws FileNotFoundException {
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(PropertyIds.NAME, name);
         properties.put(PropertyIds.OBJECT_TYPE_ID, type);
@@ -324,15 +315,15 @@ public class ClientModel {
         ContentStream content = createContentStream(filename);
 
         try {
-            return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
-                    versioningState, null, null, null);
+            return getClientSession().getSession().createDocument(properties, (unfiled ? null : getCurrentFolder()),
+                    content, versioningState, null, null, null);
         } finally {
             IOUtils.closeQuietly(content);
         }
     }
 
     public ContentStream createContentStream(String name, long length, long seed) {
-        return clientSession
+        return getClientSession()
                 .getSession()
                 .getObjectFactory()
                 .createContentStream(name, length, "application/octet-stream",
@@ -351,8 +342,8 @@ public class ClientModel {
 
         ContentStream content = createContentStream(name, length, seed);
         try {
-            return clientSession.getSession().createDocument(properties, (unfiled ? null : currentFolder), content,
-                    versioningState, null, null, null);
+            return clientSession.getSession().createDocument(properties, (unfiled ? null : getCurrentFolder()),
+                    content, versioningState, null, null, null);
         } finally {
             IOUtils.closeQuietly(content);
         }
@@ -368,7 +359,8 @@ public class ClientModel {
             properties.putAll(additionalProperties);
         }
 
-        return clientSession.getSession().createItem(properties, (unfiled ? null : currentFolder), null, null, null);
+        return getClientSession().getSession().createItem(properties, (unfiled ? null : getCurrentFolder()), null,
+                null, null);
     }
 
     public synchronized ObjectId createFolder(String name, String type, Map<String, Object> additionalProperties) {
@@ -380,7 +372,7 @@ public class ClientModel {
             properties.putAll(additionalProperties);
         }
 
-        return clientSession.getSession().createFolder(properties, currentFolder, null, null, null);
+        return getClientSession().getSession().createFolder(properties, getCurrentFolder(), null, null, null);
     }
 
     public synchronized ObjectId createRelationship(String name, String type, String sourceId, String targetId,
@@ -395,7 +387,7 @@ public class ClientModel {
             properties.putAll(additionalProperties);
         }
 
-        return clientSession.getSession().createRelationship(properties, null, null, null);
+        return getClientSession().getSession().createRelationship(properties, null, null, null);
     }
 
     public synchronized ObjectId createPolicy(String name, String type, String policyText,
@@ -411,20 +403,23 @@ public class ClientModel {
             properties.putAll(additionalProperties);
         }
 
-        return clientSession.getSession().createPolicy(properties, (unfiled ? null : currentFolder), null, null, null);
+        return getClientSession().getSession().createPolicy(properties, (unfiled ? null : getCurrentFolder()), null,
+                null, null);
     }
 
     public synchronized List<ObjectType> getTypesAsList(String rootTypeId, boolean creatableOnly) {
+        Session session = getClientSession().getSession();
+
         List<ObjectType> result = new ArrayList<ObjectType>();
 
         ObjectType rootType = null;
         try {
-            rootType = clientSession.getSession().getTypeDefinition(rootTypeId);
+            rootType = session.getTypeDefinition(rootTypeId);
         } catch (CmisBaseException e) {
             return result;
         }
 
-        List<Tree<ObjectType>> types = clientSession.getSession().getTypeDescendants(rootTypeId, -1, true);
+        List<Tree<ObjectType>> types = session.getTypeDescendants(rootTypeId, -1, true);
         addType(types, result, creatableOnly);
 
         if (creatableOnly) {

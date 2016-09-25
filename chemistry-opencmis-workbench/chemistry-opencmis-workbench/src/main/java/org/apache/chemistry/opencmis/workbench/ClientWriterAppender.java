@@ -41,8 +41,6 @@ public class ClientWriterAppender extends AbstractAppender {
         super(name, filter, layout);
     }
 
-    private static final long serialVersionUID = 1L;
-
     private static JTextArea logTextArea = null;
 
     public static void setTextArea(JTextArea textArea) {

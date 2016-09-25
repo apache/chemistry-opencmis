@@ -37,6 +37,8 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.workbench.icons.NewFolderIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CreateDialog;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class CreateFolderDialog extends CreateDialog {
 
@@ -100,7 +102,7 @@ public class CreateFolderDialog extends CreateDialog {
                             getMandatoryOrOnCreatePropertyValues(type));
 
                     if (objectId != null) {
-                        getClientModel().loadObject(objectId.getId());
+                        LoadObjectWorker.loadObject(getOwner(), getClientModel(), objectId.getId());
                     }
 
                     thisDialog.setVisible(false);
@@ -109,12 +111,7 @@ public class CreateFolderDialog extends CreateDialog {
                     ClientHelper.showError(null, e);
                 } finally {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-                    try {
-                        getClientModel().reloadFolder();
-                    } catch (Exception e) {
-                        ClientHelper.showError(null, e);
-                    }
+                    LoadFolderWorker.reloadFolder(getOwner(), getClientModel());
                 }
             }
         });

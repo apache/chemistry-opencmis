@@ -18,17 +18,15 @@
  */
 package org.apache.chemistry.opencmis.workbench.actions;
 
-import java.util.List;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.ActionPanel;
+import org.apache.chemistry.opencmis.workbench.worker.DeleteWorker;
 
 public class DeleteTreePanel extends ActionPanel {
 
@@ -71,22 +69,15 @@ public class DeleteTreePanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
-        List<String> ids = ((Folder) getObject()).deleteTree(allVersionsBox.isSelected(),
-                (UnfileObject) unfileObjectsBox.getSelectedItem(), continueOnFailureBox.isSelected());
-
-        if (ids != null && !ids.isEmpty()) {
-            StringBuilder sb = new StringBuilder(128);
-
-            sb.append("Delete tree failed! At least the following objects could not be deleted:\n");
-
-            for (String id : ids) {
-                sb.append('\n');
-                sb.append(id);
+    public void doAction() {
+        DeleteWorker worker = new DeleteWorker(this, (Folder) getObject(), allVersionsBox.isSelected(),
+                (UnfileObject) unfileObjectsBox.getSelectedItem(), continueOnFailureBox.isSelected()) {
+            @Override
+            protected void done() {
+                super.done();
+                reload(false);
             }
-
-            JOptionPane.showMessageDialog(this, sb.toString(), "Delete Tree", JOptionPane.ERROR_MESSAGE);
-        }
-        return false;
+        };
+        worker.executeTask();
     }
 }

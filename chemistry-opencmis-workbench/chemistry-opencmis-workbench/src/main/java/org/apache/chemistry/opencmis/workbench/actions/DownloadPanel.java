@@ -69,13 +69,12 @@ public class DownloadPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         String streamId = streamIdField.getText().trim();
         if (streamId.length() == 0) {
             streamId = null;
         }
 
         ClientHelper.download(this, getObject(), streamId);
-        return true;
     }
 }

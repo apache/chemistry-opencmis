@@ -422,7 +422,7 @@ public class PropertyDefinitionsSplitPane extends JSplitPane {
                 extensionsTree.setData(null);
             }
 
-            revalidate();
+            regenerateGUI();
         }
 
         private boolean is(Boolean b) {
@@ -460,6 +460,8 @@ public class PropertyDefinitionsSplitPane extends JSplitPane {
             dateTimeResolutionField = addLine("DateTime Resolution:");
             extensionsTree = addComponent("Extensions:", new InfoTreePane<List<CmisExtensionElement>>(
                     new ExtensionsTree()));
+
+            regenerateGUI();
         }
     }
 }

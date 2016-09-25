@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -34,12 +33,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.FolderListener;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
 
 public class FolderPanel extends JPanel implements FolderListener, ObjectListener {
 
@@ -97,21 +96,27 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
     }
 
     @Override
-    public void objectLoaded(ClientModelEvent event) {
-        int selectedRow = folderTable.getSelectedRow();
-        if (selectedRow > -1 && event.getClientModel().getCurrentObject() != null) {
-            if (selectedRow < folderTable.getRowCount()) {
+    public void objectLoaded(final ClientModelEvent event) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int selectedRow = folderTable.getSelectedRow();
+                if (selectedRow > -1 && event.getClientModel().getCurrentObject() != null) {
+                    if (selectedRow < folderTable.getRowCount()) {
 
-                String selId = folderTable.getValueAt(folderTable.getSelectedRow(), FolderTable.ID_COLUMN).toString();
-                String curId = event.getClientModel().getCurrentObject().getId();
+                        String selId = folderTable.getValueAt(folderTable.getSelectedRow(), FolderTable.ID_COLUMN)
+                                .toString();
+                        String curId = event.getClientModel().getCurrentObject().getId();
 
-                if (!curId.equals(selId)) {
-                    folderTable.clearSelection();
+                        if (!curId.equals(selId)) {
+                            folderTable.clearSelection();
+                        }
+                    } else {
+                        folderTable.clearSelection();
+                    }
                 }
-            } else {
-                folderTable.clearSelection();
             }
-        }
+        });
     }
 
     private void createGUI() {
@@ -126,16 +131,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         upButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    ObjectId objectId = model.loadFolder(parentId, false);
-                    model.loadObject(objectId.getId());
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                    return;
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
+                loadParentFolder();
             }
         });
         panel.add(upButton);
@@ -178,24 +174,10 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
     }
 
     private void loadFolder() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    String id = pathField.getText().trim();
-                    if (id.length() == 0) {
-                        id = "/";
-                    }
-                    ObjectId objectId = model.loadFolder(id, id.charAt(0) == '/');
-                    model.loadObject(objectId.getId());
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                    return;
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-            }
-        });
+        LoadFolderWorker.loadFolder(this, model, pathField.getText().trim());
+    }
+
+    private void loadParentFolder() {
+        LoadFolderWorker.loadFolderById(this, model, parentId);
     }
 }

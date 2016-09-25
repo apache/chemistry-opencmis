@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -44,7 +45,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -69,12 +69,32 @@ import org.apache.chemistry.opencmis.client.api.Tree;
 import org.apache.chemistry.opencmis.client.util.TypeUtils;
 import org.apache.chemistry.opencmis.client.util.TypeUtils.ValidationError;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
+import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
+import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableDocumentTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutablePropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableRelationshipTypeDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.MutableTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
+import org.apache.chemistry.opencmis.commons.definitions.RelationshipTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
+import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
+import org.apache.chemistry.opencmis.commons.enums.PropertyType;
+import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.DocumentTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.FolderTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ItemTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PolicyTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.RelationshipTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.SecondaryTypeDefinitionImpl;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.TypeMutabilityImpl;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
@@ -88,6 +108,8 @@ import org.apache.chemistry.opencmis.workbench.icons.TckIcon;
 import org.apache.chemistry.opencmis.workbench.icons.TypeIcon;
 import org.apache.chemistry.opencmis.workbench.icons.UpdateTypeIcon;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.swing.WorkbenchFileChooser;
+import org.apache.chemistry.opencmis.workbench.worker.InfoWorkbenchWorker;
 
 public class TypesFrame extends JFrame {
 
@@ -205,7 +227,7 @@ public class TypesFrame extends JFrame {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                saveTypeDefinition(TypeFormat.XML);
+                saveTypeDefinition(TypeFormat.XML, currentType);
             }
         });
 
@@ -214,7 +236,7 @@ public class TypesFrame extends JFrame {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                saveTypeDefinition(TypeFormat.JSON);
+                saveTypeDefinition(TypeFormat.JSON, currentType);
             }
         });
 
@@ -320,9 +342,44 @@ public class TypesFrame extends JFrame {
         typesTree.setRootVisible(false);
         typesTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         typesTree.setCellRenderer(new TreeCellRenderer());
+        typesTree.setModel(null);
 
         // tree popup
         final JPopupMenu treePopup = new JPopupMenu();
+
+        final JMenuItem expandAllItem = new JMenuItem("Expand All Types");
+        treePopup.add(expandAllItem);
+
+        expandAllItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int j = typesTree.getRowCount();
+                int i = 0;
+                while (i < j) {
+                    typesTree.expandRow(i);
+                    i += 1;
+                    j = typesTree.getRowCount();
+                }
+            }
+        });
+
+        final JMenuItem collapseAllItem = new JMenuItem("Collapse All Types");
+        treePopup.add(collapseAllItem);
+
+        collapseAllItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int j = typesTree.getRowCount();
+                int i = 0;
+                while (i < j) {
+                    typesTree.collapseRow(i);
+                    i += 1;
+                    j = typesTree.getRowCount();
+                }
+            }
+        });
+
+        treePopup.addSeparator();
 
         final JMenuItem saveXmlItem = new JMenuItem("Save Type Definition to XML");
         saveXmlItem.setEnabled(false);
@@ -331,7 +388,7 @@ public class TypesFrame extends JFrame {
         saveXmlItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveTypeDefinition(TypeFormat.XML);
+                saveTypeDefinition(TypeFormat.XML, currentType);
             }
         });
 
@@ -342,7 +399,31 @@ public class TypesFrame extends JFrame {
         saveJsonItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveTypeDefinition(TypeFormat.JSON);
+                saveTypeDefinition(TypeFormat.JSON, currentType);
+            }
+        });
+
+        treePopup.addSeparator();
+
+        final JMenuItem saveSubTypeXmlItem = new JMenuItem("Save Subtype Definition Template to XML");
+        saveSubTypeXmlItem.setEnabled(false);
+        treePopup.add(saveSubTypeXmlItem);
+
+        saveSubTypeXmlItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveTypeDefinition(TypeFormat.XML, createSubtypeDefinitionTemplate(currentType));
+            }
+        });
+
+        final JMenuItem saveSubTypeJsonItem = new JMenuItem("Save Subtype Definition Template to JSON");
+        saveSubTypeJsonItem.setEnabled(false);
+        treePopup.add(saveSubTypeJsonItem);
+
+        saveSubTypeJsonItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveTypeDefinition(TypeFormat.JSON, createSubtypeDefinitionTemplate(currentType));
             }
         });
 
@@ -408,6 +489,9 @@ public class TypesFrame extends JFrame {
                 saveXmlItem.setEnabled(true);
                 saveJsonItem.setEnabled(true);
 
+                saveSubTypeXmlItem.setEnabled(true);
+                saveSubTypeJsonItem.setEnabled(true);
+
                 typeDefinitionInfoPanel.setType(currentType);
                 propertyDefinitionsSplitPane.setType(currentType);
             }
@@ -439,9 +523,137 @@ public class TypesFrame extends JFrame {
         setVisible(true);
     }
 
+    private TypeDefinition createSubtypeDefinitionTemplate(TypeDefinition typeDef) {
+        MutableTypeDefinition result = null;
+
+        switch (typeDef.getBaseTypeId()) {
+        case CMIS_DOCUMENT:
+            result = new DocumentTypeDefinitionImpl();
+            ((MutableDocumentTypeDefinition) result).setIsVersionable(((DocumentTypeDefinition) typeDef)
+                    .isVersionable());
+            ((MutableDocumentTypeDefinition) result).setContentStreamAllowed(((DocumentTypeDefinition) typeDef)
+                    .getContentStreamAllowed());
+            break;
+        case CMIS_FOLDER:
+            result = new FolderTypeDefinitionImpl();
+            break;
+        case CMIS_POLICY:
+            result = new PolicyTypeDefinitionImpl();
+            break;
+        case CMIS_RELATIONSHIP:
+            result = new RelationshipTypeDefinitionImpl();
+            List<String> sourceTypeIds = ((RelationshipTypeDefinition) typeDef).getAllowedSourceTypeIds();
+            if (sourceTypeIds != null) {
+                ((MutableRelationshipTypeDefinition) result)
+                        .setAllowedSourceTypes(new ArrayList<String>(sourceTypeIds));
+            }
+            List<String> targetTypeIds = ((RelationshipTypeDefinition) typeDef).getAllowedTargetTypeIds();
+            if (targetTypeIds != null) {
+                ((MutableRelationshipTypeDefinition) result)
+                        .setAllowedTargetTypes(new ArrayList<String>(targetTypeIds));
+            }
+            break;
+        case CMIS_ITEM:
+            result = new ItemTypeDefinitionImpl();
+            break;
+        case CMIS_SECONDARY:
+            result = new SecondaryTypeDefinitionImpl();
+            break;
+        default:
+            throw new RuntimeException("Unknown base type!");
+        }
+
+        result.setId("subtype_of_" + typeDef.getId());
+        result.setLocalName("subtype_of_" + typeDef.getLocalName());
+        result.setLocalNamespace(typeDef.getLocalNamespace());
+        result.setDisplayName("Subtytpe of " + typeDef.getDisplayName());
+        result.setQueryName("subtype_of_" + typeDef.getQueryName());
+        result.setDescription(typeDef.getDescription());
+        result.setBaseTypeId(typeDef.getBaseTypeId());
+        result.setParentTypeId(typeDef.getId());
+        result.setIsCreatable(typeDef.isCreatable());
+        result.setIsFileable(typeDef.isFileable());
+        result.setIsQueryable(typeDef.isQueryable());
+        result.setIsFulltextIndexed(typeDef.isFulltextIndexed());
+        result.setIsIncludedInSupertypeQuery(typeDef.isIncludedInSupertypeQuery());
+        result.setIsControllablePolicy(typeDef.isControllablePolicy());
+        result.setIsControllableAcl(typeDef.isControllableAcl());
+
+        if (typeDef.getTypeMutability() != null) {
+            TypeMutabilityImpl mutability = new TypeMutabilityImpl();
+
+            mutability.setCanCreate(typeDef.getTypeMutability().canCreate());
+            mutability.setCanUpdate(typeDef.getTypeMutability().canUpdate());
+            mutability.setCanDelete(typeDef.getTypeMutability().canDelete());
+
+            result.setTypeMutability(mutability);
+        }
+
+        copyExtensions(typeDef, result);
+
+        MutablePropertyDefinition<String> propertyDefinition = new PropertyStringDefinitionImpl();
+
+        propertyDefinition.setId("example:id");
+        propertyDefinition.setLocalName("example:id");
+        propertyDefinition.setDisplayName("Example Property");
+        propertyDefinition.setDescription("This is an example property");
+        propertyDefinition.setPropertyType(PropertyType.STRING);
+        propertyDefinition.setCardinality(Cardinality.SINGLE);
+        propertyDefinition.setUpdatability(Updatability.READWRITE);
+        propertyDefinition.setIsInherited(false);
+        propertyDefinition.setIsRequired(false);
+        propertyDefinition.setIsQueryable(false);
+        propertyDefinition.setIsOrderable(false);
+        propertyDefinition.setQueryName("example:id");
+
+        result.addPropertyDefinition(propertyDefinition);
+
+        return result;
+    }
+
+    protected void copyExtensions(ExtensionsData source, ExtensionsData target) {
+        if (source == null || target == null) {
+            return;
+        }
+
+        if (source.getExtensions() == null) {
+            target.setExtensions(null);
+            return;
+        }
+
+        List<CmisExtensionElement> elementList = new ArrayList<CmisExtensionElement>();
+        for (CmisExtensionElement element : source.getExtensions()) {
+            elementList.add(copy(element));
+        }
+
+        target.setExtensions(elementList);
+    }
+
+    private CmisExtensionElement copy(CmisExtensionElement element) {
+        if (element == null) {
+            return null;
+        }
+
+        Map<String, String> attrs = (element.getAttributes() != null ? new HashMap<String, String>(
+                element.getAttributes()) : null);
+
+        List<CmisExtensionElement> children = element.getChildren();
+        if (isNotEmpty(children)) {
+            List<CmisExtensionElement> copyChildren = new ArrayList<CmisExtensionElement>(children.size());
+
+            for (CmisExtensionElement child : children) {
+                copyChildren.add(copy(child));
+            }
+
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, copyChildren);
+        } else {
+            return new CmisExtensionElementImpl(element.getNamespace(), element.getName(), attrs, element.getValue());
+        }
+    }
+
     private void createOrUpdateTypeDefinition(TypeFormat format, boolean create) {
         String name;
-        JFileChooser fileChooser;
+        WorkbenchFileChooser fileChooser;
 
         switch (format) {
         case XML:
@@ -457,8 +669,10 @@ public class TypesFrame extends JFrame {
         }
 
         int chooseResult = fileChooser.showDialog(getRootPane(), "Load " + name);
-        if (chooseResult == JFileChooser.APPROVE_OPTION) {
+        if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION) {
             InputStream in = null;
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
             try {
                 in = new BufferedInputStream(new FileInputStream(fileChooser.getSelectedFile()), 64 * 1024);
 
@@ -476,23 +690,55 @@ public class TypesFrame extends JFrame {
                 }
 
                 if (checkTypeDefinition(type, create)) {
-                    if (create) {
-                        model.getClientSession().getSession().createType(type);
-                    } else {
-                        model.getClientSession().getSession().updateType(type);
-                    }
+                    (new CreateTypeWorker(this, type, create)).executeTask();
                 }
-
-                loadData();
             } catch (Exception e) {
                 ClientHelper.showError(getRootPane(), e);
             } finally {
                 IOUtils.closeQuietly(in);
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
     }
 
-    private void saveTypeDefinition(TypeFormat format) {
+    private class CreateTypeWorker extends InfoWorkbenchWorker {
+
+        private TypeDefinition type;
+        private boolean create;
+
+        public CreateTypeWorker(Window parent, TypeDefinition type, boolean create) {
+            super(parent);
+            this.type = type;
+            this.create = create;
+        }
+
+        @Override
+        protected String getTitle() {
+            return (create ? "Creating" : "Updating") + " Type";
+        }
+
+        @Override
+        protected String getMessage() {
+            return (create ? "Creating" : "Updating") + " type '" + type.getId() + "'...";
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            if (create) {
+                model.getClientSession().getSession().createType(type);
+            } else {
+                model.getClientSession().getSession().updateType(type);
+            }
+            return null;
+        }
+
+        @Override
+        protected void finializeTask() {
+            loadData();
+        }
+    }
+
+    private void saveTypeDefinition(TypeFormat format, TypeDefinition typeDef) {
         String name;
         String extension;
 
@@ -509,21 +755,24 @@ public class TypesFrame extends JFrame {
             throw new RuntimeException("Unknown format!");
         }
 
-        JFileChooser fileChooser = createXmlFileChooser();
-        fileChooser.setSelectedFile(new File(getFilename() + extension));
+        WorkbenchFileChooser fileChooser = createXmlFileChooser();
+
+        fileChooser.setSelectedFile(new File(getFilename(typeDef) + extension));
 
         int chooseResult = fileChooser.showDialog(getRootPane(), "Save " + name);
-        if (chooseResult == JFileChooser.APPROVE_OPTION) {
+        if (chooseResult == WorkbenchFileChooser.APPROVE_OPTION) {
             OutputStream out = null;
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
             try {
                 out = new BufferedOutputStream(new FileOutputStream(fileChooser.getSelectedFile()));
 
                 switch (format) {
                 case XML:
-                    TypeUtils.writeToXML(currentType, out);
+                    TypeUtils.writeToXML(typeDef, out);
                     break;
                 case JSON:
-                    TypeUtils.writeToJSON(currentType, out);
+                    TypeUtils.writeToJSON(typeDef, out);
                     break;
                 default:
                     throw new RuntimeException("Unknown format!");
@@ -534,6 +783,7 @@ public class TypesFrame extends JFrame {
                 ClientHelper.showError(getRootPane(), e);
             } finally {
                 IOUtils.closeQuietly(out);
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
     }
@@ -544,18 +794,43 @@ public class TypesFrame extends JFrame {
                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (answer == JOptionPane.YES_OPTION) {
-            try {
-                model.getClientSession().getSession().deleteType(currentType.getId());
-            } catch (Exception e) {
-                ClientHelper.showError(getRootPane(), e);
-            }
+            (new DeleteTypeWorker(this, currentType.getId())).executeTask();
+        }
+    }
 
+    private class DeleteTypeWorker extends InfoWorkbenchWorker {
+
+        private String type;
+
+        public DeleteTypeWorker(Window parent, String type) {
+            super(parent);
+            this.type = type;
+        }
+
+        @Override
+        protected String getTitle() {
+            return "Deleting type";
+        }
+
+        @Override
+        protected String getMessage() {
+            return "Deleting type '" + type + "'...";
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            model.getClientSession().getSession().deleteType(type);
+            return null;
+        }
+
+        @Override
+        protected void finializeTask() {
             loadData();
         }
     }
 
-    private JFileChooser createXmlFileChooser() {
-        JFileChooser fileChooser = new JFileChooser();
+    private WorkbenchFileChooser createXmlFileChooser() {
+        WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
         fileChooser.addChoosableFileFilter(new FileFilter() {
 
             @Override
@@ -572,8 +847,8 @@ public class TypesFrame extends JFrame {
         return fileChooser;
     }
 
-    private JFileChooser createJsonFileChooser() {
-        JFileChooser fileChooser = new JFileChooser();
+    private WorkbenchFileChooser createJsonFileChooser() {
+        WorkbenchFileChooser fileChooser = new WorkbenchFileChooser();
         fileChooser.addChoosableFileFilter(new FileFilter() {
 
             @Override
@@ -590,9 +865,9 @@ public class TypesFrame extends JFrame {
         return fileChooser;
     }
 
-    private String getFilename() {
-        if (currentType != null) {
-            String filename = currentType.getId();
+    private String getFilename(TypeDefinition typeDef) {
+        if (typeDef != null) {
+            String filename = typeDef.getId();
             filename = filename.replace(':', '_');
             filename = filename.replace('/', '_');
             filename = filename.replace('\\', '_');
@@ -661,9 +936,29 @@ public class TypesFrame extends JFrame {
     }
 
     private void loadData() {
-        try {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        (new LoadTypeDataWorker(this)).executeTask();
+    }
 
+    private class LoadTypeDataWorker extends InfoWorkbenchWorker {
+
+        private DefaultTreeModel treeModel;
+
+        public LoadTypeDataWorker(Window parent) {
+            super(parent);
+        }
+
+        @Override
+        protected String getTitle() {
+            return "Loading Types";
+        }
+
+        @Override
+        protected String getMessage() {
+            return "Loading types...";
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
             DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
             List<Tree<ObjectType>> types = model.getTypeDescendants();
@@ -671,34 +966,35 @@ public class TypesFrame extends JFrame {
                 addLevel(rootNode, tt);
             }
 
-            DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-            typesTree.setModel(treeModel);
+            treeModel = new DefaultTreeModel(rootNode);
+
+            return null;
+        }
+
+        @Override
+        protected void finializeTask() {
+            if (treeModel == null || isCancelled()) {
+                TreeModel model = typesTree.getModel();
+                if (model instanceof DefaultTreeModel) {
+                    ((DefaultTreeModel) model).setRoot(null);
+                }
+            } else {
+                typesTree.setModel(treeModel);
+            }
 
             typesTree.setSelectionRow(0);
             typeSplitPane.setDividerLocation(0.5);
             typePropSplitPane.setDividerLocation(0.5);
-        } catch (Exception ex) {
-            // clear tree
-            TreeModel model = typesTree.getModel();
-            if (model instanceof DefaultTreeModel) {
-                ((DefaultTreeModel) model).setRoot(null);
-            }
-
-            ClientHelper.showError(null, ex);
-
-            return;
-        } finally {
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
-    }
 
-    private void addLevel(DefaultMutableTreeNode parent, Tree<ObjectType> tree) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TypeNode(tree.getItem()));
-        parent.add(node);
+        private void addLevel(DefaultMutableTreeNode parent, Tree<ObjectType> tree) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(new TypeNode(tree.getItem()));
+            parent.add(node);
 
-        if (tree.getChildren() != null) {
-            for (Tree<ObjectType> tt : tree.getChildren()) {
-                addLevel(node, tt);
+            if (tree.getChildren() != null) {
+                for (Tree<ObjectType> tt : tree.getChildren()) {
+                    addLevel(node, tt);
+                }
             }
         }
     }

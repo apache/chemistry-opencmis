@@ -19,14 +19,15 @@
 package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -49,6 +50,7 @@ import org.apache.chemistry.opencmis.client.api.ChangeEvents;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 import org.apache.chemistry.opencmis.workbench.swing.CollectionRenderer;
 import org.apache.chemistry.opencmis.workbench.swing.GregorianCalendarRenderer;
+import org.apache.chemistry.opencmis.workbench.worker.InfoWorkbenchWorker;
 
 public class ChangeLogFrame extends JFrame {
 
@@ -101,20 +103,7 @@ public class ChangeLogFrame extends JFrame {
                     changeLogToken = null;
                 }
 
-                ChangeEvents events = null;
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    events = model.getClientSession().getSession().getContentChanges(changeLogToken, true, 1000);
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                    return;
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-
-                changeLogTable.setChangeEvents(events.getChangeEvents());
-                changeLogTokenField.setText(events.getLatestChangeLogToken() == null ? "" : events
-                        .getLatestChangeLogToken());
+                (new ChangeLogWorker(ChangeLogFrame.this, changeLogToken)).executeTask();
             }
         });
         inputPanel.add(loadButton, BorderLayout.LINE_END);
@@ -134,7 +123,7 @@ public class ChangeLogFrame extends JFrame {
         setVisible(true);
     }
 
-    static class ChangeLogTable extends JTable {
+    private static class ChangeLogTable extends JTable {
 
         private static final long serialVersionUID = 1L;
 
@@ -268,6 +257,49 @@ public class ChangeLogFrame extends JFrame {
                 }
 
                 return super.getColumnClass(columnIndex);
+            }
+        }
+    }
+
+    private class ChangeLogWorker extends InfoWorkbenchWorker {
+
+        // in
+        private String changeLogToken;
+
+        // out
+        private ChangeEvents events;
+
+        public ChangeLogWorker(Window parent, String changeLogToken) {
+            super(parent);
+            this.changeLogToken = changeLogToken;
+        }
+
+        @Override
+        protected String getTitle() {
+            return "Retrieving Change Log";
+        }
+
+        @Override
+        protected String getMessage() {
+            return "Retrieving Change Log...";
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            events = model.getClientSession().getSession().getContentChanges(changeLogToken, true, 1000);
+
+            return null;
+        }
+
+        @Override
+        protected void finializeTask() {
+            if (isCancelled() || events == null) {
+                changeLogTable.setChangeEvents(Collections.<ChangeEvent> emptyList());
+                changeLogTokenField.setText("");
+            } else {
+                changeLogTable.setChangeEvents(events.getChangeEvents());
+                changeLogTokenField.setText(events.getLatestChangeLogToken() == null ? "" : events
+                        .getLatestChangeLogToken());
             }
         }
     }

@@ -21,15 +21,12 @@ package org.apache.chemistry.opencmis.workbench.swing;
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -39,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.net.URI;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -53,7 +51,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -61,6 +62,7 @@ import javax.swing.UIManager;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -75,8 +77,7 @@ public abstract class InfoPanel extends JPanel {
 
     private final ClientModel model;
 
-    private JPanel gridPanel;
-    private GridBagConstraints gbc;
+    private int rows;
     private Font boldFont;
 
     public InfoPanel(ClientModel model) {
@@ -88,21 +89,28 @@ public abstract class InfoPanel extends JPanel {
     }
 
     protected void setupGUI() {
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setLayout(new SpringLayout());
         setBackground(Color.WHITE);
 
-        gridPanel = new JPanel(new GridBagLayout());
-        gridPanel.setBackground(Color.WHITE);
-        add(gridPanel);
-
-        gbc = new GridBagConstraints();
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridy = 0;
-        gbc.insets = WorkbenchScale.scaleInsets(new Insets(3, 3, 3, 3));
+        rows = 0;
 
         Font labelFont = UIManager.getFont("Label.font");
         boldFont = labelFont.deriveFont(Font.BOLD, labelFont.getSize2D() * 1.2f);
+    }
+
+    protected void regenerateGUI() {
+        SpringLayout layout = (SpringLayout) getLayout();
+
+        for (int c = 0; c < 2; c++) {
+            for (int r = 0; r < rows; r++) {
+                Component comp = getComponent(r * 2 + c);
+                layout.removeLayoutComponent(comp);
+            }
+        }
+
+        makeCompactGrid(this, rows, 2, WorkbenchScale.scaleInt(5), WorkbenchScale.scaleInt(10),
+                WorkbenchScale.scaleInt(10), WorkbenchScale.scaleInt(5), WorkbenchScale.scaleInt(18));
+        revalidate();
     }
 
     protected JTextField addLine(final String label) {
@@ -115,26 +123,21 @@ public abstract class InfoPanel extends JPanel {
 
     protected JTextField addLine(final String label, final boolean bold, JTextField textField) {
         textField.setEditable(false);
-        textField.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
+        textField.setBorder(BorderFactory.createEmptyBorder());
         if (bold) {
             textField.setFont(boldFont);
         }
 
-        JLabel textLable = new JLabel(label);
-        textLable.setLabelFor(textField);
+        JLabel textLabel = new JLabel(label);
+        textLabel.setLabelFor(textField);
         if (bold) {
-            textLable.setFont(boldFont);
+            textLabel.setFont(boldFont);
         }
 
-        gbc.gridy++;
+        rows++;
 
-        gbc.gridx = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gridPanel.add(textLable, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(textField, gbc);
+        add(textLabel);
+        add(textField);
 
         return textField;
     }
@@ -153,15 +156,10 @@ public abstract class InfoPanel extends JPanel {
         JLabel textLable = new JLabel(label);
         textLable.setLabelFor(ynl);
 
-        gbc.gridy++;
+        rows++;
 
-        gbc.gridx = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gridPanel.add(textLable, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(ynl, gbc);
+        add(textLable);
+        add(ynl);
 
         return ynl;
     }
@@ -172,17 +170,27 @@ public abstract class InfoPanel extends JPanel {
         JLabel textLable = new JLabel(label);
         textLable.setLabelFor(btl);
 
-        gbc.gridy++;
+        rows++;
 
-        gbc.gridx = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gridPanel.add(textLable, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(btl, gbc);
+        add(textLable);
+        add(btl);
 
         return btl;
+    }
+
+    protected JSeparator addSeparator() {
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setMaximumSize(new Dimension(1, 1));
+
+        JSeparator separator = new JSeparator();
+
+        rows++;
+
+        add(panel);
+        add(separator);
+
+        return separator;
     }
 
     protected <T extends JComponent> T addComponent(String label, T comp) {
@@ -190,22 +198,74 @@ public abstract class InfoPanel extends JPanel {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder()));
+        panel.setBorder(BorderFactory.createEmptyBorder());
         panel.setOpaque(false);
         panel.add(comp);
         textLable.setLabelFor(panel);
 
-        gbc.gridy++;
+        rows++;
 
-        gbc.gridx = 0;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gridPanel.add(textLable, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gridPanel.add(panel, gbc);
+        add(textLable);
+        add(panel);
 
         return comp;
+    }
+
+    private SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+        Component c = parent.getComponent(row * cols + col);
+        return layout.getConstraints(c);
+    }
+
+    protected void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad,
+            int yPad, int minHeight) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+
+        Spring x = Spring.constant(initialX);
+        for (int c = 0; c < cols; c++) {
+            Spring width = Spring.constant(0);
+            for (int r = 0; r < rows; r++) {
+                width = Spring.max(width, getConstraintsForCell(r, c, parent, cols).getWidth());
+            }
+            for (int r = 0; r < rows; r++) {
+                SpringLayout.Constraints constraints = getConstraintsForCell(r, c, parent, cols);
+                constraints.setX(x);
+                constraints.setWidth(width);
+            }
+            x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
+        }
+
+        Spring y = Spring.constant(initialY);
+        for (int r = 0; r < rows; r++) {
+            Spring height = Spring.constant(minHeight);
+            for (int c = 0; c < cols; c++) {
+                height = Spring.max(height, getConstraintsForCell(r, c, parent, cols).getHeight());
+            }
+
+            SpringLayout.Constraints labelConstraints = getConstraintsForCell(r, 0, parent, cols);
+            SpringLayout.Constraints valueConstraints = getConstraintsForCell(r, 1, parent, cols);
+
+            labelConstraints.setY(y);
+            valueConstraints.setY(y);
+            valueConstraints.setHeight(height);
+
+            Component comp = parent.getComponent(r * cols + 1);
+            if (comp instanceof JTextField || comp instanceof JLabel) {
+                labelConstraints.setHeight(height);
+                valueConstraints.setConstraint(SpringLayout.BASELINE,
+                        labelConstraints.getConstraint(SpringLayout.BASELINE));
+            } else if (comp instanceof JSeparator) {
+                height = Spring.scale(height, 0.5f);
+                valueConstraints.setHeight(height);
+                valueConstraints.setY(Spring.sum(y, Spring.constant(minHeight / 4)));
+            }
+
+            y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
+        }
+
+        layout.getConstraints(parent).setConstraint(SpringLayout.EAST, x);
+        layout.getConstraints(parent).setConstraint(SpringLayout.NORTH, y);
+        parent.setPreferredSize(new Dimension(x.getPreferredValue(), y.getPreferredValue()));
     }
 
     public static class InfoList extends JPanel {
@@ -306,16 +366,36 @@ public abstract class InfoPanel extends JPanel {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 popup.setEnabled(false);
                 link = null;
+                setUnderline(false);
             } else {
                 setForeground(getLinkColor(text));
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 popup.setEnabled(true);
                 link = text;
+                setUnderline(true);
             }
 
             updated = true;
 
             super.setText(text);
+        }
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        private void setUnderline(boolean underline) {
+            Font font = getFont();
+            Map attributes = font.getAttributes();
+
+            Object isUnderlined = attributes.get(TextAttribute.UNDERLINE);
+
+            if (TextAttribute.UNDERLINE_ON.equals(isUnderlined) && !underline) {
+                attributes.put(TextAttribute.UNDERLINE, -1);
+                setFont(font.deriveFont(attributes));
+            }
+
+            if ((isUnderlined == null || Integer.valueOf(-1).equals(isUnderlined)) && underline) {
+                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                setFont(font.deriveFont(attributes));
+            }
         }
 
         @Override
@@ -336,20 +416,6 @@ public abstract class InfoPanel extends JPanel {
 
         @Override
         public void repaint(Rectangle r) {
-        }
-
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
-            if (link != null) {
-                FontMetrics fm = getFontMetrics(getFont());
-
-                int y1 = fm.getHeight() - 2;
-                int x2 = fm.stringWidth(link);
-                g.setColor(getLinkColor(link));
-                g.drawLine(0, y1, x2, y1);
-            }
         }
     }
 
@@ -372,11 +438,7 @@ public abstract class InfoPanel extends JPanel {
 
         @Override
         public void linkAction(String link) {
-            try {
-                getClientModel().loadObject(link);
-            } catch (Exception ex) {
-                ClientHelper.showError(InfoPanel.this, ex);
-            }
+            LoadObjectWorker.loadObject(InfoPanel.this, model, link);
         }
     }
 

@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,6 +66,8 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModelEvent;
 import org.apache.chemistry.opencmis.workbench.model.ObjectListener;
 import org.apache.chemistry.opencmis.workbench.swing.BaseTypeLabel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
+import org.apache.chemistry.opencmis.workbench.worker.TempFileContentWorker;
 
 public class ObjectPanel extends InfoPanel implements ObjectListener {
 
@@ -80,6 +83,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
     private InfoList secondaryTypesList;
     private JTextField versionLabelField;
     private JTextField pwcField;
+    private JTextField mimeTypeField;
+    private JTextField sizeField;
     private JTextField contentUrlField;
     private InfoList pathsList;
     private InfoList allowableActionsList;
@@ -126,6 +131,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     versionLabelField.setText("");
                     pwcField.setText("");
                     pathsList.removeAll();
+                    mimeTypeField.setText("");
+                    sizeField.setText("");
                     contentUrlField.setText("");
                     allowableActionsList.removeAll();
                     aclExactField.setText("");
@@ -169,10 +176,18 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                             } else {
                                 pwcField.setText("(not checked out)");
                             }
+
+                            sizeField.setText(doc.getContentStreamLength() >= 0 ? NumberFormat.getInstance().format(
+                                    doc.getContentStreamLength())
+                                    + " bytes" : "");
+                            mimeTypeField.setText(doc.getContentStreamMimeType() != null ? doc
+                                    .getContentStreamMimeType() : "");
                         } else {
                             latestAccessibleStateIdField.setText("");
                             pwcField.setText("");
                             versionLabelField.setText("");
+                            mimeTypeField.setText("");
+                            sizeField.setText("");
                         }
 
                         if (object instanceof FileableCmisObject) {
@@ -247,7 +262,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                     }
                 }
 
-                revalidate();
+                regenerateGUI();
             }
         });
     }
@@ -256,15 +271,21 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         setupGUI();
 
         nameField = addLine("Name:", true);
+        addSeparator();
         idField = addId("Object ID:");
         latestAccessibleStateIdField = addId("Latest State ID:");
         typeField = addLine("Type:");
         basetypeField = addBaseTypeLabel("Base Type:");
         secondaryTypesList = addComponent("Secondary Types:", new InfoList());
+        addSeparator();
         pathsList = addComponent("Paths:", new InfoList());
+        addSeparator();
+        mimeTypeField = addLine("MIME Type:");
+        sizeField = addLine("Size:");
         versionLabelField = addLine("Version Label:");
         pwcField = addId("PWC:");
         contentUrlField = addLink("Content URL:");
+        addSeparator();
         allowableActionsList = addComponent("Allowable Actions:", new InfoList());
         aclExactField = addLine("ACL:");
 
@@ -305,14 +326,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    getClientModel().reloadObject();
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
+                LoadObjectWorker.reloadObject(ObjectPanel.this, getClientModel());
             }
         });
 
@@ -367,11 +381,18 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
 
                     String name = doc.getName().toLowerCase(Locale.ENGLISH);
                     if (name.endsWith(".groovy")) {
-                        File file = ClientHelper.createTempFileFromDocument(doc, null);
-                        Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(), (String) null);
-                        if (console != null) {
-                            console.loadScriptFile(file);
-                        }
+                        // download and execute Groovy file
+                        TempFileContentWorker worker = new TempFileContentWorker(ObjectPanel.this, doc) {
+                            @Override
+                            protected void processTempFile(File file) {
+                                Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(),
+                                        (String) null);
+                                if (console != null) {
+                                    console.loadScriptFile(file);
+                                }
+                            }
+                        };
+                        worker.executeTask();
                     } else {
                         ClientHelper.open(ObjectPanel.this, doc, null);
                     }
@@ -386,26 +407,25 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         scriptRunButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    Document doc = (Document) getClientModel().getCurrentObject();
-                    File file = ClientHelper.createTempFileFromDocument(doc, null);
-                    String name = doc.getName().toLowerCase(Locale.ENGLISH);
-                    String ext = name.substring(name.lastIndexOf('.') + 1);
+                final Document doc = (Document) getClientModel().getCurrentObject();
+                TempFileContentWorker worker = new TempFileContentWorker(ObjectPanel.this, doc) {
+                    @Override
+                    protected void processTempFile(File file) {
+                        String name = doc.getName().toLowerCase(Locale.ENGLISH);
+                        String ext = name.substring(name.lastIndexOf('.') + 1);
 
-                    scriptOutput.setText("");
-                    scriptOutput.setVisible(true);
-                    scriptOutput.invalidate();
+                        scriptOutput.setText("");
+                        scriptOutput.setVisible(true);
+                        scriptOutput.invalidate();
 
-                    ClientHelper.runJSR223Script(ObjectPanel.this, getClientModel(), file, ext, scriptOutputWriter);
-                } catch (Exception ex) {
-                    ClientHelper.showError(null, ex);
-                } finally {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
+                        ClientHelper.runJSR223Script(ObjectPanel.this, getClientModel(), file, ext, scriptOutputWriter);
+                    }
+                };
+                worker.executeTask();
             }
         });
 
+        regenerateGUI();
     }
 
     private String getDocumentURL(final CmisObject document, final Session session) {

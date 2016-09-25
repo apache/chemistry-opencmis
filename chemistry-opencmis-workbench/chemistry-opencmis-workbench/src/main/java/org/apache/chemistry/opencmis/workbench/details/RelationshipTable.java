@@ -22,8 +22,8 @@ import java.awt.event.MouseEvent;
 
 import org.apache.chemistry.opencmis.client.api.ObjectId;
 import org.apache.chemistry.opencmis.client.api.Relationship;
-import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public class RelationshipTable extends AbstractDetailsTable {
 
@@ -48,12 +48,8 @@ public class RelationshipTable extends AbstractDetailsTable {
             return;
         }
 
-        try {
-            getClientModel().loadObject(id.getId());
-            setTab(0);
-        } catch (Exception ex) {
-            ClientHelper.showError(this, ex);
-        }
+        LoadObjectWorker.loadObject(this, getClientModel(), id.getId());
+        setTab(0);
     }
 
     @Override

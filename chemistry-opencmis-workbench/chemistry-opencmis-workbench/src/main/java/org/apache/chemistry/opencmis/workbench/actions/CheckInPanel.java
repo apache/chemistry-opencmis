@@ -65,7 +65,7 @@ public class CheckInPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() throws FileNotFoundException {
+    public void doAction() throws FileNotFoundException {
         ContentStream content = getClientModel().createContentStream(filenameField.getText());
 
         try {
@@ -74,6 +74,6 @@ public class CheckInPanel extends ActionPanel {
             IOUtils.closeQuietly(content);
         }
 
-        return false;
+        reload(false);
     }
 }

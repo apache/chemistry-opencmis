@@ -82,9 +82,10 @@ public class RemoveObjectFromFolderPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         ObjectId folderId = getClientModel().getClientSession().getSession().createObjectId(folderField.getText());
         ((FileableCmisObject) getObject()).removeFromFolder(folderId);
-        return true;
+
+        reload(true);
     }
 }

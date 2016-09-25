@@ -74,9 +74,10 @@ public class AddObjectToFolderPanel extends ActionPanel {
     }
 
     @Override
-    public boolean doAction() {
+    public void doAction() {
         ObjectId folderId = getClientModel().getClientSession().getSession().createObjectId(folderField.getText());
         ((FileableCmisObject) getObject()).addToFolder(folderId, allVersionsBox.isSelected());
-        return true;
+
+        reload(true);
     }
 }
