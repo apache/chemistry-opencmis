@@ -57,7 +57,7 @@ public abstract class OpenContentWorker extends InfoWorkbenchWorker {
 
     @Override
     protected String getMessage() {
-        return "Opening Content '" + filename + "'...";
+        return "Opening Content " + (filename != null ? "'" + filename + "'" : "") + "...";
     }
 
     public Component getComponent() {

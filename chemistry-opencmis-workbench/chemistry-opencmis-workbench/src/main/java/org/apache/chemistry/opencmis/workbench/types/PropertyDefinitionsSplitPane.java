@@ -182,7 +182,7 @@ public class PropertyDefinitionsSplitPane extends JSplitPane {
         public void setType(ObjectType type) {
             this.type = type;
 
-            if ((type != null) && (type.getPropertyDefinitions() != null)) {
+            if (type != null && type.getPropertyDefinitions() != null) {
                 propertyDefintions = new ArrayList<PropertyDefinition<?>>();
                 for (PropertyDefinition<?> propDef : type.getPropertyDefinitions().values()) {
                     propertyDefintions.add(propDef);
@@ -200,7 +200,7 @@ public class PropertyDefinitionsSplitPane extends JSplitPane {
 
             ((AbstractTableModel) getModel()).fireTableDataChanged();
 
-            if (type.getPropertyDefinitions() != null && !type.getPropertyDefinitions().isEmpty()) {
+            if (type != null && type.getPropertyDefinitions() != null && !type.getPropertyDefinitions().isEmpty()) {
                 getSelectionModel().setSelectionInterval(0, 0);
             } else {
                 propertyInfoPanel.setPropertyDefinition(null);
