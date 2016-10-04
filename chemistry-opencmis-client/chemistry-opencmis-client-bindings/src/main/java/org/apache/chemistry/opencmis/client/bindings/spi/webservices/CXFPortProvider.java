@@ -18,7 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.webservices;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -117,10 +117,9 @@ public class CXFPortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    portObject.getRequestContext().put(
-                            Header.HEADER_LIST,
-                            Collections.singletonList(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader
-                                    .getLocalName()), soapHeader)));
+                    List<Header> soapHeaderList = new ArrayList<>(2);
+                    soapHeaderList.add(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader.getLocalName()), soapHeader));
+                    portObject.getRequestContext().put(Header.HEADER_LIST, soapHeaderList);
                 }
 
                 // HTTP header
