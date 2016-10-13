@@ -117,7 +117,7 @@ public class CXFPortProvider extends AbstractPortProvider {
                 // SOAP header
                 Element soapHeader = authProvider.getSOAPHeaders(portObject);
                 if (soapHeader != null) {
-                    List<Header> soapHeaderList = new ArrayList<>(2);
+                    List<Header> soapHeaderList = new ArrayList<Header>(2);
                     soapHeaderList.add(new Header(new QName(soapHeader.getNamespaceURI(), soapHeader.getLocalName()), soapHeader));
                     portObject.getRequestContext().put(Header.HEADER_LIST, soapHeaderList);
                 }

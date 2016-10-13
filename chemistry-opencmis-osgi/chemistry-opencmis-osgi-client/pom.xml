@@ -58,6 +58,8 @@
                             org.slf4j.impl;resolution:=optional,
                             org.apache.cxf.*;resolution:=optional,
                             org.apache.http.*;resolution:=optional,
+                            okhttp3.*;resolution:=optional,
+                            okio.*;resolution:=optional,
                             *
                         </Import-Package>
                         <_exportcontents>

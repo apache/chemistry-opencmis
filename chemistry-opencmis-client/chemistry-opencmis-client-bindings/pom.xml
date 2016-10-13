@@ -72,12 +72,14 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                          org.apache.chemistry.opencmis.client.bindings;version=${project.version},
-                          org.apache.chemistry.opencmis.client.bindings.spi.*;version=${project.version},
-                          !org.apache.chemistry.opencmis.commons.impl.json.*,
-                          !org.apache.chemistry.opencmis.commons.impl.jaxb.*,
-                          !org.apache.http.*,
-                          !org.apache.cxf.*
+                            org.apache.chemistry.opencmis.client.bindings;version=${project.version},
+                            org.apache.chemistry.opencmis.client.bindings.spi.*;version=${project.version},
+                            !org.apache.chemistry.opencmis.commons.impl.json.*,
+                            !org.apache.chemistry.opencmis.commons.impl.jaxb.*,
+                            !org.apache.http.*,
+                            !org.apache.cxf.*,
+                            !okhttp3.*,
+                            !okio.*
                         </Export-Package>
                         <Bundle-DocURL>${project.url}</Bundle-DocURL>
                     </instructions>
