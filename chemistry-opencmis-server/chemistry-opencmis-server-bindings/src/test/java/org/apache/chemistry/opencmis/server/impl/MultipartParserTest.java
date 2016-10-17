@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamHashImpl;
 import org.apache.chemistry.opencmis.server.impl.browser.MultipartParser;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 import org.junit.Test;
@@ -51,12 +53,15 @@ public class MultipartParserTest {
     public void testMultipartParser() throws Exception {
         String boundary = "---- next ----";
         byte[] content = "This is content!".getBytes();
+        String contentStreamMD5Hash = ContentStreamHashImpl.createContentStreamHashes(
+                new ByteArrayInputStream(content), ContentStreamHashImpl.ALGORITHM_MD5).get(0).getHash();
         byte[] formdata = ("\r\n--" + boundary + "\r\n" + "Content-Disposition: form-data; name=\"field1\"\r\n"
                 + "\r\n" + "value1\r\n" + "--" + boundary + "\r\n"
                 + "content-disposition: form-data; name=\"field2\"\r\n" + "\r\n" + "value2\r\n" + "--" + boundary
                 + "\r\n" + "content-disposition: form-data; name=\"field3\"\r\n" + "\r\n" + "value3\r\n" + "--"
                 + boundary + "\r\n"
                 + "Content-Disposition: form-data; name=\"content\"; filename=test-filename.txt\r\n"
+                + "Content-MD5: " + contentStreamMD5Hash + "\r\n"
                 + "Content-Type: text/plain\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"
                 + new String(content) + "\r\n" + "--" + boundary + "--").getBytes("ISO-8859-1");
 
@@ -67,7 +72,7 @@ public class MultipartParserTest {
         values.put("field2", "value2");
         values.put("field3", "value3");
 
-        assertMultipartBasics(parser, 4, values, true, "test-filename.txt", "text/plain", content);
+        assertMultipartBasics(parser, 4, values, true, "test-filename.txt", "text/plain", content, contentStreamMD5Hash);
     }
 
     @Test
@@ -102,7 +107,7 @@ public class MultipartParserTest {
         values.put("propertyValue[1]", "cmis:document");
         values.put("token", "855475d8a6169b5f57111f5921f56136");
 
-        assertMultipartBasics(parser, 9, values, true, "Ä.txt", "text/plain", content);
+        assertMultipartBasics(parser, 9, values, true, "Ä.txt", "text/plain", content, null);
     }
 
     @Test
@@ -116,7 +121,7 @@ public class MultipartParserTest {
         Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "value1");
 
-        assertMultipartBasics(parser, 1, values, false, null, null, null);
+        assertMultipartBasics(parser, 1, values, false, null, null, null, null);
     }
 
     @Test
@@ -131,7 +136,7 @@ public class MultipartParserTest {
         Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "value1");
 
-        assertMultipartBasics(parser, 1, values, false, null, null, null);
+        assertMultipartBasics(parser, 1, values, false, null, null, null, null);
     }
 
     @Test
@@ -145,7 +150,7 @@ public class MultipartParserTest {
         Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "value1");
 
-        assertMultipartBasics(parser, 1, values, false, null, null, null);
+        assertMultipartBasics(parser, 1, values, false, null, null, null, null);
     }
 
     @Test
@@ -157,7 +162,7 @@ public class MultipartParserTest {
 
         Map<String, String> values = new HashMap<String, String>();
 
-        assertMultipartBasics(parser, 0, values, false, null, null, null);
+        assertMultipartBasics(parser, 0, values, false, null, null, null, null);
     }
 
     @Test
@@ -173,7 +178,7 @@ public class MultipartParserTest {
 
         Map<String, String> values = new HashMap<String, String>();
 
-        assertMultipartBasics(parser, 1, values, true, "a new file", "application/something", content);
+        assertMultipartBasics(parser, 1, values, true, "a new file", "application/something", content, null);
     }
 
     @Test
@@ -201,7 +206,7 @@ public class MultipartParserTest {
         values.put("field2", "value2");
         values.put("field3", "value3");
 
-        assertMultipartBasics(parser, 4, values, true, "bigtest.txt", "text/plain", content);
+        assertMultipartBasics(parser, 4, values, true, "bigtest.txt", "text/plain", content, null);
     }
 
     @Test
@@ -226,7 +231,7 @@ public class MultipartParserTest {
 
         MultipartParser parser = prepareParser(boundary, sb.toString().getBytes(IOUtils.ISO_8859_1));
 
-        assertMultipartBasics(parser, values.size(), values, false, null, null, null);
+        assertMultipartBasics(parser, values.size(), values, false, null, null, null, null);
     }
 
     @Test
@@ -265,7 +270,7 @@ public class MultipartParserTest {
 
         MultipartParser parser = prepareParser(boundary, sb.toString().getBytes(IOUtils.ISO_8859_1));
 
-        assertMultipartBasics(parser, values.size(), values, false, null, null, null);
+        assertMultipartBasics(parser, values.size(), values, false, null, null, null, null);
     }
 
     @Test
@@ -293,7 +298,7 @@ public class MultipartParserTest {
 
             MultipartParser parser = prepareParser(boundary, bos.toByteArray());
 
-            assertMultipartBasics(parser, 1, values, false, null, null, null);
+            assertMultipartBasics(parser, 1, values, false, null, null, null, null);
         }
     }
 
@@ -324,7 +329,7 @@ public class MultipartParserTest {
 
             MultipartParser parser = prepareParser(boundary, bos.toByteArray());
 
-            assertMultipartBasics(parser, 1, values, false, null, null, null);
+            assertMultipartBasics(parser, 1, values, false, null, null, null, null);
         }
     }
 
@@ -363,7 +368,7 @@ public class MultipartParserTest {
 
             MultipartParser parser = prepareParser(boundary, bos.toByteArray());
 
-            assertMultipartBasics(parser, 3, values, false, null, null, null);
+            assertMultipartBasics(parser, 3, values, false, null, null, null, null);
         }
     }
 
@@ -385,7 +390,7 @@ public class MultipartParserTest {
 
         MultipartParser parser = prepareParser(boundary, formdata);
 
-        assertMultipartBasics(parser, 1, null, false, null, null, null);
+        assertMultipartBasics(parser, 1, null, false, null, null, null, null);
     }
 
     @Test(expected = CmisInvalidArgumentException.class)
@@ -402,8 +407,26 @@ public class MultipartParserTest {
 
         MultipartParser parser = prepareParser(boundary, formdata);
 
-        assertMultipartBasics(parser, 2, null, true, "file1", "application/something", content);
+        assertMultipartBasics(parser, 2, null, true, "file1", "application/something", content, null);
     }
+
+    @Test(expected = CmisInvalidArgumentException.class)
+    public void testInvalidContentMD5MimeHeader() throws Exception {
+        String boundary = "ABCD-1234";
+        byte[] content = "abcäöü".getBytes();
+        byte[] formdata = ("\r\n--" + boundary + "\r\n"
+                + "Content-Disposition: form-data; name=\"content\"; filename=\"a new file\"\r\n"
+                + "Content-MD5: bogusMD5Sum\r\n"
+                + "Content-Type: application/something\r\n" + "Content-Transfer-Encoding: binary\r\n" + "\r\n"
+                + new String(content) + "\r\n" + "--" + boundary + "--").getBytes();
+
+        MultipartParser parser = prepareParser(boundary, formdata);
+
+        Map<String, String> values = new HashMap<String, String>();
+
+        assertMultipartBasics(parser, 1, values, true, "a new file", "application/something", content, null);
+    }
+
 
     // ---- helpers ----
 
@@ -430,7 +453,8 @@ public class MultipartParserTest {
     }
 
     private void assertMultipartBasics(MultipartParser parser, int count, Map<String, String> values,
-            boolean hasContent, String filename, String contentType, byte[] content) throws Exception {
+            boolean hasContent, String filename, String contentType, byte[] content, String contentStreamMD5Hash)
+            throws Exception {
         int counter = 0;
 
         parser.parse();
@@ -442,6 +466,7 @@ public class MultipartParserTest {
             assertEquals(contentType, parser.getContentType());
             assertEquals(content.length, parser.getSize().intValue());
             assertArrayEquals(content, readBytesFromStream(parser.getStream()));
+            assertEquals(contentStreamMD5Hash, parser.getContentStreamMD5Hash());
         } else {
             assertFalse(hasContent);
         }

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -35,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamHashImpl;
 import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
 
@@ -55,6 +58,8 @@ public class MultipartParser {
     private static final byte LF = 0x0A;
     private static final byte DASH = 0x2D;
     private static final byte[] BOUNDARY_PREFIX = { CR, LF, DASH, DASH };
+
+    private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
 
     private final HttpServletRequest request;
     private final TempStoreOutputStreamFactory streamFactory;
@@ -79,6 +84,7 @@ public class MultipartParser {
     private String contentType;
     private BigInteger contentSize;
     private InputStream contentStream;
+    private String contentStreamMD5Hash;
 
     private Map<String, String[]> fields;
     private Map<String, byte[][]> rawFields;
@@ -413,10 +419,22 @@ public class MultipartParser {
         }
     }
 
-    private void readBodyAsStream(String contentType, String filename) throws IOException {
+    private void readBodyAsStream(String contentType, String filename,
+            String contentStreamMD5Hash) throws IOException {
         TempStoreOutputStream stream = streamFactory.newOutputStream();
         stream.setMimeType(contentType);
         stream.setFileName(filename);
+
+        boolean validateContentStreamMD5Hash = contentStreamMD5Hash != null;
+        MessageDigest md5 = null;
+        if (validateContentStreamMD5Hash) {
+            try {
+                md5 = MessageDigest.getInstance(ContentStreamHashImpl.ALGORITHM_MD5);
+            } catch(NoSuchAlgorithmException e) {
+                throw new RuntimeException("Message Digest algorithm '"
+                        + ContentStreamHashImpl.ALGORITHM_MD5 + "' was not found!");
+            }
+        }
 
         try {
             while (true) {
@@ -425,16 +443,30 @@ public class MultipartParser {
                 int boundaryPosition = findBoundary();
 
                 if (boundaryPosition > -1) {
-                    stream.write(buffer, bufferPosition, boundaryPosition - bufferPosition);
+                    int len = boundaryPosition - bufferPosition;
+                    stream.write(buffer, bufferPosition, len);
+                    if (validateContentStreamMD5Hash) {
+                        md5.update(buffer, bufferPosition, len);
+                    }
                     bufferPosition = boundaryPosition + boundary.length;
                     break;
                 } else {
                     int len = Math.min(BUFFER_SIZE, bufferCount) - bufferPosition;
                     stream.write(buffer, bufferPosition, len);
+                    if (validateContentStreamMD5Hash) {
+                        md5.update(buffer, bufferPosition, len);
+                    }
                     bufferPosition = bufferPosition + len;
                 }
             }
 
+            if (validateContentStreamMD5Hash) {
+                String digest = byteArrayToHexString(md5.digest());
+                if (!contentStreamMD5Hash.equals(digest)) {
+                    throw new CmisInvalidArgumentException("Content stream MD5 hash '" + digest +
+                            "' differs from Content-MD5 Mime Header '" + contentStreamMD5Hash +"'!");
+                }
+            }
             stream.close();
 
             contentSize = BigInteger.valueOf(stream.getLength());
@@ -487,7 +519,9 @@ public class MultipartParser {
                 contentType = Constants.MEDIATYPE_OCTETSTREAM;
             }
 
-            readBodyAsStream(contentType, filename);
+            contentStreamMD5Hash = headers.get("content-md5");
+
+            readBodyAsStream(contentType, filename, contentStreamMD5Hash);
         } else {
             String name = params.get(MimeHelper.DISPOSITION_NAME);
             byte[] rawValue = readBodyBytes();
@@ -582,6 +616,17 @@ public class MultipartParser {
         }
     }
 
+    protected static String byteArrayToHexString(byte[] bytes) {
+        int n = bytes.length;
+        char[] hashHex = new char[n * 2];
+        for (int i = 0; i < n; i++) {
+            hashHex[i * 2] = HEX_DIGITS[(0xF0 & bytes[i]) >>> 4];
+            hashHex[i * 2 + 1] = HEX_DIGITS[0x0F & bytes[i]];
+        }
+
+        return new String(hashHex);
+    }
+
     public void parse() throws IOException {
         try {
 
@@ -648,6 +693,10 @@ public class MultipartParser {
 
     public InputStream getStream() {
         return contentStream;
+    }
+
+    public String getContentStreamMD5Hash() {
+        return contentStreamMD5Hash;
     }
 
     public Map<String, String[]> getFields() {
