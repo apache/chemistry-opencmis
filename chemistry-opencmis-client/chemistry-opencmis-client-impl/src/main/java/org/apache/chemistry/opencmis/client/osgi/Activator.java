@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
-
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.impl.ClassLoaderUtil;
@@ -33,6 +32,8 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.framework.wiring.BundleWiring;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OSGi Bundle activator for the OpenCMIS client which registers an instance of
@@ -46,6 +47,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
      */
     private static final String OPENCMIS_SPI_HEADER = "OpenCMIS-SPI";
 
+    private static Logger LOG = LoggerFactory.getLogger(Activator.class);
+
     private BundleContext bundleContext;
 
     @Override
@@ -56,12 +59,19 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         // add bundle listener
         context.addBundleListener(this);
 
-        // check existing bundles in framework for chemistry SPIs
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING
-                    || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
-                register(bundle);
+        try {
+            // check existing bundles in framework for chemistry SPIs
+            for (Bundle bundle : context.getBundles()) {
+                if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING
+                        || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
+                    register(bundle);
+                }
             }
+        } catch (Exception e) {
+            // this catch block is only necessary for broken OSGi
+            // implementations
+            LOG.warn("Could not find and register bundles that contain " + OPENCMIS_SPI_HEADER + " headers: ",
+                    e.toString(), e);
         }
 
         // register the MetaTypeService now, that we are ready
