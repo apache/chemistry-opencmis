@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.spi.Provider;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -331,8 +332,14 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
         bus.getInInterceptors().add(new UsernameTokenInterceptor());
     }
 
-    private Endpoint publish(String adress, Object implementor) {
-        Endpoint endpoint = Endpoint.publish(adress, implementor);
+    private Endpoint publish(String address, Object implementor) {
+        Provider provider = Provider.provider();
+        if (provider.getClass().getName().startsWith("weblogic.")) {
+            // workaround for WebLogic
+            address = address + "/";
+        }
+
+        Endpoint endpoint = Endpoint.publish(address, implementor);
         SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
 
