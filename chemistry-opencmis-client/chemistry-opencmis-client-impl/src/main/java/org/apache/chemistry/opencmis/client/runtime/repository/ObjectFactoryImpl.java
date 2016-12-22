@@ -96,6 +96,7 @@ import org.apache.chemistry.opencmis.commons.enums.Cardinality;
 import org.apache.chemistry.opencmis.commons.enums.ChangeType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PartialContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
@@ -617,6 +618,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
                     List<GregorianCalendar> list = new ArrayList<GregorianCalendar>(values.size());
                     for (Object d : values) {
                         GregorianCalendar cal = new GregorianCalendar();
+                        cal.setTimeZone(DateTimeHelper.GMT);
                         cal.setTime((Date) d);
                         list.add(cal);
                     }
@@ -707,7 +709,7 @@ public class ObjectFactoryImpl implements ObjectFactory, Serializable {
         }
 
         if ((objectData.getProperties() != null) && (objectData.getProperties().getPropertyList() != null)) {
-            properties = new HashMap<String, List<?>>();
+            properties = new HashMap<String, List<?>>(objectData.getProperties().getPropertyList().size());
 
             for (PropertyData<?> property : objectData.getProperties().getPropertyList()) {
                 properties.put(property.getId(), property.getValues());

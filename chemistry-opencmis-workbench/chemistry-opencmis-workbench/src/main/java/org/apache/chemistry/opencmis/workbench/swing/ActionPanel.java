@@ -125,8 +125,6 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
     }
 
     protected void reload(final boolean reloadObject) {
-        final ClientModel model = getClientModel();
-
         if (model.getCurrentFolder() != null) {
             LoadObjectWorker worker = new LoadObjectWorker(ActionPanel.this, model, model.getCurrentFolder().getId()) {
                 @Override

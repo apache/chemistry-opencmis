@@ -46,6 +46,7 @@ import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.XMLConstants;
 import org.apache.chemistry.opencmis.commons.impl.XMLConverter;
 import org.apache.chemistry.opencmis.commons.impl.XMLUtils;
@@ -161,7 +162,7 @@ public class AtomEntryWriter {
 
         // atom:updated
         XMLUtils.write(writer, XMLConstants.PREFIX_ATOM, XMLConstants.NAMESPACE_ATOM, TAG_ATOM_UPDATED,
-                new GregorianCalendar(TimeZone.getTimeZone("GMT")));
+                new GregorianCalendar(DateTimeHelper.GMT));
 
         // content
         if (stream != null) {

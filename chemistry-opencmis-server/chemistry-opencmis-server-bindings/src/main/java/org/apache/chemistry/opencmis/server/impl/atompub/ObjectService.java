@@ -48,6 +48,7 @@ import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Constants;
+import org.apache.chemistry.opencmis.commons.impl.DateTimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.commons.impl.MimeHelper;
 import org.apache.chemistry.opencmis.commons.impl.ReturnVersion;
@@ -847,7 +848,7 @@ public class ObjectService {
 
             // write basic Atom feed elements
             feed.writeFeedElements(null, null, null, "Bulk Update Properties",
-                    new GregorianCalendar(TimeZone.getTimeZone("GMT")), null,
+                    new GregorianCalendar(DateTimeHelper.GMT), null,
                     (result == null ? null : BigInteger.valueOf(result.size())));
 
             // write links

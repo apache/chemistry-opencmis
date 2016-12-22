@@ -135,7 +135,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         CmisServiceFactory factory = (CmisServiceFactory) object;
 
         // initialize factory instance
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<String, String>(props.size());
 
         for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();

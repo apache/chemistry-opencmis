@@ -491,7 +491,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             throw new IllegalArgumentException("New name must not be empty!");
         }
 
-        Map<String, Object> prop = new HashMap<String, Object>();
+        Map<String, Object> prop = new HashMap<String, Object>(2);
         prop.put(PropertyIds.NAME, newName);
 
         return updateProperties(prop);
@@ -503,7 +503,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             throw new IllegalArgumentException("New name must not be empty!");
         }
 
-        Map<String, Object> prop = new HashMap<String, Object>();
+        Map<String, Object> prop = new HashMap<String, Object>(2);
         prop.put(PropertyIds.NAME, newName);
 
         return updateProperties(prop, refresh);

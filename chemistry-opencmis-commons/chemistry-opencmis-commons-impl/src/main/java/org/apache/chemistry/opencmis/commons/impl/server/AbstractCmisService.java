@@ -1080,7 +1080,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
      */
     private Map<String, ObjectInfo> getObjectInfoMap() {
         if (objectInfoMap == null) {
-            objectInfoMap = new HashMap<String, ObjectInfo>();
+            objectInfoMap = new HashMap<String, ObjectInfo>(2);
         }
 
         return objectInfoMap;

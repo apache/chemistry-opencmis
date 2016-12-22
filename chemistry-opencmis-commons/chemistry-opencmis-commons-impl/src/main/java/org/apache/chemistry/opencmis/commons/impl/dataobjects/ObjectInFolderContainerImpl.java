@@ -67,7 +67,7 @@ public class ObjectInFolderContainerImpl extends AbstractExtensionData implement
     @Override
     public List<ObjectInFolderContainer> getChildren() {
         if (children == null) {
-            children = new ArrayList<ObjectInFolderContainer>();
+            children = new ArrayList<ObjectInFolderContainer>(0);
         }
 
         return children;

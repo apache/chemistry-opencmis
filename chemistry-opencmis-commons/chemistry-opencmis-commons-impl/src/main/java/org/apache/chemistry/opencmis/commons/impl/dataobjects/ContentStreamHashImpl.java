@@ -195,7 +195,7 @@ public class ContentStreamHashImpl implements ContentStreamHash {
             }
         }
 
-        List<ContentStreamHash> result = new ArrayList<ContentStreamHash>();
+        List<ContentStreamHash> result = new ArrayList<ContentStreamHash>(md.length);
 
         for (int i = 0; i < md.length; i++) {
             result.add(new ContentStreamHashImpl(algorithm[i], md[i].digest()));

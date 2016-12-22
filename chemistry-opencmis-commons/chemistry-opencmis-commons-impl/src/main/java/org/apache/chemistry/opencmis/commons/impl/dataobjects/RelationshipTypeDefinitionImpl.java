@@ -36,7 +36,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
     @Override
     public List<String> getAllowedSourceTypeIds() {
         if (allowedSourceTypes == null) {
-            allowedSourceTypes = new ArrayList<String>();
+            allowedSourceTypes = new ArrayList<String>(0);
         }
 
         return allowedSourceTypes;
@@ -50,7 +50,7 @@ public class RelationshipTypeDefinitionImpl extends AbstractTypeDefinition imple
     @Override
     public List<String> getAllowedTargetTypeIds() {
         if (allowedTargetTypes == null) {
-            allowedTargetTypes = new ArrayList<String>();
+            allowedTargetTypes = new ArrayList<String>(0);
         }
 
         return allowedTargetTypes;

@@ -651,7 +651,7 @@ public final class JSONConverter {
 
                     Object perms = permissionMap.get(JSON_ACLCAP_MAPPING_PERMISSION);
                     if (perms instanceof List) {
-                        List<String> permList = new ArrayList<String>();
+                        List<String> permList = new ArrayList<String>(3);
 
                         for (Object perm : (List<Object>) perms) {
                             if (perm != null) {
@@ -1962,7 +1962,7 @@ public final class JSONConverter {
 
                     List<Object> jsonPermissions = getList(entry.get(JSON_ACE_PERMISSIONS));
                     if (jsonPermissions != null) {
-                        List<String> permissions = new ArrayList<String>();
+                        List<String> permissions = new ArrayList<String>(5);
                         for (Object perm : jsonPermissions) {
                             if (perm != null) {
                                 permissions.add(perm.toString());
@@ -2382,7 +2382,7 @@ public final class JSONConverter {
             result = new ArrayList<GregorianCalendar>(source.size());
             for (Object obj : source) {
                 if (obj instanceof Number) {
-                    GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+                    GregorianCalendar cal = new GregorianCalendar(DateTimeHelper.GMT);
                     cal.setTimeInMillis(((Number) obj).longValue());
                     result.add(cal);
                 } else if (obj instanceof String) {
@@ -2929,7 +2929,7 @@ public final class JSONConverter {
             throw new CmisRuntimeException("Invalid Decimal value!");
         case DATETIME:
             if (value instanceof Number) {
-                GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+                GregorianCalendar cal = new GregorianCalendar(DateTimeHelper.GMT);
                 cal.setTimeInMillis(((Number) value).longValue());
                 return cal;
             } else if (value instanceof String) {
@@ -3056,7 +3056,7 @@ public final class JSONConverter {
         Object obj = json.get(key);
 
         if (obj instanceof Number) {
-            GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+            GregorianCalendar cal = new GregorianCalendar(DateTimeHelper.GMT);
             cal.setTimeInMillis(((Number) obj).longValue());
             return cal;
         } else if (obj instanceof String) {

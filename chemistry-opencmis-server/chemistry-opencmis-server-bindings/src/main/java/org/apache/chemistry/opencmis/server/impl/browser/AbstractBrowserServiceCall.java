@@ -386,7 +386,7 @@ public abstract class AbstractBrowserServiceCall extends AbstractServiceCall {
                 GregorianCalendar cal;
                 try {
                     long timestamp = Long.parseLong(s);
-                    cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+                    cal = new GregorianCalendar(DateTimeHelper.GMT);
                     cal.setTimeInMillis(timestamp);
                 } catch (NumberFormatException e) {
                     cal = DateTimeHelper.parseXmlDateTime(s);

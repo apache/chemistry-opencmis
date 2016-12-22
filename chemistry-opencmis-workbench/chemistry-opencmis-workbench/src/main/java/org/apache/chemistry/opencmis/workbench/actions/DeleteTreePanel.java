@@ -75,6 +75,7 @@ public class DeleteTreePanel extends ActionPanel {
             @Override
             protected void done() {
                 super.done();
+                
                 reload(false);
             }
         };

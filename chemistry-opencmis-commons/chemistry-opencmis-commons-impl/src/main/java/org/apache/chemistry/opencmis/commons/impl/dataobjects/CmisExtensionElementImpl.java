@@ -47,12 +47,12 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
         this.name = name;
         this.namespace = namespace;
         this.value = value;
-        children = Collections.emptyList();
+        children = null;
 
         if (attributes != null) {
             this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
         } else {
-            this.attributes = Collections.emptyMap();
+            this.attributes = null;
         }
     }
 
@@ -72,13 +72,13 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
         if (children != null) {
             this.children = Collections.unmodifiableList(new ArrayList<CmisExtensionElement>(children));
         } else {
-            this.children = Collections.emptyList();
+            this.children = null;
         }
 
         if (attributes != null) {
             this.attributes = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
         } else {
-            this.attributes = Collections.emptyMap();
+            this.attributes = null;
         }
     }
 
@@ -116,11 +116,19 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
 
     @Override
     public List<CmisExtensionElement> getChildren() {
+        if (children == null) {
+            return Collections.emptyList();
+        }
+        
         return children;
     }
 
     @Override
     public Map<String, String> getAttributes() {
+        if (attributes == null) {
+            return Collections.emptyMap();
+        }
+
         return attributes;
     }
 
@@ -135,9 +143,13 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
             sb.append("  ");
         }
 
-        sb.append((namespace == null ? "" : "{" + namespace + "}") + name + " " + attributes + ": ");
+        sb.append(namespace == null ? "" : "{" + namespace + "}")
+                .append(name)
+                .append(" ")
+                .append(attributes == null ? "[]" : attributes)
+                .append(": ");
 
-        if (children.isEmpty()) {
+        if (children == null || children.isEmpty()) {
             sb.append(value);
             sb.append('\n');
         } else {
@@ -159,7 +171,9 @@ public class CmisExtensionElementImpl implements CmisExtensionElement {
 
     @Override
     public String toString() {
-        return (namespace == null ? "" : "{" + namespace + "}") + name + " " + attributes + ": "
-                + (children.isEmpty() ? value : children.toString());
+        return (namespace == null ? "" : "{" + namespace + "}")
+                + name + " " 
+                + (attributes == null ? "[]" : attributes) + ": "
+                + (children == null || children.isEmpty() ? value : children.toString());
     }
 }

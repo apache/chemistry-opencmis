@@ -39,7 +39,7 @@ public class ObjectListImpl extends AbstractExtensionData implements ObjectList 
     @Override
     public List<ObjectData> getObjects() {
         if (objects == null) {
-            objects = new ArrayList<ObjectData>();
+            objects = new ArrayList<ObjectData>(0);
         }
 
         return objects;

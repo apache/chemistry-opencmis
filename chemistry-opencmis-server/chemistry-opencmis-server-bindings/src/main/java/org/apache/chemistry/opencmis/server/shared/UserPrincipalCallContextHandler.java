@@ -46,7 +46,7 @@ public class UserPrincipalCallContextHandler implements CallContextHandler, Seri
         Map<String, String> result = null;
 
         if (request.getUserPrincipal() != null) {
-            result = new HashMap<String, String>();
+            result = new HashMap<String, String>(2);
             result.put(CallContext.USERNAME, request.getUserPrincipal().getName());
         }
 

@@ -250,7 +250,7 @@ public class AtomEntryWriter {
     }
 
     private static String getUpdated() {
-        return DateTimeHelper.formatXmlDateTime(new GregorianCalendar(TimeZone.getTimeZone("GMT")));
+        return DateTimeHelper.formatXmlDateTime(new GregorianCalendar(DateTimeHelper.GMT));
     }
 
     private static void writeTag(XmlSerializer writer, String tagNameSpace, String tagName, String text)

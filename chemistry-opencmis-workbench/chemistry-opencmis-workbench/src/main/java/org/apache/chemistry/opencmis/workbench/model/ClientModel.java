@@ -113,7 +113,8 @@ public class ClientModel {
 
     public String getRepositoryName() {
         try {
-            return getRepositoryInfo().getName();
+            String name = getRepositoryInfo().getName();
+            return name == null ? "(no name)" : name;
         } catch (Exception e) {
             return "?";
         }

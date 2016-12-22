@@ -135,7 +135,7 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
     @Override
     public List<Choice<T>> getChoices() {
         if (choiceList == null) {
-            choiceList = new ArrayList<Choice<T>>();
+            choiceList = new ArrayList<Choice<T>>(0);
         }
 
         return choiceList;
@@ -149,7 +149,7 @@ public abstract class AbstractPropertyDefinition<T> extends AbstractExtensionDat
     @Override
     public List<T> getDefaultValue() {
         if (defaultValue == null) {
-            defaultValue = new ArrayList<T>();
+            defaultValue = new ArrayList<T>(0);
         }
 
         return defaultValue;

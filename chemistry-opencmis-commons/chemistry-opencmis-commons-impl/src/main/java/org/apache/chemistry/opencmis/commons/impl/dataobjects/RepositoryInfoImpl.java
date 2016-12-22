@@ -207,7 +207,7 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
     @Override
     public List<BaseTypeId> getChangesOnType() {
         if (changesOnType == null) {
-            changesOnType = new ArrayList<BaseTypeId>();
+            changesOnType = new ArrayList<BaseTypeId>(0);
         }
 
         return changesOnType;

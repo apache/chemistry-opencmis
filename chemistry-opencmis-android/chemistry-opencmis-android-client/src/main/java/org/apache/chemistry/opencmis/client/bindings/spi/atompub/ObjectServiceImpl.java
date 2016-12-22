@@ -541,7 +541,7 @@ public class ObjectServiceImpl extends AbstractAtomPubService implements ObjectS
 
                 // prepare result
                 FailedToDeleteDataImpl result = new FailedToDeleteDataImpl();
-                List<String> ids = new ArrayList<String>();
+                List<String> ids = new ArrayList<String>(feed.getEntries().size());
                 result.setIds(ids);
 
                 // get the children ids

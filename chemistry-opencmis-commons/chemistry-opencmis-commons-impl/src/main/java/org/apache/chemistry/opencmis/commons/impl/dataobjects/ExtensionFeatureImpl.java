@@ -83,7 +83,7 @@ public class ExtensionFeatureImpl extends ExtensionDataImpl implements Extension
     @Override
     public Map<String, String> getFeatureData() {
         if (featureData == null) {
-            featureData = new HashMap<String, String>();
+            featureData = new HashMap<String, String>(2);
         }
 
         return featureData;

@@ -58,7 +58,7 @@ public class AttributeCallContextHandler implements CallContextHandler, Serializ
         Map<String, String> result = null;
 
         if (request.getAttribute(USERNAME_ATTRIBUTE) != null) {
-            result = new HashMap<String, String>();
+            result = new HashMap<String, String>(2);
             result.put(CallContext.USERNAME, request.getAttribute(USERNAME_ATTRIBUTE).toString());
         }
 

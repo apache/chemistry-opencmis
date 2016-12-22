@@ -1252,7 +1252,7 @@ public final class TypeDefinitionFactory {
             return null;
         }
 
-        List<Choice<T>> result = new ArrayList<Choice<T>>();
+        List<Choice<T>> result = new ArrayList<Choice<T>>(0);
 
         for (Choice<T> c : source.getChoices()) {
             result.add(copyChoice(c));

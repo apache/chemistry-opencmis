@@ -39,7 +39,7 @@ public class ObjectInFolderListImpl extends AbstractExtensionData implements Obj
     @Override
     public List<ObjectInFolderData> getObjects() {
         if (objects == null) {
-            objects = new ArrayList<ObjectInFolderData>();
+            objects = new ArrayList<ObjectInFolderData>(0);
         }
 
         return objects;

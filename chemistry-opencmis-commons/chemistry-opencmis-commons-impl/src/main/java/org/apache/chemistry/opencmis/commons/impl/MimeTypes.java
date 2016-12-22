@@ -30,7 +30,7 @@ public final class MimeTypes {
 
     private static final String OCTET_STREAM = "application/octet-stream";
     private static final MimetypesFileTypeMap TYPE_MAP = new MimetypesFileTypeMap();
-    private static final Map<String, String> MIME2EXT = new HashMap<String, String>();
+    private static final Map<String, String> MIME2EXT = new HashMap<String, String>(180);
 
     private MimeTypes() {
     }

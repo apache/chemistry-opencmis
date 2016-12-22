@@ -77,7 +77,7 @@ public class BasicAuthCallContextHandler implements CallContextHandler, Serializ
             }
 
             // extract user and password and add them to map
-            result = new HashMap<String, String>();
+            result = new HashMap<String, String>(2);
             result.put(CallContext.USERNAME, credentials.substring(0, x));
             result.put(CallContext.PASSWORD, credentials.substring(x + 1));
         }

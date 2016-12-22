@@ -62,7 +62,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
     @Override
     public Map<String, PermissionMapping> getPermissionMapping() {
         if (permissionMapping == null) {
-            permissionMapping = new HashMap<String, PermissionMapping>();
+            permissionMapping = new HashMap<String, PermissionMapping>(2);
         }
 
         return permissionMapping;
@@ -75,7 +75,7 @@ public class AclCapabilitiesDataImpl extends AbstractExtensionData implements Ac
     @Override
     public List<PermissionDefinition> getPermissions() {
         if (permissionDefinitionList == null) {
-            permissionDefinitionList = new ArrayList<PermissionDefinition>();
+            permissionDefinitionList = new ArrayList<PermissionDefinition>(0);
         }
 
         return permissionDefinitionList;

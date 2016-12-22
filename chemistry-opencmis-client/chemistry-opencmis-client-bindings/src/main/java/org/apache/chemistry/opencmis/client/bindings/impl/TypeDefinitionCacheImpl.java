@@ -68,7 +68,7 @@ public class TypeDefinitionCacheImpl implements TypeDefinitionCache {
 
     @Override
     public void put(String repositoryId, TypeDefinition typeDefinition) {
-        if (typeDefinition == null || typeDefinition.getId() == null) {
+        if (repositoryId == null || typeDefinition == null || typeDefinition.getId() == null) {
             return;
         }
 
@@ -77,6 +77,10 @@ public class TypeDefinitionCacheImpl implements TypeDefinitionCache {
 
     @Override
     public TypeDefinition get(String repositoryId, String typeId) {
+        if(repositoryId == null || typeId == null) {
+            throw new IllegalArgumentException("Invalid repository ot type ID!");
+        }
+        
         return (TypeDefinition) cache.get(repositoryId, typeId);
     }
 

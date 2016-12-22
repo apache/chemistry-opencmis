@@ -39,7 +39,6 @@ public class TypeDefinitionContainerImpl extends AbstractExtensionData implement
 
     public TypeDefinitionContainerImpl(TypeDefinition typeDef) {
         type = typeDef;
-        children = new ArrayList<TypeDefinitionContainer>();
     }
 
     @Override
@@ -54,7 +53,7 @@ public class TypeDefinitionContainerImpl extends AbstractExtensionData implement
     @Override
     public List<TypeDefinitionContainer> getChildren() {
         if (children == null) {
-            children = new ArrayList<TypeDefinitionContainer>();
+            children = new ArrayList<TypeDefinitionContainer>(0);
         }
 
         return children;

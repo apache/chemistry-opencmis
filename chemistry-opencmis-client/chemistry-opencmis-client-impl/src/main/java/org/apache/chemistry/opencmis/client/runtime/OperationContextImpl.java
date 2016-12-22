@@ -378,16 +378,24 @@ public class OperationContextImpl implements OperationContext, Serializable {
 
         StringBuilder sb = new StringBuilder(128);
 
-        sb.append(includeAcls ? '1' : '0');
-        sb.append(includeAllowableActions ? '1' : '0');
-        sb.append(includePolicies ? '1' : '0');
-        sb.append('|');
-        sb.append(filter == null ? "" : getFilterString());
-        sb.append('|');
-        sb.append(includeRelationships == null ? "" : includeRelationships.value());
+        int bits = 0;
+        if (includeAcls) {
+            bits += 1;
+        }
+        if (includeAllowableActions) {
+            bits += 2;
+        }
+        if (includePolicies) {
+            bits += 4;
+        }
 
-        sb.append('|');
-        sb.append(renditionFilter == null ? "" : getRenditionFilterString());
+        sb.append((char) ('0' + bits));
+        sb.append(includeRelationships == null ? '-' : (char) ('a' + includeRelationships.ordinal()));
+        sb.append(filter == null ? "" : getFilterString());
+        if (renditionFilter != null && renditionFilter.size() > 0) {
+            sb.append('\\');
+            sb.append(getRenditionFilterString());
+        }
 
         cacheKey = sb.toString();
     }

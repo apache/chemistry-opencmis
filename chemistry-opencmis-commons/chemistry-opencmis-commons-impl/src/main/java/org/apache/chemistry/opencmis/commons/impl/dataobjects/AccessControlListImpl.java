@@ -51,7 +51,7 @@ public class AccessControlListImpl extends AbstractExtensionData implements Muta
     @Override
     public List<Ace> getAces() {
         if (aces == null) {
-            aces = new ArrayList<Ace>();
+            aces = new ArrayList<Ace>(0);
         }
 
         return aces;

@@ -96,7 +96,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
     @Override
     public List<ObjectData> getRelationships() {
         if (relationships == null) {
-            relationships = new ArrayList<ObjectData>();
+            relationships = new ArrayList<ObjectData>(0);
         }
 
         return relationships;
@@ -110,7 +110,7 @@ public class ObjectDataImpl extends AbstractExtensionData implements MutableObje
     @Override
     public List<RenditionData> getRenditions() {
         if (renditions == null) {
-            renditions = new ArrayList<RenditionData>();
+            renditions = new ArrayList<RenditionData>(0);
         }
 
         return renditions;

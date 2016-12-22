@@ -68,7 +68,7 @@ public class AccessControlEntryImpl extends AbstractExtensionData implements Mut
     @Override
     public List<String> getPermissions() {
         if (permissions == null) {
-            permissions = new ArrayList<String>();
+            permissions = new ArrayList<String>(0);
         }
 
         return permissions;

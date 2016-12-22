@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public final class DateTimeHelper {
 
-    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+    public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 
     private static final Pattern XML_DATETIME = Pattern
             .compile("(\\d{4,9})-([01]\\d)-([0-3]\\d)T([0-2]\\d):([0-5]\\d):([0-5]\\d)(\\.(\\d+))?(([+-][0-2]\\d:[0-5]\\d)|Z)?");

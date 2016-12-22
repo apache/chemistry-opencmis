@@ -49,7 +49,7 @@ public class CmisCookieStoreImpl implements Serializable {
 
     public CmisCookieStoreImpl(final int maxUrls) {
         this.maxUrls = maxUrls;
-        storeList = new ArrayDeque<CmisHttpCookie>(maxUrls);
+        storeList = new ArrayDeque<CmisHttpCookie>(64);
     }
 
     public void add(final URI uri, final CmisHttpCookie cookie) {
