@@ -158,7 +158,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <log4j.version>2.6.1</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.0.10</cxf.version>
+        <cxf.version>3.0.12</cxf.version>
         <okhttp.version>3.4.1</okhttp.version>
     </properties>
 
