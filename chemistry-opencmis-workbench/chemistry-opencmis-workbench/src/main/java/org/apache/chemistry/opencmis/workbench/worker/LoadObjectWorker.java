@@ -34,13 +34,13 @@ public class LoadObjectWorker extends InfoWorkbenchWorker {
 
     public static void reloadObject(Component comp, ClientModel model) {
         if (model.getCurrentObject() != null) {
-            (new LoadObjectWorker(comp, model, model.getCurrentObject().getId())).executeTask();
+            (new LoadObjectWorker(comp, model, null)).executeTask();
         }
     }
 
     public static void reloadObject(Window parent, ClientModel model) {
         if (model.getCurrentObject() != null) {
-            (new LoadObjectWorker(parent, model, model.getCurrentObject().getId())).executeTask();
+            (new LoadObjectWorker(parent, model, null)).executeTask();
         }
     }
 
@@ -66,13 +66,6 @@ public class LoadObjectWorker extends InfoWorkbenchWorker {
     @Override
     protected String getMessage() {
         return "<html>Loading object '" + id + "'...";
-    }
-
-    @Override
-    public void executeTask() {
-        if (id != null) {
-            super.executeTask();
-        }
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.apache.chemistry.opencmis.workbench.model.ClientModel;
 
 public class LoadFolderWorker extends InfoWorkbenchWorker {
 
-    private ClientModel model;
+    final private ClientModel model;
     private String id;
     private boolean byPath;
 
@@ -63,6 +63,22 @@ public class LoadFolderWorker extends InfoWorkbenchWorker {
     public static void reloadFolder(Window parent, ClientModel model) {
         if (model.getCurrentFolder() != null) {
             (new LoadFolderWorker(parent, model, model.getCurrentFolder().getId())).executeTask();
+        }
+    }
+
+    public LoadFolderWorker(Component comp, ClientModel model, String id) {
+        super(comp);
+
+        this.model = model;
+        this.id = id;
+        this.byPath = false;
+
+        if (this.id != null) {
+            if (this.id.length() == 0) {
+                this.id = "/";
+            }
+
+            byPath = id.charAt(0) == '/';
         }
     }
 

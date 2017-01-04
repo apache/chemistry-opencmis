@@ -39,6 +39,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.model.ClientModel;
+import org.apache.chemistry.opencmis.workbench.worker.LoadFolderWorker;
 import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 
 public abstract class ActionPanel extends JPanel implements ActionListener {
@@ -126,7 +127,7 @@ public abstract class ActionPanel extends JPanel implements ActionListener {
 
     protected void reload(final boolean reloadObject) {
         if (model.getCurrentFolder() != null) {
-            LoadObjectWorker worker = new LoadObjectWorker(ActionPanel.this, model, model.getCurrentFolder().getId()) {
+            LoadFolderWorker worker = new LoadFolderWorker(ActionPanel.this, model, model.getCurrentFolder().getId()) {
                 @Override
                 protected void done() {
                     super.done();
