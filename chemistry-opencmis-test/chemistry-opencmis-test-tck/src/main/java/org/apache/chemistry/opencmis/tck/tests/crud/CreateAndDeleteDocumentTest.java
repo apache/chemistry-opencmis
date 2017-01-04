@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.tck.tests.crud;
 
+import java.io.IOException;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
@@ -216,11 +217,39 @@ public class CreateAndDeleteDocumentTest extends AbstractSessionTest {
                 if (contentStream == null || contentStream.getStream() == null) {
                     addResult(createResult(FAILURE, "Document has no content! Id: " + document.getId()));
                     continue;
-                } else {
-                    IOUtils.closeQuietly(contentStream);
                 }
 
-                // TODO: content checks
+                try {
+                    // first stream from document
+                    String contentStr = getStringFromContentStream(contentStream);
+
+                    f = createResult(FAILURE, "Unexpected document content! Id: " + document.getId());
+                    addResult(assertEquals(CONTENT, contentStr, null, f));
+
+                    // second stream from session
+                    String contentStr2 = getStringFromContentStream(session.getContentStream(document));
+
+                    f = createResult(FAILURE, "Unexpected document content! Id: " + document.getId());
+                    addResult(assertEquals(CONTENT, contentStr2, null, f));
+
+                    // third stream by path
+                    List<String> paths = document.getPaths();
+
+                    f = createResult(FAILURE,
+                            "The document must have at least one path because it was created in a folder! Id: "
+                                    + document.getId());
+                    addResult(assertIsTrue(paths != null && paths.size() > 0, null, f));
+
+                    String contentStr3 = getStringFromContentStream(session.getContentStreamByPath(paths.get(0)));
+
+                    f = createResult(FAILURE, "Unexpected document content! Id: " + document.getId());
+                    addResult(assertEquals(CONTENT, contentStr3, null, f));
+                } catch (IOException ioe) {
+                    addResult(createResult(FAILURE, "Could not read content of document! Id: " + document.getId(), ioe,
+                            false));
+                } finally {
+                    IOUtils.closeQuietly(contentStream);
+                }
             }
 
             // delete all documents

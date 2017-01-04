@@ -105,5 +105,11 @@ public class OperationContextTest {
         assertTrue(oc3.isIncludeAcls());
         assertTrue(oc3.isIncludePolicies());
         assertFalse(oc3.isIncludePathSegments());
+
+        try {
+            OperationContext oc4 = OperationContextUtils.createMinimumOperationContext("test(prop");
+        } catch (IllegalArgumentException iae) {
+            // expected: query name contains an invalid character
+        }
     }
 }

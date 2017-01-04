@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -151,7 +152,14 @@ public final class TypeUtils {
         return JSONConverter.convertTypeDefinition((Map<String, Object>) json);
     }
 
-    private static boolean checkQueryName(String queryName) {
+    /**
+     * Checks if a property query name is valid.
+     * 
+     * @param queryName
+     *            the query name
+     * @return {@code true} if the query name is valid, {@code false} otherwise
+     */
+    public static boolean checkQueryName(String queryName) {
         return queryName != null && queryName.length() > 0 && queryName.indexOf(' ') < 0 && queryName.indexOf('\t') < 0
                 && queryName.indexOf('\n') < 0 && queryName.indexOf('\r') < 0 && queryName.indexOf('\f') < 0
                 && queryName.indexOf(',') < 0 && queryName.indexOf('"') < 0 && queryName.indexOf('\'') < 0

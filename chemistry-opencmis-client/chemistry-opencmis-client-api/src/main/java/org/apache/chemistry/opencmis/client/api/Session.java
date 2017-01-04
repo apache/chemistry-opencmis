@@ -1194,7 +1194,7 @@ public interface Session extends Serializable {
      * @param docId
      *            the ID of the document
      * @param streamId
-     *            the stream ID
+     *            the stream ID or {@code null} for the main stream
      * @param offset
      *            the offset of the stream or {@code null} to read the stream
      *            from the beginning
@@ -1208,6 +1208,40 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     ContentStream getContentStream(ObjectId docId, String streamId, BigInteger offset, BigInteger length);
+
+    /**
+     * Retrieves the main content stream of a document.
+     * 
+     * @param path
+     *            the path of the document
+     * 
+     * @return the content stream or {@code null} if the document has no content
+     *         stream
+     * 
+     * @cmis 1.0
+     */
+    ContentStream getContentStreamByPath(String path);
+
+    /**
+     * Retrieves the content stream of a document.
+     * 
+     * @param path
+     *            the path of the document
+     * @param streamId
+     *            the stream ID or {@code null} for the main stream
+     * @param offset
+     *            the offset of the stream or {@code null} to read the stream
+     *            from the beginning
+     * @param length
+     *            the maximum length of the stream or {@code null} to read to
+     *            the end of the stream
+     * 
+     * @return the content stream or {@code null} if the document has no content
+     *         stream
+     * 
+     * @cmis 1.0
+     */
+    ContentStream getContentStreamByPath(String path, String streamId, BigInteger offset, BigInteger length);
 
     /**
      * Fetches the ACL of an object from the repository.

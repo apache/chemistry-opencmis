@@ -1488,6 +1488,49 @@ public class SessionImpl implements Session {
         } catch (CmisConstraintException e) {
             // no content stream
             return null;
+        } catch (CmisObjectNotFoundException onfe) {
+            removeObjectFromCache(docId.getId());
+            throw onfe;
+        }
+
+        return contentStream;
+    }
+
+    @Override
+    public ContentStream getContentStreamByPath(String path) {
+        return getContentStreamByPath(path, null, null, null);
+    }
+
+    @Override
+    public ContentStream getContentStreamByPath(String path, String streamId, BigInteger offset, BigInteger length) {
+        checkPath(path);
+
+        // check the cache
+        String docId = cache.getObjectIdByPath(path);
+
+        // not in cache -> get the object
+        if (docId == null) {
+            ObjectData objectData = getBinding().getObjectService().getObjectByPath(getRepositoryId(), path,
+                    "cmis:objectId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none", false, false, null);
+            docId = objectData.getId();
+
+            // don't check if the object is a document
+            // the path could belong to a folder or an item and the stream ID
+            // could point to a rendition
+        }
+
+        // get the stream
+        ContentStream contentStream = null;
+        try {
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), docId, streamId,
+                    offset, length, null);
+        } catch (CmisConstraintException ce) {
+            // no content stream
+            return null;
+        } catch (CmisObjectNotFoundException onfe) {
+            removeObjectFromCache(docId);
+            cache.remove(docId);
+            throw onfe;
         }
 
         return contentStream;

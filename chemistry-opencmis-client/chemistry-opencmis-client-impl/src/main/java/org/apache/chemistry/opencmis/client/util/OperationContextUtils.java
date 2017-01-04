@@ -18,6 +18,7 @@
  */
 package org.apache.chemistry.opencmis.client.util;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,8 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
  * objects.
  */
 public final class OperationContextUtils {
+
+    private static final char[] INVALID_QUERY_NAME_CHARS = " \t\n\r\f\"',\\.()".toCharArray();
 
     public static final String PROPERTIES_STAR = "*";
     public static final String RENDITION_NONE = "cmis:none";
@@ -54,13 +57,16 @@ public final class OperationContextUtils {
     }
 
     /**
-     * Creates a new OperationContext object with the given parameters. Caching
-     * is enabled.
+     * Creates a new OperationContext object with the given parameters.
      */
     public static OperationContext createOperationContext(Set<String> filter, boolean includeAcls,
             boolean includeAllowableActions, boolean includePolicies, IncludeRelationships includeRelationships,
             Set<String> renditionFilter, boolean includePathSegments, String orderBy, boolean cacheEnabled,
             int maxItemsPerPage) {
+        if (!checkQueryNames(filter)) {
+            throw new IllegalArgumentException("Invalid filter: " + filter);
+        }
+
         return new OperationContextImpl(filter, includeAcls, includeAllowableActions, includePolicies,
                 includeRelationships, renditionFilter, includePathSegments, orderBy, cacheEnabled, maxItemsPerPage);
     }
@@ -77,14 +83,17 @@ public final class OperationContextUtils {
      * Creates a new OperationContext object that only selects the bare minimum
      * plus the provided properties. Caching is enabled.
      */
-    public static OperationContext createMinimumOperationContext(String... property) {
+    public static OperationContext createMinimumOperationContext(String... propertyQueryNames) {
         Set<String> filter = new HashSet<String>();
         filter.add(PropertyIds.OBJECT_ID);
         filter.add(PropertyIds.OBJECT_TYPE_ID);
         filter.add(PropertyIds.BASE_TYPE_ID);
 
-        if (property != null) {
-            for (String prop : property) {
+        if (propertyQueryNames != null) {
+            for (String prop : propertyQueryNames) {
+                if (!checkQueryName(prop)) {
+                    throw new IllegalArgumentException("Not a valid property query name: " + prop);
+                }
                 filter.add(prop);
             }
         }
@@ -252,5 +261,54 @@ public final class OperationContextUtils {
                 return context.toString();
             }
         };
+    }
+
+    // --- helpers ---
+
+    /**
+     * Checks if a property query name is valid.
+     * 
+     * @param queryName
+     *            the query name
+     * @return {@code true} if the query name is valid, {@code false} otherwise
+     */
+    private static boolean checkQueryName(String queryName) {
+        if (queryName == null || queryName.length() == 0) {
+            return false;
+        }
+
+        int n = queryName.length();
+        for (int i = 0; i < n; i++) {
+            char c = queryName.charAt(i);
+            for (char ic : INVALID_QUERY_NAME_CHARS) {
+                if (c == ic) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if a set of property query name is valid.
+     * 
+     * @param queryNames
+     *            the query names
+     * @return {@code true} if all query names are valid, {@code false}
+     *         otherwise
+     */
+    private static boolean checkQueryNames(Collection<String> queryNames) {
+        if (queryNames == null || queryNames.isEmpty()) {
+            return true;
+        }
+
+        for (String qn : queryNames) {
+            if (!checkQueryName(qn)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

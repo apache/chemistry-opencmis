@@ -20,7 +20,6 @@ package org.apache.chemistry.opencmis.client.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -255,18 +254,7 @@ public final class FileUtils {
             return;
         }
 
-        FileOutputStream out = new FileOutputStream(destinationPath);
-
-        ContentStream stream = null;
-        try {
-            stream = doc.getContentStream();
-            if (stream != null) {
-                IOUtils.copy(stream.getStream(), out, 64 * 1024);
-            }
-        } finally {
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(stream);
-        }
+        ContentStreamUtils.writeContentStreamToFile(doc.getContentStream(), new File(destinationPath));
     }
 
     /**
