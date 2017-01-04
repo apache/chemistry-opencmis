@@ -278,13 +278,17 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             while (true) {
                 b = reader.read(buffer, 0, buffer.length);
                 if (b > 0) {
+                    if(sb.length() + b > 10 * 1024 * 1024) {
+                        throw new IOException("File too large!");
+                    }
+
                     sb.append(buffer, 0, b);
                 } else if (b == -1) {
                     break;
                 }
             }
         } finally {
-            reader.close();
+            IOUtils.closeQuietly(reader);
         }
 
         return sb.toString();
