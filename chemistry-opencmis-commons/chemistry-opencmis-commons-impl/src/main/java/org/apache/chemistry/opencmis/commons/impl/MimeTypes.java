@@ -43,6 +43,7 @@ public final class MimeTypes {
         MIME2EXT.put("application/fractals", "fif");
         MIME2EXT.put("application/futuresplash", "spl");
         MIME2EXT.put("application/hta", "hta");
+        MIME2EXT.put("application/internet-shortcut", "url");
         MIME2EXT.put("application/java-archive", "jar");
         MIME2EXT.put("application/java-serialized-object", "ser");
         MIME2EXT.put("application/java-vm", "class");

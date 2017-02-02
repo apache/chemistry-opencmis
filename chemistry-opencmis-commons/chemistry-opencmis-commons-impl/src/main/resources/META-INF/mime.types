@@ -54,6 +54,7 @@ application/gxf gxf
 application/hta hta
 application/hyperstudio stk
 application/inkml+xml ink inkml
+application/internet-shortcut url
 application/ipfix ipfix
 application/java-archive jar war ear
 application/java-serialized-object ser
