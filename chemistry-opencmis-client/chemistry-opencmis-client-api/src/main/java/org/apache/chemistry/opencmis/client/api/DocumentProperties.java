@@ -85,6 +85,8 @@ public interface DocumentProperties {
      *         hasn't been requested, hasn't been provided by the repository, or
      *         the property value isn't set
      * 
+     * @see Document#isVersionSeriesPrivateWorkingCopy()
+     * 
      * @cmis 1.1
      */
     Boolean isPrivateWorkingCopy();

@@ -57,6 +57,23 @@ public interface Document extends FileableCmisObject, DocumentProperties {
      */
     boolean isVersionable();
 
+    /**
+     * Determines whether this document is the PWC in the version series or not.
+     * 
+     * The evaluation is based on the properties
+     * {@code cmis:isVersionSeriesCheckedOut},
+     * {@code cmis:isPrivateWorkingCopy}, and
+     * {@code cmis:versionSeriesCheckedOutId} and works for all CMIS versions.
+     * 
+     * @return {@code true} if it is the PWC, {@code false} if it is not the
+     *         PWC, or {@code null} if it can't be determined
+     * 
+     * @see DocumentProperties#isPrivateWorkingCopy()
+     * 
+     * @cmis 1.0
+     */
+    Boolean isVersionSeriesPrivateWorkingCopy();
+
     // object service
 
     /**

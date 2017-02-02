@@ -83,6 +83,31 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
         return Boolean.TRUE.equals(getDocumentType().isVersionable());
     }
 
+    @Override
+    public Boolean isVersionSeriesPrivateWorkingCopy() {
+        if (Boolean.FALSE.equals(getDocumentType().isVersionable())) {
+            return false;
+        }
+
+        Boolean isCheckedOut = isVersionSeriesCheckedOut();
+        if (Boolean.FALSE.equals(isCheckedOut)) {
+            return false;
+        }
+
+        Boolean isPWC = isPrivateWorkingCopy();
+        if (isPWC != null) {
+            return isPWC;
+        }
+
+        String vsCoId = getVersionSeriesCheckedOutId();
+        if (vsCoId == null) {
+            // we don't know ...
+            return null;
+        }
+
+        return vsCoId.equals(getId());
+    }
+
     // properties
 
     @Override
@@ -620,7 +645,8 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
     }
 
     @Override
-    public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream, String checkinComment) {
+    public ObjectId checkIn(boolean major, Map<String, ?> properties, ContentStream contentStream,
+            String checkinComment) {
         return this.checkIn(major, properties, contentStream, checkinComment, null, null, null);
     }
 }
