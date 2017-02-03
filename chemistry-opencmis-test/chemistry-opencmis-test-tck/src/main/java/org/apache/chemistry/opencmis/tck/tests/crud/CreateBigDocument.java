@@ -23,6 +23,7 @@ import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -35,6 +36,7 @@ import org.apache.chemistry.opencmis.commons.definitions.DocumentTypeDefinition;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import org.apache.chemistry.opencmis.tck.impl.AbstractSessionTest;
 
 /**
@@ -105,8 +107,14 @@ public class CreateBigDocument extends AbstractSessionTest {
             f = createResult(FAILURE, "Content stream length doesn't match the uploaded content!", true);
             assertEquals(size, doc.getContentStreamLength(), null, f);
 
-            // delete it
-            doc.delete(true);
+            // delete it by path
+            List<String> paths = doc.getPaths();
+
+            f = createResult(FAILURE,
+                    "The document must have at least one path because it was created in a folder! Id: " + doc.getId());
+            addResult(assertIsTrue(paths != null && paths.size() > 0, null, f));
+
+            session.deleteByPath(paths.get(0));
         } finally {
             // delete the test folder
             deleteTestFolder();

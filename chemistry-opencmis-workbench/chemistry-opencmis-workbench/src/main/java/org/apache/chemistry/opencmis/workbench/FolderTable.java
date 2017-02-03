@@ -148,9 +148,9 @@ public class FolderTable extends JTable implements FolderListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (model.getCurrentObject() != null) {
-                    int answer = JOptionPane.showConfirmDialog(FolderTable.this, "Do you really want to delete '"
-                            + model.getCurrentObject().getName() + "'?", "Delete", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
+                    int answer = JOptionPane.showConfirmDialog(FolderTable.this,
+                            "Do you really want to delete '" + model.getCurrentObject().getName() + "'?", "Delete",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {
                         DeleteWorker worker = new DeleteWorker(FolderTable.this, model.getCurrentObject()) {
@@ -257,17 +257,17 @@ public class FolderTable extends JTable implements FolderListener {
 
         // load icon and set icon column size
         loadIcons();
-        getColumnModel().getColumn(0).setPreferredWidth(
-                (int) (icons.get(BaseTypeId.CMIS_DOCUMENT).getIconWidth() * 1.1));
+        getColumnModel().getColumn(0)
+                .setPreferredWidth((int) (icons.get(BaseTypeId.CMIS_DOCUMENT).getIconWidth() * 1.1));
     }
 
     private void loadIcons() {
         icons = new EnumMap<BaseTypeId, Icon>(BaseTypeId.class);
-        icons.put(BaseTypeId.CMIS_DOCUMENT, new DocumentIcon(ClientHelper.OBJECT_ICON_SIZE,
-                ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_DOCUMENT,
+                new DocumentIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
         icons.put(BaseTypeId.CMIS_FOLDER, new FolderIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
-        icons.put(BaseTypeId.CMIS_RELATIONSHIP, new RelationshipIcon(ClientHelper.OBJECT_ICON_SIZE,
-                ClientHelper.OBJECT_ICON_SIZE));
+        icons.put(BaseTypeId.CMIS_RELATIONSHIP,
+                new RelationshipIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
         icons.put(BaseTypeId.CMIS_POLICY, new PolicyIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
         icons.put(BaseTypeId.CMIS_ITEM, new ItemIcon(ClientHelper.OBJECT_ICON_SIZE, ClientHelper.OBJECT_ICON_SIZE));
 
@@ -332,7 +332,7 @@ public class FolderTable extends JTable implements FolderListener {
                 if (obj instanceof Document) {
                     Document doc = (Document) obj;
                     if (Boolean.TRUE.equals(doc.isVersionSeriesCheckedOut())) {
-                        if (doc.getId().equals(doc.getVersionSeriesCheckedOutId())) {
+                        if (Boolean.TRUE.equals(doc.isVersionSeriesPrivateWorkingCopy())) {
                             return pwcIcon;
                         } else {
                             return checkedOutIcon;
@@ -421,8 +421,8 @@ public class FolderTable extends JTable implements FolderListener {
 
             File file = null;
             try {
-                List<File> fileList = (List<File>) support.getTransferable().getTransferData(
-                        DataFlavor.javaFileListFlavor);
+                List<File> fileList = (List<File>) support.getTransferable()
+                        .getTransferData(DataFlavor.javaFileListFlavor);
 
                 if (fileList == null || fileList.size() != 1 || fileList.get(0) == null || !fileList.get(0).isFile()) {
                     return false;

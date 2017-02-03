@@ -62,8 +62,8 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * some incompliant repositories might throw other exception than you expect.
  * <p>
  * Refer to the <a href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.0
- * specification</a> or the <a
- * href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.1
+ * specification</a> or the
+ * <a href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.1
  * specification</a> for details about the domain model, terms, concepts, base
  * types, properties, IDs and query names, query language, etc.
  * </p>
@@ -127,9 +127,9 @@ public interface Session extends Serializable {
      * Creates a new operation context object with the given properties.
      * 
      * @param filter
-     *            the property filter, a comma separated string of
-     *            <em>query names</em> or "*" for all properties or {@code null}
-     *            to let the repository determine a set of properties
+     *            the property filter, a comma separated string of <em>query
+     *            names</em> or "*" for all properties or {@code null} to let
+     *            the repository determine a set of properties
      * @param includeAcls
      *            indicates whether ACLs should be included or not
      * @param includeAllowableActions
@@ -145,9 +145,9 @@ public interface Session extends Serializable {
      *            indicates whether path segment or the relative path segment
      *            should be included or not
      * @param orderBy
-     *            the object order, a comma-separated list of
-     *            <em>query names</em> and the ascending modifier "ASC" or the
-     *            descending modifier "DESC" for each query name
+     *            the object order, a comma-separated list of <em>query
+     *            names</em> and the ascending modifier "ASC" or the descending
+     *            modifier "DESC" for each query name
      * @param cacheEnabled
      *            flag that indicates if the object cache should be used
      * @param maxItemsPerPage
@@ -1029,6 +1029,11 @@ public interface Session extends Serializable {
     /**
      * Creates a new folder.
      * 
+     * @param properties
+     *            the folder properties
+     * @param folderId
+     *            the folder ID of the parent folder, not {@code null}
+     * 
      * @return the object ID of the new folder
      * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
@@ -1041,6 +1046,11 @@ public interface Session extends Serializable {
     /**
      * Creates a new folder.
      * 
+     * @param properties
+     *            the folder properties
+     * @param folderId
+     *            the folder ID of the parent folder, not {@code null}
+     * 
      * @return the object ID of the new folder
      * 
      * @see Folder#createFolder(Map, List, List, List, OperationContext)
@@ -1050,7 +1060,108 @@ public interface Session extends Serializable {
     ObjectId createFolder(Map<String, ?> properties, ObjectId folderId);
 
     /**
+     * Creates a folder path.
+     * 
+     * All missing folders in the path are created. Existing folders are not
+     * touched.
+     * 
+     * @param newPath
+     *            the absolute path
+     * @param typeId
+     *            the type ID of all folders that are being created
+     * 
+     * @return the object ID of the deepest folder
+     * 
+     * @cmis 1.0
+     */
+    ObjectId createPath(String newPath, String typeId);
+
+    /**
+     * Creates a folder path.
+     * 
+     * All missing folders in the path are created. Existing folders are not
+     * touched.
+     * 
+     * @param startFolderId
+     *            the ID of a folder in the path that the path creation should
+     *            start with, {@code null} for the root folder.
+     * @param newPath
+     *            the absolute path
+     * @param typeId
+     *            the type ID of all folders that are being created
+     * 
+     * @return the object ID of the deepest folder
+     * 
+     * @cmis 1.0
+     */
+    ObjectId createPath(ObjectId startFolderId, String newPath, String typeId);
+
+    /**
+     * Creates a folder path.
+     * 
+     * All missing folders in the path are created. Existing folders are not
+     * touched.
+     * 
+     * @param newPath
+     *            the absolute path
+     * @param properties
+     *            the properties of all folders that are being created
+     * 
+     * @return the object ID of the deepest folder
+     * 
+     * @cmis 1.0
+     */
+    ObjectId createPath(String newPath, Map<String, ?> properties);
+
+    /**
+     * Creates a folder path.
+     * 
+     * All missing folders in the path are created. Existing folders are not
+     * touched.
+     * 
+     * @param startFolderId
+     *            the ID of a folder in the path that the path creation should
+     *            start with, {@code null} for the root folder
+     * @param newPath
+     *            the absolute path
+     * @param properties
+     *            the properties of all folders that are being created
+     * 
+     * @return the object ID of the deepest folder
+     * 
+     * @cmis 1.0
+     */
+    ObjectId createPath(ObjectId startFolderId, String newPath, Map<String, ?> properties);
+
+    /**
+     * Creates a folder path.
+     * 
+     * All missing folders in the path are created. Existing folders are not
+     * touched.
+     * 
+     * @param startFolderId
+     *            the ID of a folder in the path that the path creation should
+     *            start with, {@code null} for the root folder
+     * @param newPath
+     *            the absolute path
+     * @param properties
+     *            the properties of all folders that are being created
+     * 
+     * @return the object ID of the deepest folder
+     * 
+     * @cmis 1.0
+     */
+    ObjectId createPath(ObjectId startFolderId, String newPath, Map<String, ?> properties, List<Policy> policies,
+            List<Ace> addAces, List<Ace> removeAces);
+
+    /**
      * Creates a new policy.
+     * 
+     * @param properties
+     *            the policy properties
+     * @param folderId
+     *            the folder ID of the parent folder, {@code null} for an
+     *            unfiled policy
      * 
      * @return the object ID of the new policy
      * 
@@ -1064,6 +1175,12 @@ public interface Session extends Serializable {
     /**
      * Creates a new policy.
      * 
+     * @param properties
+     *            the policy properties
+     * @param folderId
+     *            the folder ID of the parent folder, {@code null} for an
+     *            unfiled policy
+     * 
      * @return the object ID of the new policy
      * 
      * @see Folder#createPolicy(Map, List, List, List, OperationContext)
@@ -1074,6 +1191,12 @@ public interface Session extends Serializable {
 
     /**
      * Creates a new item.
+     * 
+     * @param properties
+     *            the item properties
+     * @param folderId
+     *            the folder ID of the parent folder, {@code null} for an
+     *            unfiled item
      * 
      * @return the object ID of the new policy
      * 
@@ -1087,6 +1210,12 @@ public interface Session extends Serializable {
     /**
      * Creates a new item.
      * 
+     * @param properties
+     *            the item properties
+     * @param folderId
+     *            the folder ID of the parent folder, {@code null} for an
+     *            unfiled item
+     * 
      * @return the object ID of the new item
      * 
      * @see Folder#createItem(Map, List, List, List, OperationContext)
@@ -1097,7 +1226,10 @@ public interface Session extends Serializable {
 
     /**
      * Creates a new relationship.
-     * 
+     *
+     * @param properties
+     *            the relationship properties
+     *
      * @return the object ID of the new relationship
      * 
      * @cmis 1.0
@@ -1107,6 +1239,9 @@ public interface Session extends Serializable {
 
     /**
      * Creates a new relationship.
+     * 
+     * @param properties
+     *            the relationship properties
      * 
      * @return the object ID of the new relationship
      * 
@@ -1155,6 +1290,43 @@ public interface Session extends Serializable {
     void delete(ObjectId objectId, boolean allVersions);
 
     /**
+     * Deletes an object by path and, if it is a document, all versions in the
+     * version series.
+     * 
+     * @param path
+     *            the path of the object
+     * 
+     * @cmis 1.0
+     */
+    public void deleteByPath(String path);
+
+    /**
+     * Deletes an object by path and, if it is a document, all versions in the
+     * version series.
+     * 
+     * @param parentPath
+     *            the path of the parent folder
+     * @param name
+     *            the (path segment) name of the object in the folder
+     * 
+     * @cmis 1.0
+     */
+    void deleteByPath(String parentPath, String name);
+
+    /**
+     * Deletes an object by path.
+     * 
+     * @param path
+     *            the path of the object
+     * @param allVersions
+     *            if this object is a document this parameter defines if only
+     *            this version or all versions should be deleted
+     * 
+     * @cmis 1.0
+     */
+    void deleteByPath(String path, boolean allVersions);
+
+    /**
      * Deletes a folder and all subfolders.
      * 
      * @param folderId
@@ -1174,6 +1346,51 @@ public interface Session extends Serializable {
      * @cmis 1.0
      */
     List<String> deleteTree(ObjectId folderId, boolean allVersions, UnfileObject unfile, boolean continueOnFailure);
+
+    /**
+     * Deletes a folder and all subfolders by path.
+     * 
+     * @param parentPath
+     *            the path of the parent folder
+     * @param name
+     *            the (path segment) name of the folder in the parent folder
+     * @param allVersions
+     *            if this object is a document this parameter defines if only
+     *            this version or all versions should be deleted
+     * @param unfile
+     *            defines how objects should be unfiled
+     * @param continueOnFailure
+     *            if {@code true} the repository tries to delete as many objects
+     *            as possible; if {@code false} the repository stops at the
+     *            first object that could not be deleted
+     * 
+     * @return a list of object IDs which failed to be deleted
+     * 
+     * @cmis 1.0
+     */
+    List<String> deleteTreebyPath(String parentPath, String name, boolean allVersions, UnfileObject unfile,
+            boolean continueOnFailure);
+
+    /**
+     * Deletes a folder and all subfolders by path.
+     * 
+     * @param path
+     *            the path of the folder
+     * @param allVersions
+     *            if this object is a document this parameter defines if only
+     *            this version or all versions should be deleted
+     * @param unfile
+     *            defines how objects should be unfiled
+     * @param continueOnFailure
+     *            if {@code true} the repository tries to delete as many objects
+     *            as possible; if {@code false} the repository stops at the
+     *            first object that could not be deleted
+     * 
+     * @return a list of object IDs which failed to be deleted
+     * 
+     * @cmis 1.0
+     */
+    List<String> deleteTreebyPath(String path, boolean allVersions, UnfileObject unfile, boolean continueOnFailure);
 
     /**
      * Retrieves the main content stream of a document.

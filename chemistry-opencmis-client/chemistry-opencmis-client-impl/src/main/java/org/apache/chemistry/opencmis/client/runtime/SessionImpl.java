@@ -83,6 +83,7 @@ import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConstraintException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisNotSupportedException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -122,7 +123,6 @@ public class SessionImpl implements Session {
     }
 
     // private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
-
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private transient LinkedHashMap<String, ObjectType> objectTypeCache;
 
@@ -198,7 +198,7 @@ public class SessionImpl implements Session {
     }
 
     private Locale determineLocale(Map<String, String> parameters) {
-        Locale result = null;
+        Locale result;
 
         String language = parameters.get(SessionParameter.LOCALE_ISO639_LANGUAGE);
         String country = parameters.get(SessionParameter.LOCALE_ISO3166_COUNTRY);
@@ -207,18 +207,14 @@ public class SessionImpl implements Session {
         if (variant != null) {
             // all 3 parameter must not be null and valid
             result = new Locale(language, country, variant);
+        } else if (country != null) {
+            // 2 parameter must not be null and valid
+            result = new Locale(language, country);
+        } else if (language != null) {
+            // 1 parameter must not be null and valid
+            result = new Locale(language);
         } else {
-            if (country != null) {
-                // 2 parameter must not be null and valid
-                result = new Locale(language, country);
-            } else {
-                if (language != null) {
-                    // 1 parameter must not be null and valid
-                    result = new Locale(language);
-                } else {
-                    result = Locale.getDefault();
-                }
-            }
+            result = Locale.getDefault();
         }
 
         return result;
@@ -432,6 +428,7 @@ public class SessionImpl implements Session {
                 };
             }
         }) {
+
             @Override
             public ItemIterable<ChangeEvent> skipTo(long position) {
                 throw new CmisNotSupportedException("Skipping not supported!");
@@ -446,6 +443,7 @@ public class SessionImpl implements Session {
             public ItemIterable<ChangeEvent> getPage(int maxNumItems) {
                 throw new CmisNotSupportedException("Paging not supported!");
             }
+
         };
     }
 
@@ -587,24 +585,7 @@ public class SessionImpl implements Session {
 
     @Override
     public CmisObject getObjectByPath(String parentPath, String name, OperationContext context) {
-        if (parentPath == null || parentPath.length() < 1) {
-            throw new IllegalArgumentException("Parent path must be set!");
-        }
-        if (parentPath.charAt(0) != '/') {
-            throw new IllegalArgumentException("Parent path must start with a '/'!");
-        }
-        if (name == null || name.length() < 1) {
-            throw new IllegalArgumentException("Name must be set!");
-        }
-
-        StringBuilder path = new StringBuilder(parentPath.length() + name.length() + 2);
-        path.append(parentPath);
-        if (!parentPath.endsWith("/")) {
-            path.append('/');
-        }
-        path.append(name);
-
-        return getObjectByPath(path.toString(), context);
+        return getObjectByPath(buildPath(parentPath, name), context);
     }
 
     @Override
@@ -767,41 +748,22 @@ public class SessionImpl implements Session {
         checkPath(path);
 
         try {
-            ObjectData object = binding.getObjectService().getObjectByPath(getRepositoryId(), path, "cmis:objectId",
-                    Boolean.FALSE, IncludeRelationships.NONE, "cmis:none", Boolean.FALSE, Boolean.FALSE, null);
-
+            String objectId = getObjectIdByPath(path);
             String cacheObjectId = cache.getObjectIdByPath(path);
-            if (cacheObjectId != null && !cacheObjectId.equals(object.getId())) {
+
+            if (cacheObjectId != null && !cacheObjectId.equals(objectId)) {
                 cache.removePath(path);
             }
 
             return true;
         } catch (CmisObjectNotFoundException onf) {
-            cache.removePath(path);
             return false;
         }
     }
 
     @Override
     public boolean existsPath(String parentPath, String name) {
-        if (parentPath == null || parentPath.length() < 1) {
-            throw new IllegalArgumentException("Parent path must be set!");
-        }
-        if (parentPath.charAt(0) != '/') {
-            throw new IllegalArgumentException("Parent path must start with a '/'!");
-        }
-        if (name == null || name.length() < 1) {
-            throw new IllegalArgumentException("Name must be set!");
-        }
-
-        StringBuilder path = new StringBuilder(parentPath.length() + name.length() + 2);
-        path.append(parentPath);
-        if (!parentPath.endsWith("/")) {
-            path.append('/');
-        }
-        path.append(name);
-
-        return existsPath(path.toString());
+        return existsPath(buildPath(parentPath, name));
     }
 
     @Override
@@ -846,33 +808,33 @@ public class SessionImpl implements Session {
     public ItemIterable<ObjectType> getTypeChildren(final String typeId, final boolean includePropertyDefinitions) {
         final RepositoryService repositoryService = getBinding().getRepositoryService();
 
-        return new CollectionIterable<ObjectType>(new AbstractPageFetcher<ObjectType>(getDefaultContext()
-                .getMaxItemsPerPage()) {
+        return new CollectionIterable<ObjectType>(
+                new AbstractPageFetcher<ObjectType>(getDefaultContext().getMaxItemsPerPage()) {
 
-            @Override
-            protected AbstractPageFetcher.Page<ObjectType> fetchPage(long skipCount) {
+                    @Override
+                    protected AbstractPageFetcher.Page<ObjectType> fetchPage(long skipCount) {
 
-                // fetch the data
-                TypeDefinitionList tdl = repositoryService.getTypeChildren(SessionImpl.this.getRepositoryId(), typeId,
-                        includePropertyDefinitions, BigInteger.valueOf(this.maxNumItems),
-                        BigInteger.valueOf(skipCount), null);
+                        // fetch the data
+                        TypeDefinitionList tdl = repositoryService.getTypeChildren(SessionImpl.this.getRepositoryId(),
+                                typeId, includePropertyDefinitions, BigInteger.valueOf(this.maxNumItems),
+                                BigInteger.valueOf(skipCount), null);
 
-                // convert type definitions
-                List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
-                for (TypeDefinition typeDefinition : tdl.getList()) {
-                    page.add(convertTypeDefinition(typeDefinition));
-                }
+                        // convert type definitions
+                        List<ObjectType> page = new ArrayList<ObjectType>(tdl.getList().size());
+                        for (TypeDefinition typeDefinition : tdl.getList()) {
+                            page.add(convertTypeDefinition(typeDefinition));
+                        }
 
-                return new AbstractPageFetcher.Page<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
-                };
-            }
-        });
+                        return new AbstractPageFetcher.Page<ObjectType>(page, tdl.getNumItems(), tdl.hasMoreItems()) {
+                        };
+                    }
+                });
     }
 
     @Override
     public ObjectType getTypeDefinition(String typeId) {
-        TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(),
-                typeId, null);
+        TypeDefinition typeDefinition = getBinding().getRepositoryService().getTypeDefinition(getRepositoryId(), typeId,
+                null);
 
         return convertAndCacheTypeDefinition(typeDefinition, true);
     }
@@ -922,7 +884,7 @@ public class SessionImpl implements Session {
 
     /**
      * Converts a type definition into an object type and caches the result.
-     * 
+     *
      * The cache should only be used for type definitions that have been fetched
      * with getTypeDefinition() because the high level cache should roughly
      * correspond to the low level type cache. The type definitions returned by
@@ -1154,8 +1116,8 @@ public class SessionImpl implements Session {
                 throw new IllegalStateException("Repository ID is not set!");
             }
 
-            repositoryInfo = objectFactory.convertRepositoryInfo(getBinding().getRepositoryService().getRepositoryInfo(
-                    repositoryId, null));
+            repositoryInfo = objectFactory
+                    .convertRepositoryInfo(getBinding().getRepositoryService().getRepositoryInfo(repositoryId, null));
         } finally {
             lock.writeLock().unlock();
         }
@@ -1188,7 +1150,6 @@ public class SessionImpl implements Session {
     }
 
     // --- creates ---
-
     @Override
     public ObjectId createDocument(Map<String, ?> properties, ObjectId folderId, ContentStream contentStream,
             VersioningState versioningState, List<Policy> policies, List<Ace> addAces, List<Ace> removeAces) {
@@ -1243,8 +1204,8 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
-            List<Ace> addAces, List<Ace> removeAces) {
+    public ObjectId createFolder(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
+            List<Ace> removeAces) {
         checkFolderId(folderId);
         checkProperties(properties);
 
@@ -1261,8 +1222,141 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies,
+    public ObjectId createPath(String newPath, String typeId) {
+        return createPath(null, newPath, typeId);
+    }
+
+    @Override
+    public ObjectId createPath(ObjectId startFolderId, String newPath, String typeId) {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(PropertyIds.OBJECT_TYPE_ID, typeId);
+
+        return createPath(startFolderId, newPath, properties, null, null, null);
+    }
+
+    @Override
+    public ObjectId createPath(String newPath, Map<String, ?> properties) {
+        return createPath(null, newPath, properties);
+    }
+
+    @Override
+    public ObjectId createPath(ObjectId startFolderId, String newPath, Map<String, ?> properties) {
+        return createPath(startFolderId, newPath, properties, null, null, null);
+    }
+
+    @Override
+    public ObjectId createPath(ObjectId startFolderId, String newPath, Map<String, ?> properties, List<Policy> policies,
             List<Ace> addAces, List<Ace> removeAces) {
+        checkPath(newPath);
+        if (newPath.length() == 1) {
+            throw new IllegalArgumentException("Cannot create root folder!");
+        }
+        if (newPath.charAt(newPath.length() - 1) == '/') {
+            throw new IllegalArgumentException("Path cannot end with a '/'!");
+        }
+
+        checkProperties(properties);
+        if (!(properties.get(PropertyIds.OBJECT_TYPE_ID) instanceof String)) {
+            throw new IllegalArgumentException("Property '" + PropertyIds.OBJECT_TYPE_ID + "' not set or invalid!");
+        }
+
+        StringBuilder nextPath = new StringBuilder(newPath.length());
+        String[] segements;
+        ObjectId lastFolderId = null;
+        boolean create = false;
+
+        // check start folder
+        if (startFolderId != null && startFolderId.getId() != null) {
+            if (startFolderId instanceof Folder) {
+                Folder startFolder = (Folder) startFolderId;
+                if (!startFolder.isRootFolder()) {
+                    nextPath.append(startFolder.getPath());
+                    lastFolderId = startFolder;
+                }
+            } else {
+                ObjectData startFolderData = null;
+                try {
+                    startFolderData = getBinding().getObjectService().getObject(getRepositoryId(),
+                            startFolderId.getId(), "cmis:objectId,cmis:baseTypeId,cmis:name,cmis:path", false,
+                            IncludeRelationships.NONE, "cmis:none", false, false, null);
+                } catch (CmisBaseException cbe) {
+                    throw new IllegalArgumentException("Start folder does not exist or is not accessible!", cbe);
+                }
+
+                if (startFolderData.getBaseTypeId() != BaseTypeId.CMIS_FOLDER) {
+                    throw new IllegalArgumentException("Start folder is not a folder!");
+                }
+
+                if (startFolderData.getProperties() == null || startFolderData.getProperties().getProperties() == null
+                        || startFolderData.getProperties().getProperties().get(PropertyIds.PATH) == null) {
+                    throw new IllegalArgumentException("Start folder has no path property?!");
+                }
+
+                Object startPath = startFolderData.getProperties().getProperties().get(PropertyIds.PATH)
+                        .getFirstValue();
+                if (!(startPath instanceof String)) {
+                    throw new IllegalArgumentException("Start folder has an invalid path property?!");
+                }
+
+                if (!repositoryInfo.getRootFolderId().equals(startFolderData.getId())) {
+                    nextPath.append(startPath);
+                    lastFolderId = startFolderId;
+                }
+            }
+
+            if (!newPath.startsWith(nextPath.toString())) {
+                throw new IllegalArgumentException("Start folder in not in the path!");
+            }
+
+            segements = newPath.substring(nextPath.length()).split("/");
+        } else {
+            segements = newPath.split("/");
+        }
+
+        // create folders
+        for (int i = 1; i < segements.length; i++) {
+            if (create) {
+                lastFolderId = createFolder(buildCreatePathProperties(properties, segements[i]), lastFolderId, policies,
+                        addAces, removeAces);
+            } else {
+                try {
+                    nextPath.append('/');
+                    nextPath.append(segements[i]);
+
+                    ObjectData folderData = getBinding().getObjectService().getObjectByPath(getRepositoryId(),
+                            nextPath.toString(), "cmis:objectId,cmis:baseTypeId,cmis:name", false,
+                            IncludeRelationships.NONE, "cmis:none", false, false, null);
+                    if (folderData.getBaseTypeId() != BaseTypeId.CMIS_FOLDER) {
+                        throw new CmisConstraintException("Cannot create a folder '" + segements[i]
+                                + "' because there is already an object with this name, which is not a folder!");
+                    }
+
+                    lastFolderId = new ObjectIdImpl(folderData.getId());
+                } catch (CmisObjectNotFoundException onfe) {
+                    if (lastFolderId == null) {
+                        lastFolderId = new ObjectIdImpl(repositoryInfo.getRootFolderId());
+                    }
+
+                    lastFolderId = createFolder(buildCreatePathProperties(properties, segements[i]), lastFolderId,
+                            policies, addAces, removeAces);
+                    create = true;
+                }
+            }
+        }
+
+        return lastFolderId;
+    }
+
+    private Map<String, ?> buildCreatePathProperties(Map<String, ?> properties, String name) {
+        Map<String, Object> newProperties = new HashMap<String, Object>(properties);
+        newProperties.put(PropertyIds.NAME, name);
+
+        return newProperties;
+    }
+
+    @Override
+    public ObjectId createPolicy(Map<String, ?> properties, ObjectId folderId, List<Policy> policies, List<Ace> addAces,
+            List<Ace> removeAces) {
         checkProperties(properties);
 
         String newId = getBinding().getObjectService().createPolicy(getRepositoryId(),
@@ -1339,7 +1433,6 @@ public class SessionImpl implements Session {
     }
 
     // --- relationships ---
-
     @Override
     public ObjectId createRelationship(Map<String, ?> properties) {
         return createRelationship(properties, null, null, null);
@@ -1386,7 +1479,6 @@ public class SessionImpl implements Session {
     }
 
     // --- bulk update ---
-
     @Override
     public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(List<CmisObject> objects,
             Map<String, ?> properties, List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds) {
@@ -1402,8 +1494,8 @@ public class SessionImpl implements Session {
                 ObjectType secondaryType = getTypeDefinition(stid);
 
                 if (!(secondaryType instanceof SecondaryType)) {
-                    throw new IllegalArgumentException("Secondary types contains a type that is not a secondary type: "
-                            + secondaryType.getId());
+                    throw new IllegalArgumentException(
+                            "Secondary types contains a type that is not a secondary type: " + secondaryType.getId());
                 }
 
                 secondaryTypes.put(secondaryType.getId(), (SecondaryType) secondaryType);
@@ -1417,8 +1509,8 @@ public class SessionImpl implements Session {
                 continue;
             }
 
-            objectIdsAndChangeTokens.add(new BulkUpdateObjectIdAndChangeTokenImpl(object.getId(), object
-                    .getChangeToken()));
+            objectIdsAndChangeTokens
+                    .add(new BulkUpdateObjectIdAndChangeTokenImpl(object.getId(), object.getChangeToken()));
 
             if (objectType == null) {
                 objectType = object.getType();
@@ -1440,7 +1532,6 @@ public class SessionImpl implements Session {
     }
 
     // --- delete ---
-
     @Override
     public void delete(ObjectId objectId) {
         delete(objectId, true);
@@ -1452,6 +1543,23 @@ public class SessionImpl implements Session {
 
         getBinding().getObjectService().deleteObject(getRepositoryId(), objectId.getId(), allVersions, null);
         removeObjectFromCache(objectId);
+    }
+
+    @Override
+    public void deleteByPath(String path) {
+        deleteByPath(path, true);
+    }
+
+    @Override
+    public void deleteByPath(String parentPath, String name) {
+        deleteByPath(buildPath(parentPath, name), true);
+    }
+
+    @Override
+    public void deleteByPath(String path, boolean allVersions) {
+        checkPath(path);
+
+        delete(new ObjectIdImpl(getObjectIdByPath(path)), allVersions);
     }
 
     @Override
@@ -1469,8 +1577,21 @@ public class SessionImpl implements Session {
         return (failed != null ? failed.getIds() : null);
     }
 
-    // --- content stream ---
+    @Override
+    public List<String> deleteTreebyPath(String parentPath, String name, boolean allVersions, UnfileObject unfile,
+            boolean continueOnFailure) {
+        return deleteTreebyPath(buildPath(parentPath, name), allVersions, unfile, continueOnFailure);
+    }
 
+    @Override
+    public List<String> deleteTreebyPath(String path, boolean allVersions, UnfileObject unfile,
+            boolean continueOnFailure) {
+        checkPath(path);
+
+        return deleteTree(new ObjectIdImpl(getObjectIdByPath(path)), allVersions, unfile, continueOnFailure);
+    }
+
+    // --- content stream ---
     @Override
     public ContentStream getContentStream(ObjectId docId) {
         return getContentStream(docId, null, null, null);
@@ -1483,8 +1604,8 @@ public class SessionImpl implements Session {
         // get the stream
         ContentStream contentStream = null;
         try {
-            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), docId.getId(),
-                    streamId, offset, length, null);
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), docId.getId(), streamId,
+                    offset, length, null);
         } catch (CmisConstraintException e) {
             // no content stream
             return null;
@@ -1506,13 +1627,13 @@ public class SessionImpl implements Session {
         checkPath(path);
 
         // check the cache
-        String docId = cache.getObjectIdByPath(path);
+        boolean fromCache = true;
+        String objectId = cache.getObjectIdByPath(path);
 
         // not in cache -> get the object
-        if (docId == null) {
-            ObjectData objectData = getBinding().getObjectService().getObjectByPath(getRepositoryId(), path,
-                    "cmis:objectId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none", false, false, null);
-            docId = objectData.getId();
+        if (objectId == null) {
+            fromCache = false;
+            objectId = getObjectIdByPath(path);
 
             // don't check if the object is a document
             // the path could belong to a folder or an item and the stream ID
@@ -1522,22 +1643,33 @@ public class SessionImpl implements Session {
         // get the stream
         ContentStream contentStream = null;
         try {
-            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), docId, streamId,
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), objectId, streamId,
                     offset, length, null);
         } catch (CmisConstraintException ce) {
             // no content stream
             return null;
         } catch (CmisObjectNotFoundException onfe) {
-            removeObjectFromCache(docId);
-            cache.remove(docId);
-            throw onfe;
+            if (fromCache) {
+                removeObjectFromCache(objectId);
+                cache.removePath(path);
+            } else {
+                throw onfe;
+            }
+        }
+
+        if (contentStream == null) {
+            // we are here because we got the object ID from the cache but the
+            // object couldn't be found anymore
+            // there maybe now a new object at this path -> let's try again
+
+            contentStream = getBinding().getObjectService().getContentStream(getRepositoryId(), getObjectIdByPath(path),
+                    streamId, offset, length, null);
         }
 
         return contentStream;
     }
 
     // --- ACL ---
-
     @Override
     public Acl getAcl(ObjectId objectId, boolean onlyBasicPermissions) {
         checkObjectId(objectId);
@@ -1573,7 +1705,6 @@ public class SessionImpl implements Session {
     }
 
     // --- Policies ---
-
     @Override
     public void applyPolicy(ObjectId objectId, ObjectId... policyIds) {
         checkObjectId(objectId);
@@ -1619,6 +1750,37 @@ public class SessionImpl implements Session {
     }
 
     // ----
+    protected String buildPath(String parentPath, String name) {
+        if (parentPath == null || parentPath.length() < 1) {
+            throw new IllegalArgumentException("Parent path must be set!");
+        }
+        if (parentPath.charAt(0) != '/') {
+            throw new IllegalArgumentException("Parent path must start with a '/'!");
+        }
+        if (name == null || name.length() < 1) {
+            throw new IllegalArgumentException("Name must be set!");
+        }
+
+        StringBuilder path = new StringBuilder(parentPath.length() + name.length() + 2);
+        path.append(parentPath);
+        if (!parentPath.endsWith("/")) {
+            path.append('/');
+        }
+        path.append(name);
+
+        return path.toString();
+    }
+
+    protected String getObjectIdByPath(String path) {
+        try {
+            return getBinding().getObjectService().getObjectByPath(getRepositoryId(), path,
+                    "cmis:objectId,cmis:baseTypeId", false, IncludeRelationships.NONE, "cmis:none", false, false, null)
+                    .getId();
+        } catch (CmisObjectNotFoundException onfe) {
+            cache.removePath(path);
+            throw onfe;
+        }
+    }
 
     protected final void checkObjectId(ObjectId objectId) {
         if (objectId == null || objectId.getId() == null) {
@@ -1678,7 +1840,6 @@ public class SessionImpl implements Session {
     }
 
     // ----
-
     @Override
     public String toString() {
         return "Session " + getBinding().getSessionId();

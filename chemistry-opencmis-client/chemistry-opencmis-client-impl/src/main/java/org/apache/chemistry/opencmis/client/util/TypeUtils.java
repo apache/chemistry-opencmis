@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -223,7 +222,8 @@ public final class TypeUtils {
         if (type.isControllableAcl() == null) {
             errors.add(new ValidationError("controllableACL", "ControllableACL flag must be set."));
         } else if (type.getBaseTypeId() == BaseTypeId.CMIS_SECONDARY && Boolean.TRUE.equals(type.isControllableAcl())) {
-            errors.add(new ValidationError("controllableACL", "ControllableACL flag must be FALSE for secondary types."));
+            errors.add(
+                    new ValidationError("controllableACL", "ControllableACL flag must be FALSE for secondary types."));
         }
 
         if (type.isFulltextIndexed() == null) {
@@ -342,7 +342,8 @@ public final class TypeUtils {
             errors.add(new ValidationError("orderable", "Orderable flag must be set."));
         } else if (propDef.isOrderable().booleanValue()) {
             if (propDef.getCardinality() == Cardinality.MULTI) {
-                errors.add(new ValidationError("orderable", "Orderable flag is set to TRUE for a multi-value property."));
+                errors.add(
+                        new ValidationError("orderable", "Orderable flag is set to TRUE for a multi-value property."));
             }
         }
 
@@ -352,35 +353,43 @@ public final class TypeUtils {
 
         if (propDef instanceof PropertyIdDefinition) {
             if (propDef.getPropertyType() != PropertyType.ID) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyStringDefinition) {
             if (propDef.getPropertyType() != PropertyType.STRING) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyIntegerDefinition) {
             if (propDef.getPropertyType() != PropertyType.INTEGER) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyDecimalDefinition) {
             if (propDef.getPropertyType() != PropertyType.DECIMAL) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyBooleanDefinition) {
             if (propDef.getPropertyType() != PropertyType.BOOLEAN) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyDateTimeDefinition) {
             if (propDef.getPropertyType() != PropertyType.DATETIME) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyHtmlDefinition) {
             if (propDef.getPropertyType() != PropertyType.HTML) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         } else if (propDef instanceof PropertyUriDefinition) {
             if (propDef.getPropertyType() != PropertyType.URI) {
-                errors.add(new ValidationError("propertyType", "Property type does not match the property definition."));
+                errors.add(
+                        new ValidationError("propertyType", "Property type does not match the property definition."));
             }
         }
 

@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -130,8 +129,8 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
                     primaryType = type;
                     primaryAlias = alias;
                 } else {
-                    throw new IllegalArgumentException("Two primary types found: " + primaryType.getId() + " and "
-                            + type.getId());
+                    throw new IllegalArgumentException(
+                            "Two primary types found: " + primaryType.getId() + " and " + type.getId());
                 }
             }
 
@@ -193,8 +192,8 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
                 }
 
                 if (propertyDef == null) {
-                    throw new IllegalArgumentException("Property '" + propertyId
-                            + "' is not defined in the provided object types!");
+                    throw new IllegalArgumentException(
+                            "Property '" + propertyId + "' is not defined in the provided object types!");
                 }
 
                 if (propertyDef.getQueryName() == null) {
@@ -269,8 +268,8 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
                 }
 
                 if (propertyDef == null) {
-                    throw new IllegalArgumentException("Property '" + realPropertyId
-                            + "' is not defined in the provided object types!");
+                    throw new IllegalArgumentException(
+                            "Property '" + realPropertyId + "' is not defined in the provided object types!");
                 }
 
                 if (propertyDef.getQueryName() == null) {
