@@ -572,6 +572,11 @@ public class QueryStatementImpl implements QueryStatement, Cloneable {
     }
 
     @Override
+    public ItemIterable<QueryResult> query() {
+        return session.query(toQueryString(), false);
+    }
+
+    @Override
     public ItemIterable<QueryResult> query(boolean searchAllVersions) {
         return session.query(toQueryString(), searchAllVersions);
     }

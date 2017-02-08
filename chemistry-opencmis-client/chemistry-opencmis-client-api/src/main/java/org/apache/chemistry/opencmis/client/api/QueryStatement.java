@@ -167,8 +167,7 @@ public interface QueryStatement extends Cloneable {
      * <td>\</td>
      * <td>\\</td>
      * <td>\\\\<br>
-     * <em>(for any other character following other than * ?
-     * -)</em></td>
+     * <em>(for any other character following other than * ? -)</em></td>
      * </tr>
      * <tr>
      * <td>\*</td>
@@ -315,6 +314,13 @@ public interface QueryStatement extends Cloneable {
      * @return the query statement, not {@code null}
      */
     String toQueryString();
+
+    /**
+     * Executes the query with {@code searchAllVersions) set to {@code false}.
+     * 
+     * @see Session#query(String, boolean)
+     */
+    ItemIterable<QueryResult> query();
 
     /**
      * Executes the query.
