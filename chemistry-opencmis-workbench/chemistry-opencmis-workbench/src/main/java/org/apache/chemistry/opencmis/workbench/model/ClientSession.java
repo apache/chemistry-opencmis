@@ -73,7 +73,7 @@ public class ClientSession {
     public static final String MAX_FOLDER_CHILDREN = FOLDER_PREFIX + "maxChildren";
 
     public enum Authentication {
-        NONE, STANDARD, NTLM, OAUTH_BEARER
+        NONE, STANDARD, NTLM, OAUTH_BEARER, CLIENT_CERT
     }
 
     private static final Set<String> FOLDER_PROPERTY_SET = new HashSet<String>();
@@ -152,6 +152,9 @@ public class ClientSession {
             break;
         case OAUTH_BEARER:
             parameters.setOAuthBearerTokenAuthentication(username);
+            break;
+        case CLIENT_CERT:
+            parameters.setCertificateAuthentication(username, password);
             break;
         default:
             parameters.setNoAuthentication();
@@ -411,7 +414,7 @@ public class ClientSession {
         };
 
         try {
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance("TSL");
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(accepctAllHostnames);

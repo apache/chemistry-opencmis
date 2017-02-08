@@ -399,6 +399,35 @@ public class SessionParameterMap extends LinkedHashMap<String, String> {
     }
 
     /**
+     * Turns Client Certificate authentication on and and basic authentication
+     * and UsernameToken authentication off.
+     * 
+     * @param keyfilePath
+     *            the path to the JKS key file
+     * @param passphrase
+     *            the pass phrase for the key file
+     */
+    public void setCertificateAuthentication(String keyfilePath, String passphrase) {
+        if (keyfilePath == null) {
+            throw new IllegalArgumentException("Key file path mut be set!");
+        }
+
+        put(SessionParameter.AUTH_HTTP_BASIC, false);
+        put(SessionParameter.AUTH_SOAP_USERNAMETOKEN, false);
+        put(SessionParameter.AUTH_OAUTH_BEARER, false);
+
+        put(SessionParameter.CLIENT_CERT_KEYFILE, keyfilePath);
+        if (passphrase == null) {
+            remove(SessionParameter.CLIENT_CERT_PASSPHRASE);
+        } else {
+            put(SessionParameter.CLIENT_CERT_PASSPHRASE, passphrase);
+        }
+
+        put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+                "org.apache.chemistry.opencmis.client.bindings.spi.ClientCertificateAuthenticationProvider");
+    }
+
+    /**
      * Turns simple OAuth 2.0 bearer token authentication on and basic
      * authentication and UsernameToken authentication off.
      * <p>

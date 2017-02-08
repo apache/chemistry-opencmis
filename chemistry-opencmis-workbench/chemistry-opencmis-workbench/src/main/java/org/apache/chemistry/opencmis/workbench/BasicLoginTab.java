@@ -65,6 +65,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
     private JRadioButton authenticationStandardButton;
     private JRadioButton authenticationNTLMButton;
     private JRadioButton authenticationOAuthButton;
+    private JRadioButton authenticationCertButton;
     private JRadioButton compressionOnButton;
     private JRadioButton compressionOffButton;
     private JRadioButton clientCompressionOnButton;
@@ -90,7 +91,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         createBindingButtons(this);
 
-        usernameField = createTextField(this, "Username:", "Enter the user name.");
+        usernameField = createTextField(this, "Username:",
+                "<html>Enter the user name.<br>(Or bearer token for OAuth authentication or key file path for client certificate authentication.)");
         usernameField.setText(System.getProperty(SYSPROP_USER, ""));
 
         passwordField = createPasswordField(this, "Password:", "Enter the users password.");
@@ -167,16 +169,19 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
                 .equals("standard"));
         boolean ntlm = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("ntlm"));
         boolean oauth = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("oauth"));
-        boolean none = !standard && !ntlm;
+        boolean cert = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("cert"));
+        boolean none = !standard && !ntlm && !oauth && !cert;
         authenticationNoneButton = new JRadioButton("None", none);
         authenticationStandardButton = new JRadioButton("Standard", standard);
         authenticationNTLMButton = new JRadioButton("NTLM", ntlm);
         authenticationOAuthButton = new JRadioButton("OAuth 2.0 (Bearer Token)", oauth);
+        authenticationCertButton = new JRadioButton("Client Certificate", cert);
         ButtonGroup authenticationGroup = new ButtonGroup();
         authenticationGroup.add(authenticationNoneButton);
         authenticationGroup.add(authenticationStandardButton);
         authenticationGroup.add(authenticationNTLMButton);
         authenticationGroup.add(authenticationOAuthButton);
+        authenticationGroup.add(authenticationCertButton);
         authenticationContainer.add(authenticationNoneButton);
         authenticationContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         authenticationContainer.add(authenticationStandardButton);
@@ -184,14 +189,17 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         authenticationContainer.add(authenticationNTLMButton);
         authenticationContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
         authenticationContainer.add(authenticationOAuthButton);
+        authenticationContainer.add(Box.createRigidArea(WorkbenchScale.scaleDimension(new Dimension(10, 0))));
+        authenticationContainer.add(authenticationCertButton);
         JLabel authenticatioLabel = new JLabel("Authentication:", SwingConstants.TRAILING);
 
         pane.add(authenticatioLabel);
         pane.add(createHelp("<html>Select the authentication method.<br>"
                 + "The <b>Standard authentication</b> is Basic Auth and should work with most repositories.<br>"
                 + "The <b>NTLM authentication</b> should be used with caution! It's very likely that some CMIS operations will fail.<br>"
-                + "The <b>OAuth authentication</b> requires a bearer token in the username field. The token will not be refreshed when it expires."
-                + "Use the OAuthAuthenticationProvider for full OAuth support."));
+                + "The <b>OAuth authentication</b> requires a bearer token in the username field. The token will not be refreshed when it expires. "
+                + "Use the OAuthAuthenticationProvider for full OAuth support.<br>"
+                + "The <b>Client Certificate authentication</b> requires a JKS key file path the username field and the passphrase in the password field."));
         pane.add(authenticationContainer);
     }
 
@@ -281,6 +289,8 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
             authentication = ClientSession.Authentication.NTLM;
         } else if (authenticationOAuthButton.isSelected()) {
             authentication = ClientSession.Authentication.OAUTH_BEARER;
+        } else if (authenticationCertButton.isSelected()) {
+            authentication = ClientSession.Authentication.CLIENT_CERT;
         }
 
         Locale locale = null;

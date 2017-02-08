@@ -705,6 +705,11 @@ public final class SessionParameter {
     public static final String OAUTH_EXPIRATION_TIMESTAMP = "org.apache.chemistry.opencmis.oauth.expirationTimestamp";
     public static final String OAUTH_DEFAULT_TOKEN_LIFETIME = "org.apache.chemistry.opencmis.oauth.defaultTokenLifetime";
 
+    // --- client certificates ---
+
+    public static final String CLIENT_CERT_KEYFILE = "org.apache.chemistry.opencmis.clientcerts.keyfile";
+    public static final String CLIENT_CERT_PASSPHRASE = "org.apache.chemistry.opencmis.clientcerts.passphrase";
+
     // --- connection ---
 
     public static final String HTTP_INVOKER_CLASS = "org.apache.chemistry.opencmis.binding.httpinvoker.classname";

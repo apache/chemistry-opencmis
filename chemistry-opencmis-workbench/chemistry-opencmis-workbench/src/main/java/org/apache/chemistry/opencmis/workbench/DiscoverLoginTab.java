@@ -51,6 +51,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.apache.chemistry.opencmis.client.api.CmisEndpointDocumentReader;
+import org.apache.chemistry.opencmis.client.bindings.spi.ClientCertificateAuthenticationProvider;
+import org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.runtime.CmisEndpointDocumentReaderImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.endpoints.CmisAuthentication;
@@ -188,6 +190,13 @@ public class DiscoverLoginTab extends AbstractLoginTab {
             parameters.put(SessionParameter.OAUTH_CLIENT_ID, "");
             parameters.put(SessionParameter.OAUTH_CLIENT_SECRET, "");
             parameters.put(SessionParameter.OAUTH_CODE, "");
+            parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS, OAuthAuthenticationProvider.class.getName());
+        } else if (CmisAuthentication.AUTH_CERT.equals(auth.getType())) {
+            // client cert parameters
+            parameters.put(SessionParameter.CLIENT_CERT_KEYFILE, "");
+            parameters.put(SessionParameter.CLIENT_CERT_PASSPHRASE, "");
+            parameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+                    ClientCertificateAuthenticationProvider.class.getName());
         } else if (!CmisAuthentication.AUTH_NONE.equals(auth.getType())
                 && !parameters.containsKey(SessionParameter.AUTHENTICATION_PROVIDER_CLASS)) {
             // a custom authentication provider is required here
@@ -243,8 +252,8 @@ public class DiscoverLoginTab extends AbstractLoginTab {
             allEnpointsMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String json = CmisEndpointsDocumentHelper.write(((CmisAuthenticationModel) getModel())
-                            .getCmisEndpointsDocument());
+                    String json = CmisEndpointsDocumentHelper
+                            .write(((CmisAuthenticationModel) getModel()).getCmisEndpointsDocument());
                     copyTableToClipboard(json);
                 }
             });
@@ -407,8 +416,8 @@ public class DiscoverLoginTab extends AbstractLoginTab {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             // make sure that the text fit into the row
