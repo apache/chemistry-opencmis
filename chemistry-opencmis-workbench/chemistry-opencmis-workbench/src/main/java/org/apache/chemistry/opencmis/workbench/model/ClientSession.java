@@ -414,7 +414,7 @@ public class ClientSession {
         };
 
         try {
-            SSLContext sc = SSLContext.getInstance("TSL");
+            SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(accepctAllHostnames);
