@@ -407,7 +407,7 @@ public class QueryObject {
         }
         return secondaryTypeIds;
     }
-
+    
     // ///////////////////////////////////////////////////////
     // resolve types after first pass traversing the AST is complete
 
@@ -558,14 +558,11 @@ public class QueryObject {
                 tdFound = td;
             }
         }
-        if (noFound == 0) {
-            throw new CmisQueryException(propName + " is not a property query name in any of the types in from ...");
-        } else if (noFound > 1 && !isStar) {
+        
+        if (noFound > 1 && !isStar) {
             throw new CmisQueryException(propName + " is not a unique property query name within the types in from ...");
-        } else {
-            if (null != tdFound) {
-                validateColumnReferenceAndResolveType(tdFound, colRef);
-            }
+        } else if (null != tdFound) {
+        	validateColumnReferenceAndResolveType(tdFound, colRef);
         }
     }
 
