@@ -270,7 +270,7 @@ public final class PropertyCreationHelper {
         return props;
     }
 
-    public static Properties getPropertiesFromObject(StoredObject so, ObjectStore objectStore,
+    public static Properties getPropertiesFromObject(TypeManager tm, StoredObject so, ObjectStore objectStore,
             TypeDefinition primaryType, List<TypeDefinition> secondaryTypes, Map<String, String> requestedIds,
             Map<String, String> requestedFuncs) {
         // build properties collection
@@ -347,6 +347,20 @@ public final class PropertyCreationHelper {
                 }
             }
         }
+        
+        // add secondary properties that are not part of a JOIN in a query, e.g.
+        // SELECT cmis:name, mySecondaryProp FROM cmis:document ...
+        // we do not have an exact type definition in this case mySecondaryProp can be part of multiple
+        // type definitions, take the first one found.
+        if (!requestedIds.containsValue("*")) {
+			for (Map.Entry<String, String> prop : requestedIds.entrySet()) {
+				if (!mappedProperties.containsKey(prop.getValue())) {
+					PropertyData<?> pd = properties.get(prop.getValue());
+					TypeDefinition typeDef = findFirstTypeDefHavingProperty(tm, so, pd);
+					addPropertyToMap(mappedProperties, typeDef, pd, prop.getKey());
+				}
+			}
+        }
 
         // add functions:
         for (Entry<String, String> funcEntry : requestedFuncs.entrySet()) {
@@ -372,7 +386,19 @@ public final class PropertyCreationHelper {
         return props;
     }
 
-    private static void addNotSetPropertyToMap(Map<String, PropertyData<?>> mappedProperties, TypeDefinition typeDef,
+    private static TypeDefinition findFirstTypeDefHavingProperty(TypeManager tm, StoredObject so, PropertyData<?> pd) {
+    	List<String> typeIds = so.getSecondaryTypeIds();
+    	for (String typeId : typeIds) {
+    		TypeDefinition typeDef = tm.getTypeById(typeId).getTypeDefinition();
+    		Map<String, PropertyDefinition<?>> propMap = typeDef.getPropertyDefinitions();
+    		if (propMap.containsKey(pd.getId())) {
+    			return typeDef;
+    		}
+    	}
+		return null;
+	}
+
+	private static void addNotSetPropertyToMap(Map<String, PropertyData<?>> mappedProperties, TypeDefinition typeDef,
             String propId, String queryNameOrAlias) {
         PropertyDefinition<?> propDef = typeDef.getPropertyDefinitions().get(propId);
         if (null != propDef) {
@@ -468,7 +494,7 @@ public final class PropertyCreationHelper {
         ObjectDataImpl od = new ObjectDataImpl();
 
         // build properties collection
-        Properties props = getPropertiesFromObject(so, objectStore, primaryType, secondaryTypes, requestedProperties,
+        Properties props = getPropertiesFromObject(tm, so, objectStore, primaryType, secondaryTypes, requestedProperties,
                 requestedFuncs);
 
         // fill output object

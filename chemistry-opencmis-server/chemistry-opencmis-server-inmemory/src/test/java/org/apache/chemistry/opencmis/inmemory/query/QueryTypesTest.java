@@ -127,14 +127,22 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesTest7() {
+    public void resolveTypesTest7() throws Exception {
         String statement = "SELECT UnknownProperty FROM BookType WHERE ISBN = '100'";
-        try {
-            verifyResolveSelect(statement);
-            fail("Select of unknown property in type should fail.");
-        } catch (Exception e) {
-            assertTrue(e instanceof CmisInvalidArgumentException);
-            assertTrue(e.toString().contains("is not a property query name in any"));
+
+        CmisQueryWalker walker = getWalker(statement);
+        assertNotNull(queryObj);
+        assertNotNull(walker);
+        Map<String, String> types = queryObj.getTypes();
+        assertTrue(1 == types.size());
+        List<CmisSelector> selects = queryObj.getSelectReferences();
+        assertTrue(1 == selects.size());
+        for (CmisSelector select : selects) {
+            assertTrue(select instanceof ColumnReference);
+            ColumnReference colRef = ((ColumnReference) select);
+            assertTrue(null == colRef.getTypeDefinition());
+            assertTrue(colRef.getPropertyQueryName().equals("UnknownProperty"));
+            assertTrue(null == colRef.getPropertyId());
         }
     }
 

@@ -1099,7 +1099,23 @@ public class EvalQueryTest extends AbstractServiceTest {
 
         log.debug("...Stop testSecondaryJoin.");
     }
-
+    
+    @Test
+    public void testAskForSecondaryPropertyOnSimpleQuery() {
+        log.debug("Start testAskForSecondaryPropertyOnSimpleQuery...");
+        dataCreator.createSecondaryTestDocuments();
+        String statement = "SELECT cmis:name, cmis:objectId, " + UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP
+        		+ " AS SecInt, " + UnitTestTypeSystemCreator.SECONDARY_STRING_PROP + " FROM " + COMPLEX_TYPE + 
+        		" WHERE cmis:name LIKE 'docwithsecondary%'";
+        ObjectList res = doQuery(statement);
+        assertEquals(2, res.getObjects().size());
+        assertTrue(resultContainsProperty(PropertyIds.NAME, res));
+        assertTrue(resultContainsProperty(PropertyIds.OBJECT_ID, res));
+        assertTrue(resultContainsProperty(UnitTestTypeSystemCreator.SECONDARY_STRING_PROP, res));
+        assertTrue(resultContainsQueryName("SecInt", res));
+        log.debug("...Stop testAskForSecondaryPropertyOnSimpleQuery.");
+    }
+    
     @Test
     public void testMultipleContains() {
         log.debug("Start testMultipleContains...");
@@ -1200,6 +1216,17 @@ public class EvalQueryTest extends AbstractServiceTest {
             }
         }
         return true;
+    }
+    
+    private static boolean resultContainsQueryName(String queryName, ObjectList results) {
+        for (ObjectData od : results.getObjects()) {
+        	for (PropertyData<?> propData : od.getProperties().getProperties().values()) {
+        		if (queryName.equals(propData.getQueryName())) {
+        			return true;
+        		}
+        	}
+        }
+        return false;
     }
 
 }
