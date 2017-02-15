@@ -21,15 +21,13 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -44,12 +42,14 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
 
     private static final long serialVersionUID = 1L;
 
+    private static final int HISTORY = 10;
+
     private final ClientModel model;
 
     private String parentId;
 
     private JButton upButton;
-    private JTextField pathField;
+    private JComboBox<String> pathField;
     private JButton goButton;
     private FolderTable folderTable;
 
@@ -71,7 +71,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
 
                 if (currentFolder != null) {
                     String path = currentFolder.getPath();
-                    pathField.setText(path);
+                    setPath(path);
 
                     Folder parent = null;
                     try {
@@ -87,7 +87,7 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
                         upButton.setEnabled(true);
                     }
                 } else {
-                    pathField.setText("???");
+                    setPath(null);
                     parentId = null;
                     upButton.setEnabled(false);
                 }
@@ -136,21 +136,14 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         });
         panel.add(upButton);
 
-        pathField = new JTextField("");
-        pathField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
+        pathField = new JComboBox<String>();
+        pathField.setEditable(true);
+        pathField.setMaximumRowCount(HISTORY);
 
+        pathField.getEditor().addActionListener(new ActionListener() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    loadFolder();
-                }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
+            public void actionPerformed(ActionEvent e) {
+                loadFolder();
             }
         });
         panel.add(pathField);
@@ -173,8 +166,45 @@ public class FolderPanel extends JPanel implements FolderListener, ObjectListene
         add(new JScrollPane(folderTable), BorderLayout.CENTER);
     }
 
+    public void clear() {
+        pathField.removeAllItems();
+    }
+
+    private void setPath(String path) {
+        if (path == null) {
+            // no path -> object couldn't be loaded
+            pathField.setSelectedItem("");
+            return;
+        }
+
+        // if the new path already exists in the history, remove it
+        int i = 0;
+        while (i < pathField.getItemCount()) {
+            if (path.equals(pathField.getItemAt(i))) {
+                pathField.removeItemAt(i);
+            } else {
+                i++;
+            }
+        }
+
+        // add new path at the top
+        pathField.insertItemAt(path, 0);
+
+        // cut history
+        while (pathField.getItemCount() > HISTORY) {
+            pathField.removeItemAt(HISTORY);
+        }
+
+        // select the path in combo box
+        pathField.setSelectedIndex(0);
+    }
+
+    private String getPath() {
+        return pathField.getEditor().getItem().toString().trim();
+    }
+
     private void loadFolder() {
-        LoadFolderWorker.loadFolder(this, model, pathField.getText().trim());
+        LoadFolderWorker.loadFolder(this, model, getPath());
     }
 
     private void loadParentFolder() {

@@ -16,13 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
-import org.apache.chemistry.opencmis.client.util.*
-
-// def cmis = new scripts.CMIS(session)
-// println session.repositoryInfo.name
-// cmis.printObjectSummary "/"
+ 
+OperationContext ctxt = OperationContextUtils.createMaximumOperationContext()
+CmisObject cmisObject = session.getObject("...", ctxt)

@@ -21,6 +21,7 @@ import org.apache.chemistry.opencmis.commons.*
 import org.apache.chemistry.opencmis.commons.data.*
 import org.apache.chemistry.opencmis.commons.enums.*
 import org.apache.chemistry.opencmis.client.api.*
+import org.apache.chemistry.opencmis.client.util.*
 
 println "'cmis:document' and subtypes:     ${countTypes('cmis:document')}"
 println "'cmis:item' and subtypes:         ${countTypes('cmis:item')}"

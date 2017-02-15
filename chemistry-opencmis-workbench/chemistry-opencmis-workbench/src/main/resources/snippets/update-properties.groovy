@@ -17,12 +17,10 @@
  * under the License.
  */
 
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
-import org.apache.chemistry.opencmis.client.util.*
+CmisObject cmisObject = ...
 
-// def cmis = new scripts.CMIS(session)
-// println session.repositoryInfo.name
-// cmis.printObjectSummary "/"
+def properties = [
+    (PropertyIds.NAME): "new name"
+]
+
+cmisObject.updateProperties(properties)

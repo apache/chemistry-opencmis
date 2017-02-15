@@ -17,12 +17,15 @@
  * under the License.
  */
 
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
-import org.apache.chemistry.opencmis.client.util.*
+Folder parentFolder = ...
+String name = "document.txt"
+String content = "content"
 
-// def cmis = new scripts.CMIS(session)
-// println session.repositoryInfo.name
-// cmis.printObjectSummary "/"
+def properties = [
+    (PropertyIds.OBJECT_TYPE_ID): "cmis:document",
+    (PropertyIds.NAME): name
+]
+
+def contentStream = ContentStreamUtils.createTextContentStream(name, content)
+
+parentFolder.createDocument(properties, contentStream, VersioningState.NONE)

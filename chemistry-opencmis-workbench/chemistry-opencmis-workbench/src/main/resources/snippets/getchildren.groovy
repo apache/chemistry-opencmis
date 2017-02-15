@@ -16,13 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+ 
+Folder folder = ...
+OperationContext ctxt = OperationContextUtils.createMaximumOperationContext()
 
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
-import org.apache.chemistry.opencmis.client.util.*
-
-// def cmis = new scripts.CMIS(session)
-// println session.repositoryInfo.name
-// cmis.printObjectSummary "/"
+folder.getChildren(ctxt).each { child ->
+    println "${child.name} (${child.id}) [${child.type.id}]"
+}

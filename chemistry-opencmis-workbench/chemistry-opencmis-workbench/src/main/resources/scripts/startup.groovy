@@ -21,6 +21,7 @@ import org.apache.chemistry.opencmis.commons.*
 import org.apache.chemistry.opencmis.commons.data.*
 import org.apache.chemistry.opencmis.commons.enums.*
 import org.apache.chemistry.opencmis.client.api.*
+import org.apache.chemistry.opencmis.client.util.*
 
 // variable 'session' is bound to the current OpenCMIS session
 

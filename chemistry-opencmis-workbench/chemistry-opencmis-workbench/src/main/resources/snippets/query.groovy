@@ -17,12 +17,9 @@
  * under the License.
  */
 
-import org.apache.chemistry.opencmis.commons.*
-import org.apache.chemistry.opencmis.commons.data.*
-import org.apache.chemistry.opencmis.commons.enums.*
-import org.apache.chemistry.opencmis.client.api.*
-import org.apache.chemistry.opencmis.client.util.*
+String queryStmt = "SELECT * FROM cmis:document"
 
-// def cmis = new scripts.CMIS(session)
-// println session.repositoryInfo.name
-// cmis.printObjectSummary "/"
+for(QueryResult hit: session.query(queryStmt, false)) {
+    hit.properties.each{ println "${it.queryName}: ${it.firstValue}" }
+    println "----------------------------------"
+}

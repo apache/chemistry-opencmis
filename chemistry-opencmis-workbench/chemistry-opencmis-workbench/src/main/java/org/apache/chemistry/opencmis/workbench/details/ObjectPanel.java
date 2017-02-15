@@ -19,7 +19,6 @@
 package org.apache.chemistry.opencmis.workbench.details;
 
 import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNullOrEmpty;
-import groovy.ui.Console;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -58,6 +57,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.workbench.ClientHelper;
+import org.apache.chemistry.opencmis.workbench.ConsoleHelper;
 import org.apache.chemistry.opencmis.workbench.WorkbenchScale;
 import org.apache.chemistry.opencmis.workbench.checks.ObjectComplianceTestGroup;
 import org.apache.chemistry.opencmis.workbench.checks.SwingReport;
@@ -68,6 +68,8 @@ import org.apache.chemistry.opencmis.workbench.swing.BaseTypeLabel;
 import org.apache.chemistry.opencmis.workbench.swing.InfoPanel;
 import org.apache.chemistry.opencmis.workbench.worker.LoadObjectWorker;
 import org.apache.chemistry.opencmis.workbench.worker.TempFileContentWorker;
+
+import groovy.ui.Console;
 
 public class ObjectPanel extends InfoPanel implements ObjectListener {
 
@@ -177,11 +179,10 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                                 pwcField.setText("(not checked out)");
                             }
 
-                            sizeField.setText(doc.getContentStreamLength() >= 0 ? NumberFormat.getInstance().format(
-                                    doc.getContentStreamLength())
-                                    + " bytes" : "");
-                            mimeTypeField.setText(doc.getContentStreamMimeType() != null ? doc
-                                    .getContentStreamMimeType() : "");
+                            sizeField.setText(doc.getContentStreamLength() >= 0
+                                    ? NumberFormat.getInstance().format(doc.getContentStreamLength()) + " bytes" : "");
+                            mimeTypeField.setText(
+                                    doc.getContentStreamMimeType() != null ? doc.getContentStreamMimeType() : "");
                         } else {
                             latestAccessibleStateIdField.setText("");
                             pwcField.setText("");
@@ -336,8 +337,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    Map<String, String> parameters = new HashMap<String, String>(getClientModel().getClientSession()
-                            .getSessionParameters());
+                    Map<String, String> parameters = new HashMap<String, String>(
+                            getClientModel().getClientSession().getSessionParameters());
                     parameters.put(SessionParameter.REPOSITORY_ID, getClientModel().getRepositoryInfo().getId());
                     String objectId = getClientModel().getCurrentObject().getId();
 
@@ -362,7 +363,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                    ClientHelper.openConsole(ObjectPanel.this, getClientModel(),
+                    ConsoleHelper.openConsole(ObjectPanel.this, getClientModel(),
                             createGroovySourceCode(getClientModel().getCurrentObject()));
                 } catch (Exception ex) {
                     ClientHelper.showError(null, ex);
@@ -385,7 +386,7 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         TempFileContentWorker worker = new TempFileContentWorker(ObjectPanel.this, doc) {
                             @Override
                             protected void processTempFile(File file) {
-                                Console console = ClientHelper.openConsole(ObjectPanel.this, getClientModel(),
+                                Console console = ConsoleHelper.openConsole(ObjectPanel.this, getClientModel(),
                                         (String) null);
                                 if (console != null) {
                                     console.loadScriptFile(file);
@@ -418,7 +419,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
                         scriptOutput.setVisible(true);
                         scriptOutput.invalidate();
 
-                        ClientHelper.runJSR223Script(ObjectPanel.this, getClientModel(), file, ext, scriptOutputWriter);
+                        ConsoleHelper.runJSR223Script(ObjectPanel.this, getClientModel(), file, ext,
+                                scriptOutputWriter);
                     }
                 };
                 worker.executeTask();
@@ -442,7 +444,8 @@ public class ObjectPanel extends InfoPanel implements ObjectListener {
         sb.append("import org.apache.chemistry.opencmis.commons.*\n");
         sb.append("import org.apache.chemistry.opencmis.commons.data.*\n");
         sb.append("import org.apache.chemistry.opencmis.commons.enums.*\n");
-        sb.append("import org.apache.chemistry.opencmis.client.api.*\n\n");
+        sb.append("import org.apache.chemistry.opencmis.client.api.*\n");
+        sb.append("import org.apache.chemistry.opencmis.client.util.*\n\n");
 
         sb.append("// ");
         sb.append(object.getName());

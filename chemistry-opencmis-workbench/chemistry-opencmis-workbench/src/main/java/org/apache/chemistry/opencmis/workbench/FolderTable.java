@@ -470,6 +470,10 @@ public class FolderTable extends JTable implements FolderListener {
 
                 @Override
                 public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                    if (flavor != DataFlavor.javaFileListFlavor) {
+                        throw new UnsupportedFlavorException(flavor);
+                    }
+
                     try {
                         TempFileContentWorker worker = new TempFileContentWorker(null, (Document) object);
                         return Collections.singletonList(worker.executeSync());

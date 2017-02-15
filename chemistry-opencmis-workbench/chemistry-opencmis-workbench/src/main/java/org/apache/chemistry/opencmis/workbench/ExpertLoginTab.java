@@ -20,30 +20,43 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.DropMode;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.TransferHandler;
 
 import org.apache.chemistry.opencmis.client.SessionParameterMap;
+import org.apache.chemistry.opencmis.client.bindings.spi.ClientCertificateAuthenticationProvider;
+import org.apache.chemistry.opencmis.client.bindings.spi.OAuthAuthenticationProvider;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.ApacheClientHttpInvoker;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.DefaultHttpInvoker;
 import org.apache.chemistry.opencmis.client.bindings.spi.http.OkHttpHttpInvoker;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.impl.IOUtils;
 import org.apache.chemistry.opencmis.workbench.ClientHelper.FileEntry;
 import org.apache.chemistry.opencmis.workbench.model.ClientSession;
 
@@ -105,10 +118,16 @@ public class ExpertLoginTab extends AbstractLoginTab {
         add(configs, BorderLayout.PAGE_START);
 
         sessionParameterTextArea = new JTextArea();
-        sessionParameterTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, sessionParameterTextArea.getFont()
-                .getSize()));
+        sessionParameterTextArea
+                .setFont(new Font(Font.MONOSPACED, Font.PLAIN, sessionParameterTextArea.getFont().getSize()));
         add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
 
+        // drag and drop support
+        sessionParameterTextArea.setTransferHandler(new TextAreaTransferHandler());
+        sessionParameterTextArea.setDragEnabled(true);
+        sessionParameterTextArea.setDropMode(DropMode.INSERT);
+
+        // context menu
         final JPopupMenu popup = new JPopupMenu("Session Parameters");
         popup.add(createMenuGroup("Binding", SessionParameter.BINDING_TYPE, SessionParameter.ATOMPUB_URL,
                 SessionParameter.BROWSER_URL, SessionParameter.BROWSER_SUCCINCT,
@@ -123,8 +142,15 @@ public class ExpertLoginTab extends AbstractLoginTab {
                 SessionParameter.USER_AGENT, SessionParameter.PROXY_USER, SessionParameter.PROXY_PASSWORD,
                 SessionParameter.CONNECT_TIMEOUT, SessionParameter.READ_TIMEOUT));
 
-        popup.add(createMenuGroup("OAuth", SessionParameter.OAUTH_CLIENT_ID, SessionParameter.OAUTH_CLIENT_SECRET,
-                SessionParameter.OAUTH_CODE, SessionParameter.OAUTH_TOKEN_ENDPOINT, SessionParameter.OAUTH_REDIRECT_URI));
+        popup.add(createMenuGroup("OAuth",
+                SessionParameter.AUTHENTICATION_PROVIDER_CLASS + "=" + OAuthAuthenticationProvider.class.getName(),
+                SessionParameter.OAUTH_CLIENT_ID, SessionParameter.OAUTH_CLIENT_SECRET, SessionParameter.OAUTH_CODE,
+                SessionParameter.OAUTH_TOKEN_ENDPOINT, SessionParameter.OAUTH_REDIRECT_URI));
+
+        popup.add(createMenuGroup("Client Certificate",
+                SessionParameter.AUTHENTICATION_PROVIDER_CLASS + "="
+                        + ClientCertificateAuthenticationProvider.class.getName(),
+                SessionParameter.CLIENT_CERT_KEYFILE, SessionParameter.CLIENT_CERT_PASSPHRASE));
 
         popup.add(createMenuGroup("HTTP Invoker",
                 SessionParameter.HTTP_INVOKER_CLASS + "=" + DefaultHttpInvoker.class.getName(),
@@ -213,5 +239,114 @@ public class ExpertLoginTab extends AbstractLoginTab {
     @Override
     public boolean transferSessionParametersToExpertTab() {
         return false;
+    }
+
+    private class TextAreaTransferHandler extends TransferHandler {
+
+        private static final long serialVersionUID = 1L;
+
+        public TextAreaTransferHandler() {
+            super();
+        }
+
+        @Override
+        public boolean canImport(TransferSupport support) {
+            // we support files and strings
+            if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+                    && !support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                return false;
+            }
+
+            if (!support.isDrop()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean importData(TransferSupport support) {
+            if (!canImport(support)) {
+                return false;
+            }
+
+            if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                // we have file
+                File file = null;
+                try {
+                    List<File> fileList = (List<File>) support.getTransferable()
+                            .getTransferData(DataFlavor.javaFileListFlavor);
+
+                    // one file only
+                    if (fileList == null || fileList.size() != 1 || fileList.get(0) == null
+                            || !fileList.get(0).isFile()) {
+                        return false;
+                    }
+
+                    file = fileList.get(0);
+                } catch (Exception ex) {
+                    ClientHelper.showError(null, ex);
+                    return false;
+                }
+
+                // read the first 100 lines
+                InputStream stream = null;
+                try {
+                    stream = new BufferedInputStream(new FileInputStream(file));
+                    sessionParameterTextArea.setText(IOUtils.readAllLines(stream, 100));
+                } catch (IOException e) {
+                    ClientHelper.showError(ExpertLoginTab.this, e);
+                } finally {
+                    IOUtils.closeQuietly(stream);
+                }
+            } else if (support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                // we have string
+                try {
+                    sessionParameterTextArea
+                            .setText((String) support.getTransferable().getTransferData(DataFlavor.stringFlavor));
+                } catch (Exception e) {
+                    ClientHelper.showError(ExpertLoginTab.this, e);
+                }
+            } else {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int getSourceActions(JComponent c) {
+            return COPY;
+        }
+
+        @Override
+        protected Transferable createTransferable(JComponent c) {
+            return new Transferable() {
+                @Override
+                public boolean isDataFlavorSupported(DataFlavor flavor) {
+                    return flavor == DataFlavor.stringFlavor;
+                }
+
+                @Override
+                public DataFlavor[] getTransferDataFlavors() {
+                    return new DataFlavor[] { DataFlavor.stringFlavor };
+                }
+
+                @Override
+                public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                    if (flavor != DataFlavor.stringFlavor) {
+                        throw new UnsupportedFlavorException(flavor);
+                    }
+
+                    String s = sessionParameterTextArea.getSelectedText();
+                    if (s == null) {
+                        s = sessionParameterTextArea.getText();
+                    }
+
+                    return s;
+                }
+            };
+        }
     }
 }
