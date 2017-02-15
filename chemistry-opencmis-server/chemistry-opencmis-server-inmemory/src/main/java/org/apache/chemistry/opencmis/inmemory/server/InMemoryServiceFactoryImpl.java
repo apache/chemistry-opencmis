@@ -240,6 +240,12 @@ public class InMemoryServiceFactoryImpl extends AbstractAsyncServiceFactory {
             TypeManager tmc = typeManager;
             importTypesFromFile(tmc, typeDefsFileName);
         }
+        
+        // check if relaxed parser mode is configured (only for unit tests)
+        String parserMode = parameters.get(ConfigConstants.PARSER_MODE);
+        if (null != parserMode) {
+        	storeManager.addFlag(parserMode);
+        }
         return created;
     }
 

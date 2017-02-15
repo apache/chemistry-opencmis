@@ -84,6 +84,11 @@ public interface StoreManager {
     void createAndInitRepository(String repositoryId, String typeCreatorClassName);
 
     /**
+     * Add option to specify runtime options
+     */
+    void addFlag(String flag);
+    
+    /**
      * Retrieve a list with all type definitions.
      * 
      * @param repositoryId

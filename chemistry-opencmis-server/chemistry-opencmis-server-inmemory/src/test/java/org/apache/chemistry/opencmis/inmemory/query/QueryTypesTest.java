@@ -38,6 +38,7 @@ import org.apache.chemistry.opencmis.server.support.query.AbstractPredicateWalke
 import org.apache.chemistry.opencmis.server.support.query.CmisQueryWalker;
 import org.apache.chemistry.opencmis.server.support.query.CmisSelector;
 import org.apache.chemistry.opencmis.server.support.query.ColumnReference;
+import org.apache.chemistry.opencmis.server.support.query.QueryObject;
 import org.apache.chemistry.opencmis.server.support.query.QueryObject.SortSpec;
 import org.junit.After;
 import org.junit.Before;
@@ -127,10 +128,22 @@ public class QueryTypesTest extends AbstractQueryTest {
     }
 
     @Test
-    public void resolveTypesTest7() throws Exception {
+    public void resolveTypesTest7StrictSelect() {
+        String statement = "SELECT UnknownProperty FROM BookType WHERE ISBN = '100'";
+        try {
+            verifyResolveSelect(statement);
+            fail("Select of unknown property in type should fail.");
+        } catch (Exception e) {
+            assertTrue(e instanceof CmisInvalidArgumentException);
+            assertTrue(e.toString().contains("is not a property query name in any"));
+        }
+    }
+
+    @Test
+    public void resolveTypesTest7RelaxedSelect() throws Exception {
         String statement = "SELECT UnknownProperty FROM BookType WHERE ISBN = '100'";
 
-        CmisQueryWalker walker = getWalker(statement);
+        CmisQueryWalker walker = getWalker(statement, QueryObject.ParserMode.MODE_ALLOW_RELAXED_SELECT);
         assertNotNull(queryObj);
         assertNotNull(walker);
         Map<String, String> types = queryObj.getTypes();
@@ -164,10 +177,11 @@ public class QueryTypesTest extends AbstractQueryTest {
         verifyResolveSelect(statement);
     }
 
-    private void verifyResolveSelect(String statement) throws Exception {
+    private void verifyResolveSelect(String statement, QueryObject.ParserMode mode) throws Exception {
         CmisQueryWalker walker = getWalker(statement);
         assertNotNull(queryObj);
         assertNotNull(walker);
+        queryObj.setSelectMode(mode);
         Map<String, String> types = queryObj.getTypes();
         assertTrue(1 == types.size());
         List<CmisSelector> selects = queryObj.getSelectReferences();
@@ -179,6 +193,10 @@ public class QueryTypesTest extends AbstractQueryTest {
             assertTrue(colRef.getPropertyQueryName().equals(TITLE_PROP)
                     || colRef.getPropertyQueryName().equals(AUTHOR_PROP));
         }
+    }
+
+    private void verifyResolveSelect(String statement) throws Exception {
+    	verifyResolveSelect(statement, QueryObject.ParserMode.MODE_STRICT);
     }
 
     @Test

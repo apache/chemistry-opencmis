@@ -59,14 +59,18 @@ public class EvalQueryTest extends AbstractServiceTest {
     @Override
     @Before
     public void setUp() {
+    	setUp(false);
+    }
+
+    protected void setUp(boolean parserMode) {
         // initialize query object with type manager
         super.setTypeCreatorClass(UnitTestTypeSystemCreator.class.getName());
-        super.setUp();
+        super.setUp(parserMode);
         // create test data
         dataCreator = new QueryTestDataCreator(fRepositoryId, fRootFolderId, fObjSvc, fVerSvc);
         dataCreator.createBasicTestData();
     }
-
+    
     @Override
     @After
     public void tearDown() {
@@ -1103,6 +1107,7 @@ public class EvalQueryTest extends AbstractServiceTest {
     @Test
     public void testAskForSecondaryPropertyOnSimpleQuery() {
         log.debug("Start testAskForSecondaryPropertyOnSimpleQuery...");
+        setUp(true); // force relaxed parser mode
         dataCreator.createSecondaryTestDocuments();
         String statement = "SELECT cmis:name, cmis:objectId, " + UnitTestTypeSystemCreator.SECONDARY_INTEGER_PROP
         		+ " AS SecInt, " + UnitTestTypeSystemCreator.SECONDARY_STRING_PROP + " FROM " + COMPLEX_TYPE + 

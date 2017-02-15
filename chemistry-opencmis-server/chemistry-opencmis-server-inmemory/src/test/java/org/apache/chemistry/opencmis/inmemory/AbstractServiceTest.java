@@ -110,12 +110,19 @@ public class AbstractServiceTest {
     }
 
     protected void setUp() {
+    	setUp(false);
+    }
+    
+    protected void setUp(boolean relaxedParserMode) {
         LOG.debug("Initializing InMemory Test with type creator class: " + fTypeCreatorClassName);
         Map<String, String> parameters = new HashMap<String, String>();
 
         // attach repository info to the session:
         parameters.put(ConfigConstants.TYPE_CREATOR_CLASS, fTypeCreatorClassName);
         parameters.put(ConfigConstants.REPOSITORY_ID, REPOSITORY_ID);
+        if (relaxedParserMode) {
+        	parameters.put(ConfigConstants.PARSER_MODE, "ParserModeRelaxed");
+        }
 
         // give subclasses a chance to provide additional parameters for special
         // tests

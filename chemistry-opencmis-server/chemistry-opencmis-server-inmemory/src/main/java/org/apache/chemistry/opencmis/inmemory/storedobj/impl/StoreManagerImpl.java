@@ -109,6 +109,9 @@ public class StoreManagerImpl implements StoreManager {
      * Map from repository id to a object store.
      */
     private final Map<String, ObjectStore> fMapRepositoryToObjectStore = new HashMap<String, ObjectStore>();
+    
+    private boolean relaxedParserMode = false;
+    
 
     public ObjectStoreImpl getStore(String repositoryId) {
         return (ObjectStoreImpl) fMapRepositoryToObjectStore.get(repositoryId);
@@ -147,6 +150,13 @@ public class StoreManagerImpl implements StoreManager {
         initTypeSystem(repositoryId, typeCreatorClassName);
     }
 
+    @Override
+    public void addFlag(String flag) {
+    	if (flag.trim().equalsIgnoreCase("ParserModeRelaxed")) {
+    		relaxedParserMode = true;
+    	}
+    }
+    
     @Override
     public ObjectStore getObjectStore(String repositoryId) {
         return fMapRepositoryToObjectStore.get(repositoryId);
@@ -576,7 +586,7 @@ public class StoreManagerImpl implements StoreManager {
         TypeManager tm = getTypeManager(repositoryId);
         ObjectStore objectStore = getObjectStore(repositoryId);
 
-        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId), callContext);
+        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId), callContext, relaxedParserMode);
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 

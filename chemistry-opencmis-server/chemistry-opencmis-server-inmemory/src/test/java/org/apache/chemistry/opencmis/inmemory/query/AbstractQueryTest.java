@@ -86,6 +86,13 @@ public abstract class AbstractQueryTest {
         return queryUtil.getWalker();
     }
 
+    protected CmisQueryWalker getWalker(String statement, QueryObject.ParserMode mode) throws RecognitionException {
+        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, typeManager, predicateWalker, true, mode);
+        queryUtil.processStatementUsingCmisExceptions();
+        queryObj = queryUtil.getQueryObject();
+        return queryUtil.getWalker();
+    }
+
     // Helper to create some types for testing
 
     protected List<TypeDefinition> createTypes() {

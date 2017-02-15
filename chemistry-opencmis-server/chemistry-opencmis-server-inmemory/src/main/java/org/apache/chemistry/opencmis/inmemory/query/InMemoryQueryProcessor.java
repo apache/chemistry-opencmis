@@ -87,10 +87,12 @@ public class InMemoryQueryProcessor {
     private ObjectStoreImpl objStore;
     private List<TypeDefinition> secondaryTypeIds;
     private CallContext callContext;
+    private boolean relaxedParserMode;
 
-    public InMemoryQueryProcessor(ObjectStoreImpl objStore, CallContext ctx) {
+    public InMemoryQueryProcessor(ObjectStoreImpl objStore, CallContext ctx, boolean relaxedParserMode) {
         this.objStore = objStore;
         this.callContext = ctx;
+        this.relaxedParserMode = relaxedParserMode;
     }
 
     /**
@@ -147,7 +149,12 @@ public class InMemoryQueryProcessor {
      *            type manager for the repository
      */
     public void processQueryAndCatchExc(String statement, TypeManager tm) {
-        QueryUtilStrict queryUtil = new QueryUtilStrict(statement, tm, null);
+        QueryUtilStrict queryUtil;
+        if (relaxedParserMode) {
+        	queryUtil = new QueryUtilStrict(statement, tm, null, true, QueryObject.ParserMode.MODE_ALLOW_RELAXED_SELECT);
+        } else {
+        	queryUtil = new QueryUtilStrict(statement, tm, null);
+        }
         queryUtil.processStatementUsingCmisExceptions();
         CmisQueryWalker walker = queryUtil.getWalker();
         queryObj = queryUtil.getQueryObject();
