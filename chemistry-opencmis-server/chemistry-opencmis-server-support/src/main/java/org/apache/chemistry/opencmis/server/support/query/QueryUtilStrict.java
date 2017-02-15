@@ -38,11 +38,16 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
     private boolean parseFulltext = true;
 
     public QueryUtilStrict(String statement, TypeManager tm, PredicateWalkerBase pw) {
-        super(statement, tm, pw);
+        super(statement, tm, pw, null);
     }
 
     public QueryUtilStrict(String statement, TypeManager tm, PredicateWalkerBase pw, boolean parseFulltext) {
-        super(statement, tm, pw);
+        super(statement, tm, pw, null);
+        this.parseFulltext = parseFulltext;
+    }
+
+    public QueryUtilStrict(String statement, TypeManager tm, PredicateWalkerBase pw, boolean parseFulltext, QueryObject.ParserMode mode) {
+        super(statement, tm, pw, mode);
         this.parseFulltext = parseFulltext;
     }
 

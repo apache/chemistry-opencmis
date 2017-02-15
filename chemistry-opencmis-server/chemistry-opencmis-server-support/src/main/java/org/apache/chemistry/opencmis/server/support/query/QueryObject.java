@@ -80,6 +80,10 @@ public class QueryObject {
     };
 
     private String errorMessage;
+    
+    public enum ParserMode {MODE_STRICT, MODE_ALLOW_RELAXED_SELECT};
+    
+    private ParserMode selectMode = ParserMode.MODE_STRICT;
 
     public static class JoinSpec {
 
@@ -137,6 +141,10 @@ public class QueryObject {
         typeMgr = tm;
     }
 
+    public void setSelectMode(ParserMode mode) {
+    	selectMode = mode;
+    }
+    
     public Map<Integer, CmisSelector> getColumnReferences() {
         return Collections.unmodifiableMap(columnReferences);
     }
@@ -559,7 +567,9 @@ public class QueryObject {
             }
         }
         
-        if (noFound > 1 && !isStar) {
+        if (noFound == 0 && selectMode == ParserMode.MODE_STRICT) {
+        	throw new CmisQueryException(propName + " is not a property query name in any of the types in from ...");
+        } else if (noFound > 1 && !isStar) {
             throw new CmisQueryException(propName + " is not a unique property query name within the types in from ...");
         } else if (null != tdFound) {
         	validateColumnReferenceAndResolveType(tdFound, colRef);

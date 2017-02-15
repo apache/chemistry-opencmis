@@ -73,9 +73,12 @@ public abstract class QueryUtilBase<T extends TreeParser> {
         walkStatement();
     }
 
-    protected QueryUtilBase(String statement, TypeManager tm, PredicateWalkerBase pw) {
+    protected QueryUtilBase(String statement, TypeManager tm, PredicateWalkerBase pw, QueryObject.ParserMode mode) {
         walker = null;
         queryObj = new QueryObject(tm);
+        if (mode != null) {
+        	queryObj.setSelectMode(mode);
+        }
         predicateWalker = pw;
         this.statement = statement;
     }
