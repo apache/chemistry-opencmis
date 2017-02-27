@@ -35,7 +35,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Content Stream Updates capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -45,7 +45,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Changes capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -55,7 +55,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns Rendition capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -68,7 +68,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the Get Descendants capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -78,7 +78,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns Get Folder Tree capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -87,7 +87,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Order By capability.
      *
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.1
@@ -100,7 +100,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the Multifiling capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -110,7 +110,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the Unfiling capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -120,7 +120,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the Version Specific Filing capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -132,7 +132,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the PWC Searchable capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -142,7 +142,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the PWC Updatable capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -152,7 +152,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the All Versions Searchable capability.
      * 
      * @return {@code true} if supported, {@code false} if not supported, or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.0
      */
@@ -163,7 +163,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Query capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -173,7 +173,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Join capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -185,7 +185,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the ACL capability.
      * 
-     * @return the capability enum or {code null} if the the repository does not
+     * @return the capability enum or {@code null} if the the repository does not
      *         provide this value
      * 
      * @cmis 1.0
@@ -197,7 +197,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
     /**
      * Returns the Creatable Property Types capability.
      * 
-     * @return the creatable property types or {code null} if the the repository
+     * @return the creatable property types or {@code null} if the the repository
      *         does not provide this value
      * 
      * @cmis 1.1
@@ -208,7 +208,7 @@ public interface RepositoryCapabilities extends Serializable, ExtensionsData {
      * Returns the New Type Settable Attributes capability.
      * 
      * @return the attributes that can be set when a new type is created or
-     *         {code null} if the the repository does not provide this value
+     *         {@code null} if the the repository does not provide this value
      * 
      * @cmis 1.1
      */
