@@ -34,7 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.apache.chemistry.opencmis.commons.ExtensionFeatures;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -244,7 +243,8 @@ public final class JSONConverter {
             } else {
                 for (Object ef : extendedFeatures) {
                     if (ef instanceof ExtensionFeature) {
-                        if (ExtensionFeatures.EXTENDED_DATETIME_FORMAT.getId().equals(((ExtensionFeature) ef).getId())) {
+                        if (ExtensionFeatures.EXTENDED_DATETIME_FORMAT.getId()
+                                .equals(((ExtensionFeature) ef).getId())) {
                             addFeature = false;
                             break;
                         }
@@ -518,8 +518,8 @@ public final class JSONConverter {
 
         RepositoryCapabilitiesImpl result = new RepositoryCapabilitiesImpl();
 
-        result.setCapabilityContentStreamUpdates(getEnum(json, JSON_CAP_CONTENT_STREAM_UPDATABILITY,
-                CapabilityContentStreamUpdates.class));
+        result.setCapabilityContentStreamUpdates(
+                getEnum(json, JSON_CAP_CONTENT_STREAM_UPDATABILITY, CapabilityContentStreamUpdates.class));
         result.setCapabilityChanges(getEnum(json, JSON_CAP_CHANGES, CapabilityChanges.class));
         result.setCapabilityRendition(getEnum(json, JSON_CAP_RENDITIONS, CapabilityRenditions.class));
         result.setSupportsGetDescendants(getBoolean(json, JSON_CAP_GET_DESCENDANTS));
@@ -539,8 +539,8 @@ public final class JSONConverter {
         if (creatablePropertyTypesJson != null) {
             CreatablePropertyTypesImpl creatablePropertyTypes = new CreatablePropertyTypesImpl();
 
-            List<Object> canCreateJson = getList(creatablePropertyTypesJson
-                    .get(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE));
+            List<Object> canCreateJson = getList(
+                    creatablePropertyTypesJson.get(JSON_CAP_CREATABLE_PROPERTY_TYPES_CANCREATE));
             if (canCreateJson != null) {
                 Set<PropertyType> canCreate = EnumSet.noneOf(PropertyType.class);
 
@@ -566,32 +566,32 @@ public final class JSONConverter {
         if (newTypeSettableAttributesJson != null) {
             NewTypeSettableAttributesImpl newTypeSettableAttributes = new NewTypeSettableAttributesImpl();
 
-            newTypeSettableAttributes.setCanSetId(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID));
-            newTypeSettableAttributes.setCanSetLocalName(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME));
-            newTypeSettableAttributes.setCanSetLocalNamespace(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE));
-            newTypeSettableAttributes.setCanSetDisplayName(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME));
-            newTypeSettableAttributes.setCanSetQueryName(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME));
-            newTypeSettableAttributes.setCanSetDescription(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION));
-            newTypeSettableAttributes.setCanSetCreatable(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE));
-            newTypeSettableAttributes.setCanSetFileable(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE));
-            newTypeSettableAttributes.setCanSetQueryable(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE));
-            newTypeSettableAttributes.setCanSetFulltextIndexed(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED));
+            newTypeSettableAttributes
+                    .setCanSetId(getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_ID));
+            newTypeSettableAttributes.setCanSetLocalName(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAME));
+            newTypeSettableAttributes.setCanSetLocalNamespace(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_LOCALNAMESPACE));
+            newTypeSettableAttributes.setCanSetDisplayName(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DISPLAYNAME));
+            newTypeSettableAttributes.setCanSetQueryName(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYNAME));
+            newTypeSettableAttributes.setCanSetDescription(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_DESCRIPTION));
+            newTypeSettableAttributes.setCanSetCreatable(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CREATEABLE));
+            newTypeSettableAttributes.setCanSetFileable(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FILEABLE));
+            newTypeSettableAttributes.setCanSetQueryable(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_QUERYABLE));
+            newTypeSettableAttributes.setCanSetFulltextIndexed(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_FULLTEXTINDEXED));
             newTypeSettableAttributes.setCanSetIncludedInSupertypeQuery(getBoolean(newTypeSettableAttributesJson,
                     JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_INCLUDEDINSUPERTYTPEQUERY));
-            newTypeSettableAttributes.setCanSetControllablePolicy(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY));
-            newTypeSettableAttributes.setCanSetControllableAcl(getBoolean(newTypeSettableAttributesJson,
-                    JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL));
+            newTypeSettableAttributes.setCanSetControllablePolicy(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEPOLICY));
+            newTypeSettableAttributes.setCanSetControllableAcl(
+                    getBoolean(newTypeSettableAttributesJson, JSON_CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_CONTROLABLEACL));
 
             convertExtension(newTypeSettableAttributesJson, newTypeSettableAttributes,
                     CAP_NEW_TYPE_SETTABLE_ATTRIBUTES_KEYS);
@@ -700,8 +700,8 @@ public final class JSONConverter {
         case CMIS_DOCUMENT:
             result = new DocumentTypeDefinitionImpl();
 
-            ((DocumentTypeDefinitionImpl) result).setContentStreamAllowed(getEnum(json,
-                    JSON_TYPE_CONTENTSTREAM_ALLOWED, ContentStreamAllowed.class));
+            ((DocumentTypeDefinitionImpl) result).setContentStreamAllowed(
+                    getEnum(json, JSON_TYPE_CONTENTSTREAM_ALLOWED, ContentStreamAllowed.class));
             ((DocumentTypeDefinitionImpl) result).setIsVersionable(getBoolean(json, JSON_TYPE_VERSIONABLE));
 
             break;
@@ -823,22 +823,22 @@ public final class JSONConverter {
             break;
         case BOOLEAN:
             result = new PropertyBooleanDefinitionImpl();
-            ((PropertyBooleanDefinitionImpl) result).setChoices(convertChoicesBoolean(json
-                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            ((PropertyBooleanDefinitionImpl) result)
+                    .setChoices(convertChoicesBoolean(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
             ((PropertyIntegerDefinitionImpl) result).setMinValue(getInteger(json, JSON_PROPERTY_TYPE_MIN_VALUE));
             ((PropertyIntegerDefinitionImpl) result).setMaxValue(getInteger(json, JSON_PROPERTY_TYPE_MAX_VALUE));
-            ((PropertyIntegerDefinitionImpl) result).setChoices(convertChoicesInteger(json
-                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            ((PropertyIntegerDefinitionImpl) result)
+                    .setChoices(convertChoicesInteger(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
-            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(getEnum(json,
-                    JSON_PROPERTY_TYPE_RESOLUTION, DateTimeResolution.class));
-            ((PropertyDateTimeDefinitionImpl) result).setChoices(convertChoicesDateTime(json
-                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setDateTimeResolution(getEnum(json, JSON_PROPERTY_TYPE_RESOLUTION, DateTimeResolution.class));
+            ((PropertyDateTimeDefinitionImpl) result)
+                    .setChoices(convertChoicesDateTime(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
@@ -854,8 +854,8 @@ public final class JSONConverter {
                 }
             }
 
-            ((PropertyDecimalDefinitionImpl) result).setChoices(convertChoicesDecimal(json
-                    .get(JSON_PROPERTY_TYPE_CHOICE)));
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setChoices(convertChoicesDecimal(json.get(JSON_PROPERTY_TYPE_CHOICE)));
             break;
         case HTML:
             result = new PropertyHtmlDefinitionImpl();
@@ -1619,7 +1619,8 @@ public final class JSONConverter {
     /**
      * Converts a property type definition.
      */
-    public static JSONObject convert(final PropertyDefinition<?> propertyDefinition, final DateTimeFormat dateTimeFormat) {
+    public static JSONObject convert(final PropertyDefinition<?> propertyDefinition,
+            final DateTimeFormat dateTimeFormat) {
         if (propertyDefinition == null) {
             return null;
         }
@@ -1679,9 +1680,8 @@ public final class JSONConverter {
 
         // choices
         if (isNotEmpty(propertyDefinition.getChoices())) {
-            result.put(
-                    JSON_PROPERTY_TYPE_CHOICE,
-                    convertChoices(propertyDefinition.getChoices(), propertyDefinition.getCardinality(), dateTimeFormat));
+            result.put(JSON_PROPERTY_TYPE_CHOICE, convertChoices(propertyDefinition.getChoices(),
+                    propertyDefinition.getCardinality(), dateTimeFormat));
         }
 
         // generic
@@ -1897,8 +1897,8 @@ public final class JSONConverter {
 
         Map<String, Object> propMap = getMap(json.get(JSON_OBJECT_SUCCINCT_PROPERTIES));
         if (propMap != null) {
-            result.setProperties(convertSuccinctProperties(propMap, getMap(json.get(JSON_OBJECT_PROPERTIES_EXTENSION)),
-                    typeCache));
+            result.setProperties(
+                    convertSuccinctProperties(propMap, getMap(json.get(JSON_OBJECT_PROPERTIES_EXTENSION)), typeCache));
         }
         propMap = getMap(json.get(JSON_OBJECT_PROPERTIES));
         if (propMap != null) {
@@ -2447,7 +2447,8 @@ public final class JSONConverter {
     /**
      * Converts a object list.
      */
-    public static ObjectInFolderList convertObjectInFolderList(final Map<String, Object> json, final TypeCache typeCache) {
+    public static ObjectInFolderList convertObjectInFolderList(final Map<String, Object> json,
+            final TypeCache typeCache) {
         if (json == null) {
             return null;
         }
@@ -2581,8 +2582,8 @@ public final class JSONConverter {
 
         ObjectListImpl result = new ObjectListImpl();
 
-        List<Object> jsonChildren = getList(json.get(isQueryResult ? JSON_QUERYRESULTLIST_RESULTS
-                : JSON_OBJECTLIST_OBJECTS));
+        List<Object> jsonChildren = getList(
+                json.get(isQueryResult ? JSON_QUERYRESULTLIST_RESULTS : JSON_OBJECTLIST_OBJECTS));
         List<ObjectData> objects = new ArrayList<ObjectData>();
 
         if (jsonChildren != null) {
@@ -3066,7 +3067,8 @@ public final class JSONConverter {
         return null;
     }
 
-    public static <T extends Enum<T>> T getEnum(final Map<String, Object> json, final String key, final Class<T> clazz) {
+    public static <T extends Enum<T>> T getEnum(final Map<String, Object> json, final String key,
+            final Class<T> clazz) {
         return CmisEnumHelper.fromValue(getString(json, key), clazz);
     }
 
