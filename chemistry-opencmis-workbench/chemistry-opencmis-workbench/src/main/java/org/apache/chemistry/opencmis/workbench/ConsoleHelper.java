@@ -25,8 +25,6 @@ import java.awt.Desktop.Action;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -49,6 +47,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
@@ -146,64 +145,16 @@ public class ConsoleHelper {
 
             final JPopupMenu popup = new JPopupMenu();
 
-            final JMenuItem cutItem = new JMenuItem("Cut");
-            cutItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        String text = console.getInputArea().getSelectedText();
-                        if (text != null) {
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            Transferable transferable = new StringSelection(text);
-                            clipboard.setContents(transferable, null);
-
-                            int start = console.getInputArea().getSelectionStart();
-                            int end = console.getInputArea().getSelectionEnd();
-                            console.getInputArea().getDocument().remove(start, end - start);
-                        }
-                    } catch (Exception ex) {
-                        ClientHelper.showError(console.getFrame().getRootPane(), ex);
-                    }
-                }
-            });
+            final JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
+            cutItem.setText("Cut");
             popup.add(cutItem);
 
-            final JMenuItem copyItem = new JMenuItem("Copy");
-            copyItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String text = console.getInputArea().getSelectedText();
-                    if (text != null) {
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        Transferable transferable = new StringSelection(text);
-                        clipboard.setContents(transferable, null);
-                    }
-                }
-            });
+            final JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+            copyItem.setText("Copy");
             popup.add(copyItem);
 
-            final JMenuItem pasteItem = new JMenuItem("Paste");
-            pasteItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        Object content = clipboard.getData(DataFlavor.stringFlavor);
-                        if (content != null) {
-                            int start = console.getInputArea().getSelectionStart();
-                            int end = console.getInputArea().getSelectionEnd();
-                            if (end - start > 0) {
-                                console.getInputArea().getDocument().remove(start, end - start);
-                            }
-
-                            console.getInputArea().getDocument().insertString(console.getInputArea().getCaretPosition(),
-                                    content.toString(), null);
-                        }
-                    } catch (Exception ex) {
-                        ClientHelper.showError(console.getFrame().getRootPane(), ex);
-                    }
-                }
-            });
+            final JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+            pasteItem.setText("Paste");
             popup.add(pasteItem);
 
             popup.addSeparator();
@@ -253,7 +204,7 @@ public class ConsoleHelper {
                 }
             });
 
-            // read source codeÏÍ
+            // read source code
             if (file != null) {
                 console.getInputArea().setText(ClientHelper.readFileAndRemoveHeader(file));
             } else if (soureCode != null) {

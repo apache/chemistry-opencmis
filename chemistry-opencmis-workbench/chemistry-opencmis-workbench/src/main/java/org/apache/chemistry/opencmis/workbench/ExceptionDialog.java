@@ -20,6 +20,7 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -51,6 +52,13 @@ public class ExceptionDialog extends JDialog {
         createGUI();
     }
 
+    public ExceptionDialog(Dialog owner, Throwable throwable) {
+        super(owner, "Exception", true);
+        this.throwable = throwable;
+
+        createGUI();
+    }
+
     private void createGUI() {
         setMinimumSize(WorkbenchScale.scaleDimension(new Dimension(600, 150)));
         setPreferredSize(WorkbenchScale.scaleDimension(new Dimension(600, 200)));
@@ -70,8 +78,8 @@ public class ExceptionDialog extends JDialog {
         ClientHelper.encodeHtml(exceptionText, throwable.getMessage());
         exceptionText.append("</h2>");
         if (throwable.getCause() != null) {
-            exceptionText.append("<h3><font color=\"red\">Cause: <em>"
-                    + throwable.getCause().getClass().getSimpleName() + "</em></font><br>");
+            exceptionText.append("<h3><font color=\"red\">Cause: <em>" + throwable.getCause().getClass().getSimpleName()
+                    + "</em></font><br>");
             ClientHelper.encodeHtml(exceptionText, throwable.getCause().getMessage());
             exceptionText.append("</h3>");
         }

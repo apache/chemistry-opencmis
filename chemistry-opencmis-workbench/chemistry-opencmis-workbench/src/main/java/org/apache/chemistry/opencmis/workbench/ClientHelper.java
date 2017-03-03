@@ -21,6 +21,8 @@ package org.apache.chemistry.opencmis.workbench;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -53,13 +55,14 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -83,6 +86,9 @@ public final class ClientHelper {
     public static final int BUTTON_ICON_SIZE = 11;
     public static final int OBJECT_ICON_SIZE = 16;
     public static final int ICON_BUTTON_ICON_SIZE = 16;
+
+    public static final String UNDO_ACTION_KEY = "Undo";
+    public static final String REDO_ACTION_KEY = "Redo";
 
     private static final Logger LOG = LoggerFactory.getLogger(ClientHelper.class);
 
@@ -130,9 +136,18 @@ public final class ClientHelper {
     public static void showError(Component parent, Throwable t) {
         logError(t);
 
-        JFrame frame = (parent == null ? null : (JFrame) SwingUtilities.getRoot(parent));
-
-        new ExceptionDialog(frame, t);
+        if (parent == null) {
+            new ExceptionDialog((Frame) null, t);
+        } else {
+            Window window = (Window) SwingUtilities.getRoot(parent);
+            if (window instanceof Frame) {
+                new ExceptionDialog((Frame) window, t);
+            } else if (window instanceof Dialog) {
+                new ExceptionDialog((Dialog) window, t);
+            } else {
+                new ExceptionDialog((Frame) null, t);
+            }
+        }
     }
 
     public static boolean isMacOSX() {
@@ -192,6 +207,52 @@ public final class ClientHelper {
                 }
             }
         });
+    }
+
+    public static AbstractAction createAndAttachUndoAction(final UndoManager undoManager, JComponent component) {
+        AbstractAction undoAction = new AbstractAction(UNDO_ACTION_KEY) {
+            private static final long serialVersionUID = 1L;
+
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoManager.canUndo()) {
+                        undoManager.undo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        };
+
+        component.getActionMap().put(UNDO_ACTION_KEY, undoAction);
+
+        KeyStroke undoKey = isMacOSX() ? KeyStroke.getKeyStroke("meta pressed Z")
+                : KeyStroke.getKeyStroke("control pressed Z");
+        component.getInputMap().put(undoKey, UNDO_ACTION_KEY);
+
+        return undoAction;
+    }
+
+    public static AbstractAction createAndAttachRedoAction(final UndoManager undoManager, JComponent component) {
+        AbstractAction redoAction = new AbstractAction(REDO_ACTION_KEY) {
+            private static final long serialVersionUID = 1L;
+
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoManager.canRedo()) {
+                        undoManager.redo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        };
+
+        component.getActionMap().put(REDO_ACTION_KEY, redoAction);
+
+        KeyStroke redoKey = isMacOSX() ? KeyStroke.getKeyStroke("meta shift pressed Z")
+                : KeyStroke.getKeyStroke("control shift pressed Z");
+        component.getInputMap().put(redoKey, REDO_ACTION_KEY);
+
+        return redoAction;
     }
 
     public static ImageIcon getIcon(String name) {

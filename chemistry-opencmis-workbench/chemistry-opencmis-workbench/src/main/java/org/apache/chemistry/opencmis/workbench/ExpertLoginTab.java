@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -38,6 +40,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
 import javax.swing.JComboBox;
@@ -48,6 +51,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.TransferHandler;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
+import javax.swing.undo.UndoManager;
 
 import org.apache.chemistry.opencmis.client.SessionParameterMap;
 import org.apache.chemistry.opencmis.client.bindings.spi.ClientCertificateAuthenticationProvider;
@@ -71,6 +79,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
     private JComboBox<FileEntry> configs;
     private JTextArea sessionParameterTextArea;
+    private UndoManager undoManager;
     private List<FileEntry> sessionConfigurations;
 
     public ExpertLoginTab() {
@@ -122,6 +131,17 @@ public class ExpertLoginTab extends AbstractLoginTab {
                 .setFont(new Font(Font.MONOSPACED, Font.PLAIN, sessionParameterTextArea.getFont().getSize()));
         add(new JScrollPane(sessionParameterTextArea), BorderLayout.CENTER);
 
+        // undo
+        undoManager = new UndoManager();
+        sessionParameterTextArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            public void undoableEditHappened(UndoableEditEvent e) {
+                undoManager.addEdit(e.getEdit());
+            }
+        });
+
+        AbstractAction undoAction = ClientHelper.createAndAttachUndoAction(undoManager, sessionParameterTextArea);
+        AbstractAction redoAction = ClientHelper.createAndAttachRedoAction(undoManager, sessionParameterTextArea);
+
         // drag and drop support
         sessionParameterTextArea.setTransferHandler(new TextAreaTransferHandler());
         sessionParameterTextArea.setDragEnabled(true);
@@ -129,6 +149,31 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
         // context menu
         final JPopupMenu popup = new JPopupMenu("Session Parameters");
+
+        final JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
+        cutItem.setText("Cut");
+        popup.add(cutItem);
+
+        final JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+        copyItem.setText("Copy");
+        popup.add(copyItem);
+
+        final JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+        pasteItem.setText("Paste");
+        popup.add(pasteItem);
+
+        popup.addSeparator();
+
+        final JMenuItem undoItem = new JMenuItem(undoAction);
+        undoItem.setText("Undo");
+        popup.add(undoItem);
+
+        final JMenuItem redoItem = new JMenuItem(redoAction);
+        redoItem.setText("Redo");
+        popup.add(redoItem);
+
+        popup.addSeparator();
+
         popup.add(createMenuGroup("Binding", SessionParameter.BINDING_TYPE, SessionParameter.ATOMPUB_URL,
                 SessionParameter.BROWSER_URL, SessionParameter.BROWSER_SUCCINCT,
                 SessionParameter.BROWSER_DATETIME_FORMAT));
@@ -174,6 +219,21 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
             private void maybeShowPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
+                    if (sessionParameterTextArea.getSelectedText() != null) {
+                        cutItem.setEnabled(true);
+                        copyItem.setEnabled(true);
+
+                    } else {
+                        cutItem.setEnabled(false);
+                        copyItem.setEnabled(false);
+                    }
+
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    pasteItem.setEnabled(clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor));
+
+                    undoItem.setEnabled(undoManager.canUndo());
+                    redoItem.setEnabled(undoManager.canRedo());
+
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -254,11 +314,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
             // we support files and strings
             if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
                     && !support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                return false;
-            }
-
-            if (!support.isDrop()) {
-                return false;
+                return super.canImport(support);
             }
 
             return true;
@@ -272,7 +328,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
             }
 
             if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                // we have file
+                // we have a file
                 File file = null;
                 try {
                     List<File> fileList = (List<File>) support.getTransferable()
@@ -303,8 +359,21 @@ public class ExpertLoginTab extends AbstractLoginTab {
             } else if (support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 // we have string
                 try {
-                    sessionParameterTextArea
-                            .setText((String) support.getTransferable().getTransferData(DataFlavor.stringFlavor));
+                    String s = (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
+
+                    if (support.isDrop()) {
+                        int index = ((JTextComponent.DropLocation) support.getDropLocation()).getIndex();
+                        sessionParameterTextArea.insert(s, index);
+                    } else {
+                        int start = sessionParameterTextArea.getSelectionStart();
+                        int end = sessionParameterTextArea.getSelectionEnd();
+
+                        if (start == end) {
+                            sessionParameterTextArea.insert(s, sessionParameterTextArea.getCaretPosition());
+                        } else {
+                            sessionParameterTextArea.replaceRange(s, start, end);
+                        }
+                    }
                 } catch (Exception e) {
                     ClientHelper.showError(ExpertLoginTab.this, e);
                 }
@@ -317,7 +386,16 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
         @Override
         public int getSourceActions(JComponent c) {
-            return COPY;
+            return COPY_OR_MOVE;
+        }
+
+        @Override
+        protected void exportDone(JComponent c, Transferable data, int action) {
+            if ((action & MOVE) > 0) {
+                int start = sessionParameterTextArea.getSelectionStart();
+                int end = sessionParameterTextArea.getSelectionEnd();
+                sessionParameterTextArea.replaceRange("", start, end);
+            }
         }
 
         @Override
