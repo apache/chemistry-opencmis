@@ -172,6 +172,15 @@ public class ExpertLoginTab extends AbstractLoginTab {
         redoItem.setText("Redo");
         popup.add(redoItem);
 
+        final JMenuItem clearItem = new JMenuItem("Clear History");
+        clearItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                undoManager.discardAllEdits();
+            }
+        });
+        popup.add(clearItem);
+
         popup.addSeparator();
 
         popup.add(createMenuGroup("Binding", SessionParameter.BINDING_TYPE, SessionParameter.ATOMPUB_URL,
@@ -233,6 +242,7 @@ public class ExpertLoginTab extends AbstractLoginTab {
 
                     undoItem.setEnabled(undoManager.canUndo());
                     redoItem.setEnabled(undoManager.canRedo());
+                    clearItem.setEnabled(undoManager.canUndo() || undoManager.canRedo());
 
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
