@@ -120,7 +120,8 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
      * @param encrypt
      *            indicates if temporary files must be encrypted
      */
-    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize, boolean encrypt) {
+    public ThresholdOutputStream(int initSize, File tempDir, int memoryThreshold, long maxContentSize,
+            boolean encrypt) {
         if (initSize < 0) {
             throw new IllegalArgumentException("Negative initial size: " + initSize);
         }
@@ -160,8 +161,8 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             return;
         }
 
-        int newSize = ((bufSize + nextBufferSize) * 2 < MAX_GROW ? (bufSize + nextBufferSize) * 2 : buf.length
-                + nextBufferSize + MAX_GROW);
+        int newSize = ((bufSize + nextBufferSize) * 2 < MAX_GROW ? (bufSize + nextBufferSize) * 2
+                : buf.length + nextBufferSize + MAX_GROW);
         byte[] newbuf = new byte[newSize];
         System.arraycopy(buf, 0, newbuf, 0, bufSize);
         buf = newbuf;
@@ -362,7 +363,7 @@ public class ThresholdOutputStream extends TempStoreOutputStream {
             tmpStream = null;
         }
 
-        if (tempFile != null) {
+        if (tempFile != null && tempFile.exists()) {
             boolean isDeleted = tempFile.delete();
             if (!isDeleted) {
                 if (LOG.isErrorEnabled()) {

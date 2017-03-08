@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.Field;
 
 import org.apache.chemistry.opencmis.commons.server.TempStoreOutputStream;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
@@ -209,7 +210,7 @@ public class ThresholdOutputStreamTest {
     }
 
     @Test
-    public void testDestroy() throws Exception {
+    public void testClose() throws Exception {
         TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, 0, 1024, false);
 
         TempStoreOutputStream tempStream = streamFactory.newOutputStream();
@@ -230,7 +231,33 @@ public class ThresholdOutputStreamTest {
         File tempFile = tis.getTemporaryFile();
         assertTrue(tempFile.exists());
 
-        // destroy
+        // close stream -> delete temp file
+        tis.close();
+
+        // check temp file
+        assertFalse(tempFile.exists());
+    }
+
+    @Test
+    public void testDestroy() throws Exception {
+        TempStoreOutputStreamFactory streamFactory = TempStoreOutputStreamFactory.newInstance(null, 0, 1024, false);
+
+        TempStoreOutputStream tempStream = streamFactory.newOutputStream();
+        tempStream.setMimeType(MIME_TYPE_2);
+        tempStream.setFileName(FILE_NAME_2);
+        assertTrue(tempStream instanceof ThresholdOutputStream);
+
+        // set content
+        ThresholdOutputStream tos = (ThresholdOutputStream) tempStream;
+        tos.write(CONTENT);
+        tos.close();
+
+        // get temp file
+        Field tempFileField = ThresholdOutputStream.class.getDeclaredField("tempFile");
+        tempFileField.setAccessible(true);
+        File tempFile = (File) tempFileField.get(tos);
+
+        // destroy -> delete temp file
         tempStream.destroy(new Exception("ohoh"));
 
         // check temp file
