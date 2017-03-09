@@ -31,7 +31,7 @@ public abstract class AbstractAtomPubTckIT extends AbstractTckIT {
     public Map<String, String> getSessionParameters() {
         Map<String, String> parameters = getBaseSessionParameters();
 
-        String url = "http://" + HOST + ":" + PORT + getAtomPubPath();
+        String url = "http://" + HOST + ":" + getPort() + getAtomPubPath();
 
         parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
         parameters.put(SessionParameter.ATOMPUB_URL, url);

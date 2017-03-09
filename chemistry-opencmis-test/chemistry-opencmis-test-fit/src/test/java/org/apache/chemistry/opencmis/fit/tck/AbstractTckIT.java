@@ -28,7 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
@@ -61,7 +64,8 @@ public abstract class AbstractTckIT extends AbstractRunner {
     public static final String DEFAULT_VERSIONABLE_DOCUMENT_TYPE_VALUE = "VersionableType"; // InMemory
 
     public static final String HOST = "localhost";
-    public static final int PORT = 19080;
+    private static final int BASEPORT = 19080;
+    private static int portCounter = -1;
 
     public static final String REPOSITORY_ID = "test";
     public static final String USER = "test";
@@ -75,6 +79,10 @@ public abstract class AbstractTckIT extends AbstractRunner {
 
     public abstract boolean usesVersionableDocumentType();
 
+    public static int getPort() {
+        return BASEPORT + portCounter;
+    }
+
     public Map<String, String> getBaseSessionParameters() {
         Map<String, String> parameters = new HashMap<String, String>();
 
@@ -87,8 +95,8 @@ public abstract class AbstractTckIT extends AbstractRunner {
             parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE,
                     System.getProperty(DEFAULT_VERSIONABLE_DOCUMENT_TYPE, DEFAULT_VERSIONABLE_DOCUMENT_TYPE_VALUE));
         } else {
-            parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE, System.getProperty(
-                    TestParameters.DEFAULT_DOCUMENT_TYPE, TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE));
+            parameters.put(TestParameters.DEFAULT_DOCUMENT_TYPE, System
+                    .getProperty(TestParameters.DEFAULT_DOCUMENT_TYPE, TestParameters.DEFAULT_DOCUMENT_TYPE_VALUE));
         }
 
         parameters.put(TestParameters.DEFAULT_FOLDER_TYPE,
@@ -115,32 +123,52 @@ public abstract class AbstractTckIT extends AbstractRunner {
             throw new RuntimeException("OpenCMIS WAR file not found!");
         }
 
-        tomcateBaseDir = new File(targetDir, "tomcat.base");
+        portCounter++;
+
+        tomcateBaseDir = new File(targetDir, "tomcat.base." + getPort());
         if (!tomcateBaseDir.exists()) {
             tomcateBaseDir.mkdir();
         }
 
-        // Logger.getLogger("").setLevel(Level.WARNING);
+        // Logger.getLogger("").setLevel(Level.INFO);
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 
         tomcat = new Tomcat();
         tomcat.setBaseDir(tomcateBaseDir.getAbsolutePath());
-        tomcat.setPort(PORT);
+        tomcat.setPort(getPort());
         // tomcat.setSilent(true);
         tomcat.getHost().setCreateDirs(true);
         tomcat.getHost().setDeployOnStartup(true);
         tomcat.getHost().setAutoDeploy(false);
+
+        tomcat.getServer().addLifecycleListener(new LifecycleListener() {
+            @Override
+            public void lifecycleEvent(LifecycleEvent event) {
+                if (event.getLifecycle().getState() == LifecycleState.DESTROYED) {
+                    if (!deleteDirectory(tomcateBaseDir)) {
+                        markDirectoryForDelete(tomcateBaseDir);
+                    }
+                }
+            }
+        });
 
         File appDir = new File(tomcateBaseDir, tomcat.getHost().getAppBase());
         if (!appDir.exists()) {
             appDir.mkdir();
         }
 
-        // Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.WARNING);
-
         tomcat.addWebapp(null, "/opencmis", warFile.getAbsolutePath());
         tomcat.init();
         tomcat.start();
+
+        int count = 60;
+        while (count > 0) {
+            count--;
+            if (tomcat.getServer().getState() == LifecycleState.STARTED) {
+                break;
+            }
+            Thread.sleep(500);
+        }
 
         Thread.sleep(5000);
     }
@@ -149,7 +177,6 @@ public abstract class AbstractTckIT extends AbstractRunner {
     public static void stopTomcat() throws LifecycleException, InterruptedException {
         tomcat.stop();
         tomcat.destroy();
-        deleteDirectory(tomcateBaseDir);
     }
 
     private static boolean deleteDirectory(File dir) {
@@ -166,6 +193,22 @@ public abstract class AbstractTckIT extends AbstractRunner {
         }
 
         return dir.delete();
+    }
+
+    private static void markDirectoryForDelete(File dir) {
+        if (!dir.exists()) {
+            return;
+        }
+
+        dir.deleteOnExit();
+
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                markDirectoryForDelete(file);
+            } else {
+                file.deleteOnExit();
+            }
+        }
     }
 
     @Before
@@ -212,9 +255,9 @@ public abstract class AbstractTckIT extends AbstractRunner {
         target.mkdir();
 
         CmisTestReport report = new TextReport();
-        report.createReport(getParameters(), getGroups(), new File(target, "tck-result-" + getBindingType().value()
-                + "-" + getCmisVersion().value() + "-"
-                + (usesVersionableDocumentType() ? "versionable" : "nonversionable") + ".txt"));
+        report.createReport(getParameters(), getGroups(),
+                new File(target, "tck-result-" + getBindingType().value() + "-" + getCmisVersion().value() + "-"
+                        + (usesVersionableDocumentType() ? "versionable" : "nonversionable") + ".txt"));
 
         // find failures
         for (CmisTestGroup group : getGroups()) {

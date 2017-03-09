@@ -35,7 +35,7 @@
 
     <properties>
         <parentBasedir>../../</parentBasedir>
-        <tomcat.version>7.0.70</tomcat.version>
+        <tomcat.version>7.0.75</tomcat.version>
         <overlay.groupId />
         <overlay.artifactId />
         <factory.class />

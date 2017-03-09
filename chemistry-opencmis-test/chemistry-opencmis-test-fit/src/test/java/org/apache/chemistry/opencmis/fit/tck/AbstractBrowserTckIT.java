@@ -32,7 +32,7 @@ public abstract class AbstractBrowserTckIT extends AbstractTckIT {
     public Map<String, String> getSessionParameters() {
         Map<String, String> parameters = getBaseSessionParameters();
 
-        String url = "http://" + HOST + ":" + PORT + BROWSER_PATH;
+        String url = "http://" + HOST + ":" + getPort() + BROWSER_PATH;
 
         parameters.put(SessionParameter.BINDING_TYPE, BindingType.BROWSER.value());
         parameters.put(SessionParameter.BROWSER_URL, url);

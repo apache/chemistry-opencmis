@@ -31,7 +31,7 @@ public abstract class AbstractWebServicesTckIT extends AbstractTckIT {
     public Map<String, String> getSessionParameters() {
         Map<String, String> parameters = getBaseSessionParameters();
 
-        String url = "http://" + HOST + ":" + PORT + getWebServicesPath() + "/";
+        String url = "http://" + HOST + ":" + getPort() + getWebServicesPath() + "/";
 
         parameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
         parameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE, url + "RepositoryService?wsdl");
