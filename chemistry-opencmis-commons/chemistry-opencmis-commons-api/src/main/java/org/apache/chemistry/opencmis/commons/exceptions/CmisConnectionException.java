@@ -158,6 +158,34 @@ public class CmisConnectionException extends CmisBaseException {
         super(message, BigInteger.ZERO);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param url
+     *            failing URL
+     * @param respCode
+     *            HTTP response code (0 if unknown)
+     * @param cause
+     *            the cause
+     */
+    public CmisConnectionException(String url, int respCode, Throwable cause) {
+        super("Cannot access \"" + url + "\"" + (respCode > 0 ? " (HTTP status code " + respCode + ")" : "") + ": "
+                + formatMessage(cause), BigInteger.ZERO, cause);
+    }
+
+    private static String formatMessage(Throwable cause) {
+        if (cause == null) {
+            return "(no exception)";
+        }
+
+        String msg = cause.getMessage();
+        if (msg == null || msg.length() == 0) {
+            msg = cause.getClass().getSimpleName();
+        }
+
+        return msg;
+    }
+
     @Override
     public final String getExceptionName() {
         return EXCEPTION_NAME;

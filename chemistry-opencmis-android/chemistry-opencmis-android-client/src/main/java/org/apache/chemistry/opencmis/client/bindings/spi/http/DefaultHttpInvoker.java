@@ -18,6 +18,8 @@
  */
 package org.apache.chemistry.opencmis.client.bindings.spi.http;
 
+import static org.apache.chemistry.opencmis.commons.impl.CollectionsHelper.isNotEmpty;
+
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -94,7 +96,9 @@ public class DefaultHttpInvoker implements HttpInvoker {
             conn.setDoOutput(writer != null);
             conn.setAllowUserInteraction(false);
             conn.setUseCaches(false);
-            conn.setRequestProperty("User-Agent", ClientVersion.OPENCMIS_CLIENT);
+
+            conn.setRequestProperty("User-Agent",
+                    (String) session.get(SessionParameter.USER_AGENT, ClientVersion.OPENCMIS_USER_AGENT));
 
             // timeouts
             int connectTimeout = session.get(SessionParameter.CONNECT_TIMEOUT, -1);
@@ -124,7 +128,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 Map<String, List<String>> httpHeaders = authProvider.getHTTPHeaders(url.toString());
                 if (httpHeaders != null) {
                     for (Map.Entry<String, List<String>> header : httpHeaders.entrySet()) {
-                        if (header.getKey() != null && header.getValue() != null && !header.getValue().isEmpty()) {
+                        if (header.getKey() != null && isNotEmpty(header.getValue())) {
                             String key = header.getKey();
                             if (key.equalsIgnoreCase("user-agent")) {
                                 conn.setRequestProperty("User-Agent", header.getValue().get(0));
@@ -153,7 +157,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             }
 
             // range
-            if ((offset != null) || (length != null)) {
+            if (offset != null || length != null) {
                 StringBuilder sb = new StringBuilder("bytes=");
 
                 if ((offset == null) || (offset.signum() == -1)) {
@@ -163,7 +167,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
                 sb.append(offset.toString());
                 sb.append('-');
 
-                if ((length != null) && (length.signum() == 1)) {
+                if (length != null && length.signum() == 1) {
                     sb.append(offset.add(length.subtract(BigInteger.ONE)).toString());
                 }
 
@@ -172,7 +176,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // compression
             Object compression = session.get(SessionParameter.COMPRESSION);
-            if ((compression != null) && Boolean.parseBoolean(compression.toString())) {
+            if (compression != null && Boolean.parseBoolean(compression.toString())) {
                 conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             }
 
@@ -199,11 +203,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
                 OutputStream out = new BufferedOutputStream(connOut, BUFFER_SIZE);
                 writer.write(out);
-                out.flush();
-
-                if (connOut instanceof GZIPOutputStream) {
-                    ((GZIPOutputStream) connOut).finish();
-                }
+                out.close();
             }
 
             // connect
@@ -218,8 +218,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // log after connect
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url, conn
-                        .getHeaderFields().toString());
+                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url,
+                        conn.getHeaderFields().toString());
             }
 
             // forward response HTTP headers
@@ -231,8 +231,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
                     conn.getErrorStream());
         } catch (Exception e) {
-            String status = respCode > 0 ? " (HTTP status code " + respCode + ")" : "";
-            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
+            throw new CmisConnectionException(url.toString(), respCode, e);
         }
     }
 }

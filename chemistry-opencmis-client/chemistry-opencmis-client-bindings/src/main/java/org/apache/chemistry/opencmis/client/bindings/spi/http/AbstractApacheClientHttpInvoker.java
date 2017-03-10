@@ -316,8 +316,7 @@ public abstract class AbstractApacheClientHttpInvoker implements HttpInvoker {
             return new Response(respCode, response.getStatusLine().getReasonPhrase(), responseHeaders, inputStream,
                     errorStream);
         } catch (Exception e) {
-            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
-            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
+            throw new CmisConnectionException(url.toString(), respCode, e);
         }
     }
 

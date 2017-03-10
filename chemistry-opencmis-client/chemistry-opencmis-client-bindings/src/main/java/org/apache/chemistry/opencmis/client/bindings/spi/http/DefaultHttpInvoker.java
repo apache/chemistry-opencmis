@@ -216,8 +216,8 @@ public class DefaultHttpInvoker implements HttpInvoker {
 
             // log after connect
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url, conn
-                        .getHeaderFields().toString());
+                LOG.trace("Session {}: {} {} > Headers: {}", session.getSessionId(), method, url,
+                        conn.getHeaderFields().toString());
             }
 
             // forward response HTTP headers
@@ -229,8 +229,7 @@ public class DefaultHttpInvoker implements HttpInvoker {
             return new Response(respCode, conn.getResponseMessage(), conn.getHeaderFields(), inputStream,
                     conn.getErrorStream());
         } catch (Exception e) {
-            String status = respCode > 0 ? " (HTTP status code " + respCode + ")" : "";
-            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
+            throw new CmisConnectionException(url.toString(), respCode, e);
         }
     }
 }

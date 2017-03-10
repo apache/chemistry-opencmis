@@ -32,12 +32,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okio.BufferedSink;
-
 import org.apache.chemistry.opencmis.client.bindings.impl.ClientVersion;
 import org.apache.chemistry.opencmis.client.bindings.impl.CmisBindingsHelper;
 import org.apache.chemistry.opencmis.client.bindings.spi.AbstractAuthenticationProvider;
@@ -49,6 +43,12 @@ import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.spi.AuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okio.BufferedSink;
 
 public class OkHttpHttpInvoker implements HttpInvoker {
 
@@ -248,8 +248,7 @@ public class OkHttpHttpInvoker implements HttpInvoker {
             // get the response
             return new Response(respCode, okResponse.message(), responseHeaders, inputStream, errorStream);
         } catch (Exception e) {
-            String status = (respCode > 0 ? " (HTTP status code " + respCode + ")" : "");
-            throw new CmisConnectionException("Cannot access \"" + url + "\"" + status + ": " + e.getMessage(), e);
+            throw new CmisConnectionException(url.toString(), respCode, e);
         }
     }
 
