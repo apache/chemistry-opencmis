@@ -37,7 +37,7 @@ public interface ChangeEventInfo extends ExtensionsData {
     /**
      * Returns when the change took place.
      * 
-     * @return the timespamp of the change, not {@code null}
+     * @return the timestamp of the change, not {@code null}
      */
     GregorianCalendar getChangeTime();
 }
