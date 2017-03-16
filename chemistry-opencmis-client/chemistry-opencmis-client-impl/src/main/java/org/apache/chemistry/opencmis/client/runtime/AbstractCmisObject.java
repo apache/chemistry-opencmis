@@ -57,6 +57,7 @@ import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 
@@ -74,6 +75,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     private AllowableActions allowableActions;
     private List<Rendition> renditions;
     private Acl acl;
+    private List<String> policyIds;
     private List<Policy> policies;
     private List<Relationship> relationships;
     private Map<ExtensionLevel, List<CmisExtensionElement>> extensions;
@@ -129,7 +131,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             List<String> stids = (List<String>) objectData.getProperties().getProperties()
                     .get(PropertyIds.SECONDARY_OBJECT_TYPE_IDS).getValues();
             if (isNotEmpty(stids)) {
-                secondaryTypes = new ArrayList<SecondaryType>();
+                secondaryTypes = new ArrayList<SecondaryType>(stids.size());
                 for (String stid : stids) {
                     if (stid != null) {
                         ObjectType type = session.getTypeDefinition(stid);
@@ -157,7 +159,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
 
         // handle renditions
         if (objectData.getRenditions() != null && !objectData.getRenditions().isEmpty()) {
-            renditions = new ArrayList<Rendition>();
+            renditions = new ArrayList<Rendition>(objectData.getRenditions().size());
             for (RenditionData rd : objectData.getRenditions()) {
                 renditions.add(of.convertRendition(getId(), rd));
             }
@@ -201,26 +203,21 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
 
         // handle policies
+        policies = null;
         if (objectData.getPolicyIds() != null && objectData.getPolicyIds().getPolicyIds() != null) {
             if (objectData.getPolicyIds().getPolicyIds().isEmpty()) {
-                policies = null;
+                policyIds = null;
             } else {
-                policies = new ArrayList<Policy>();
-                for (String pid : objectData.getPolicyIds().getPolicyIds()) {
-                    CmisObject policy = session.getObject(pid);
-                    if (policy instanceof Policy) {
-                        policies.add((Policy) policy);
-                    }
-                }
+                policyIds = objectData.getPolicyIds().getPolicyIds();
             }
             extensions.put(ExtensionLevel.POLICIES, objectData.getPolicyIds().getExtensions());
         } else {
-            policies = null;
+            policyIds = null;
         }
 
         // handle relationships
         if (objectData.getRelationships() != null && !objectData.getRelationships().isEmpty()) {
-            relationships = new ArrayList<Relationship>();
+            relationships = new ArrayList<Relationship>(objectData.getRelationships().size());
             for (ObjectData rod : objectData.getRelationships()) {
                 CmisObject relationship = of.convertObject(rod, this.creationContext);
                 if (relationship instanceof Relationship) {
@@ -397,12 +394,10 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             }
 
             // it's time to update
-            getBinding().getObjectService().updateProperties(
-                    getRepositoryId(),
-                    objectIdHolder,
-                    changeTokenHolder,
-                    getObjectFactory()
-                            .convertProperties(properties, this.objectType, this.secondaryTypes, updatebility), null);
+            getBinding().getObjectService().updateProperties(getRepositoryId(), objectIdHolder, changeTokenHolder,
+                    getObjectFactory().convertProperties(properties, this.objectType, this.secondaryTypes,
+                            updatebility),
+                    null);
 
             newObjectId = objectIdHolder.getValue();
 
@@ -607,7 +602,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public ObjectType getType() {
         readLock();
         try {
-            return this.objectType;
+            return objectType;
         } finally {
             readUnlock();
         }
@@ -658,7 +653,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public AllowableActions getAllowableActions() {
         readLock();
         try {
-            return this.allowableActions;
+            return allowableActions;
         } finally {
             readUnlock();
         }
@@ -684,7 +679,7 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public List<Rendition> getRenditions() {
         readLock();
         try {
-            return this.renditions;
+            return renditions;
         } finally {
             readUnlock();
         }
@@ -820,7 +815,49 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
     public List<Policy> getPolicies() {
         readLock();
         try {
+            if (policies != null || policyIds == null) {
+                return policies;
+            }
+        } finally {
+            readUnlock();
+        }
+
+        writeLock();
+        try {
+            if (policies == null) {
+                policies = new ArrayList<Policy>(policyIds.size());
+                for (String pid : policyIds) {
+                    try {
+                        CmisObject policy = session.getObject(pid);
+                        if (policy instanceof Policy) {
+                            policies.add((Policy) policy);
+                        }
+                    } catch (CmisObjectNotFoundException nfe) {
+                        // ignore
+                    }
+                }
+            }
+
             return policies;
+        } finally {
+            writeUnlock();
+        }
+    }
+
+    @Override
+    public List<ObjectId> getPolicyIds() {
+        readLock();
+        try {
+            if (policyIds == null) {
+                return null;
+            }
+
+            List<ObjectId> result = new ArrayList<ObjectId>(policyIds.size());
+            for (String pid : policyIds) {
+                result.add(session.createObjectId(pid));
+            }
+
+            return result;
         } finally {
             readUnlock();
         }
@@ -878,12 +915,9 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
             OperationContext oc = getCreationContext();
 
             // get the latest data from the repository
-            ObjectData objectData = getSession()
-                    .getBinding()
-                    .getObjectService()
-                    .getObject(getRepositoryId(), objectId, oc.getFilterString(), oc.isIncludeAllowableActions(),
-                            oc.getIncludeRelationships(), oc.getRenditionFilterString(), oc.isIncludePolicies(),
-                            oc.isIncludeAcls(), null);
+            ObjectData objectData = getSession().getBinding().getObjectService().getObject(getRepositoryId(), objectId,
+                    oc.getFilterString(), oc.isIncludeAllowableActions(), oc.getIncludeRelationships(),
+                    oc.getRenditionFilterString(), oc.isIncludePolicies(), oc.isIncludeAcls(), null);
 
             // reset this object
             initialize(session, session.getTypeDefinition(objectType.getId()), objectData, creationContext);

@@ -148,6 +148,11 @@ public class CmisObjectMock implements CmisObject, Serializable {
     }
 
     @Override
+    public List<ObjectId> getPolicyIds() {
+        return null;
+    }
+
+    @Override
     public List<Property<?>> getProperties() {
         return null;
     }

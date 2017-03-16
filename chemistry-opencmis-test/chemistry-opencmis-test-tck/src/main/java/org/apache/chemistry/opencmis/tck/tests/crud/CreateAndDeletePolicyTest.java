@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.tck.tests.crud;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.FAILURE;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.INFO;
 import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.SKIPPED;
+import static org.apache.chemistry.opencmis.tck.CmisTestResultStatus.WARNING;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class CreateAndDeletePolicyTest extends AbstractSessionTest {
     public void init(Map<String, String> parameters) {
         super.init(parameters);
         setName("Create and Delete Policy Test");
-        setDescription("Creates a policy object, checks the newly created policy object, applys and removes it from a document, and finally deletes the created policy object.");
+        setDescription(
+                "Creates a policy object, checks the newly created policy object, applys and removes it from a document, and finally deletes the created policy object.");
     }
 
     @Override
@@ -78,6 +80,10 @@ public class CreateAndDeletePolicyTest extends AbstractSessionTest {
                             + ", Doc Id: " + doc.getId());
                     addResult(assertIsTrue(found1, null, f));
 
+                    // check if policy IDs and policy object match
+                    f = createResult(WARNING, "Not all policy IDs can be resolved to policy objects.");
+                    addResult(assertEquals(doc.getPolicyIds().size(), doc.getPolicies().size(), null, f));
+
                     // get the policies
                     List<ObjectData> policiesData2 = session.getBinding().getPolicyService()
                             .getAppliedPolicies(session.getRepositoryInfo().getId(), doc.getId(), "*", null);
@@ -92,9 +98,8 @@ public class CreateAndDeletePolicyTest extends AbstractSessionTest {
                         }
                     }
 
-                    f = createResult(FAILURE,
-                            "Applied policy is not returned by the repository! Policy Id: " + policy.getId()
-                                    + ", Doc Id: " + doc.getId());
+                    f = createResult(FAILURE, "Applied policy is not returned by the repository! Policy Id: "
+                            + policy.getId() + ", Doc Id: " + doc.getId());
                     addResult(assertIsTrue(found2, null, f));
 
                     // remove policy
@@ -111,17 +116,13 @@ public class CreateAndDeletePolicyTest extends AbstractSessionTest {
                             }
                         }
 
-                        f = createResult(FAILURE,
-                                "Policy has not been removed from document! Policy Id: " + policy.getId()
-                                        + ", Doc Id: " + doc.getId());
+                        f = createResult(FAILURE, "Policy has not been removed from document! Policy Id: "
+                                + policy.getId() + ", Doc Id: " + doc.getId());
                         addResult(assertIsFalse(found3, null, f));
                     }
                 } else {
-                    addResult(createResult(
-                            INFO,
-                            "Document type "
-                                    + doc.getType().getId()
-                                    + " does not allow applying and removing policies. Choose a different document type for this test."));
+                    addResult(createResult(INFO, "Document type " + doc.getType().getId()
+                            + " does not allow applying and removing policies. Choose a different document type for this test."));
                 }
 
                 // delete document

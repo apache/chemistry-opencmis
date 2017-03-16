@@ -112,9 +112,9 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
      * 
      * @param allVersions
      *            if this object is a document this parameter defines whether
-     *            only this version ({@code false}) or all versions ({@code true}
-     *            ) should be deleted, the parameter is ignored for all other
-     *            object types
+     *            only this version ({@code false}) or all versions
+     *            ({@code true} ) should be deleted, the parameter is ignored
+     *            for all other object types
      * 
      * @cmis 1.0
      */
@@ -296,14 +296,34 @@ public interface CmisObject extends ObjectId, CmisObjectProperties {
 
     /**
      * Returns the applied policies if they have been fetched for this object.
+     * This method fetches the policy objects from the repository when this
+     * method is called for the first time. Policy objects that don't exist are
+     * ignored.
      * 
      * @return the list of policies applied to this object or {@code null} if
      *         the policies have not been requested or no policies are applied
      *         to this object
      * 
+     * @see #getPolicyIds()
+     * 
      * @cmis 1.0
      */
     List<Policy> getPolicies();
+
+    /**
+     * Returns the applied policy IDs if they have been fetched for this object.
+     * All applied policy IDs are returned, even IDs of policies that don't
+     * exist.
+     * 
+     * @return the list of IDs of applied policies or {@code null} if the
+     *         policies have not been requested or no policies are applied to
+     *         this object
+     * 
+     * @see #getPolicies()
+     * 
+     * @cmis 1.0
+     */
+    List<ObjectId> getPolicyIds();
 
     // ACL service
 
