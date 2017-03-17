@@ -678,13 +678,13 @@ public class InMemoryQueryProcessor {
         }
 
         private boolean findText(String nodeText) {
-            Content cont = (Content) so;
             String pattern = StringUtil.unescape(nodeText, "\\'-");
             if (null == pattern) {
                 throw new CmisInvalidArgumentException("Illegal Escape sequence in text search expression " + nodeText);
             }
 
-            if (so instanceof Content && cont.hasContent()) {
+            if (so instanceof Content && ((Content) so).hasContent()) {
+                Content cont = (Content) so;
                 ContentStreamDataImpl cdi = (ContentStreamDataImpl) cont.getContent();
                 if (cdi.getMimeType().startsWith("text/")) {
                     byte[] ba = cdi.getBytes();
