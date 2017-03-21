@@ -25,6 +25,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,10 +57,14 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.NumberFormatter;
+import javax.swing.undo.UndoManager;
 
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
@@ -85,6 +92,7 @@ public class QueryFrame extends JFrame {
     private final ClientModel model;
 
     private JTextArea queryText;
+    private UndoManager undoManager;
     private JFormattedTextField skipCountField;
     private JFormattedTextField maxHitsField;
     private JCheckBox searchAllVersionsCheckBox;
@@ -116,6 +124,18 @@ public class QueryFrame extends JFrame {
         queryText = new JTextArea(DEFAULT_QUERY, 5, 60);
         queryText.setLineWrap(true);
         queryText.setPreferredSize(new Dimension(Short.MAX_VALUE, queryText.getPreferredSize().height));
+
+        // undo
+        undoManager = new UndoManager();
+        queryText.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            public void undoableEditHappened(UndoableEditEvent e) {
+                undoManager.addEdit(e.getEdit());
+            }
+        });
+
+        AbstractAction undoAction = ClientHelper.createAndAttachUndoAction(undoManager, queryText);
+        AbstractAction redoAction = ClientHelper.createAndAttachRedoAction(undoManager, queryText);
+
         inputPanel.add(queryText);
 
         JPanel inputPanel2 = new JPanel();
@@ -147,8 +167,8 @@ public class QueryFrame extends JFrame {
         searchAllVersionsCheckBox = new JCheckBox("search all versions", false);
         buttonPanel.add(searchAllVersionsCheckBox);
 
-        JButton queryButton = new JButton("Query", new QueryIcon(ClientHelper.BUTTON_ICON_SIZE,
-                ClientHelper.BUTTON_ICON_SIZE));
+        JButton queryButton = new JButton("Query",
+                new QueryIcon(ClientHelper.BUTTON_ICON_SIZE, ClientHelper.BUTTON_ICON_SIZE));
         queryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -162,6 +182,40 @@ public class QueryFrame extends JFrame {
 
         // snippets
         final JPopupMenu queryPopup = new JPopupMenu("Snippets");
+
+        final JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
+        cutItem.setText("Cut");
+        queryPopup.add(cutItem);
+
+        final JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+        copyItem.setText("Copy");
+        queryPopup.add(copyItem);
+
+        final JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+        pasteItem.setText("Paste");
+        queryPopup.add(pasteItem);
+
+        queryPopup.addSeparator();
+
+        final JMenuItem undoItem = new JMenuItem(undoAction);
+        undoItem.setText("Undo");
+        queryPopup.add(undoItem);
+
+        final JMenuItem redoItem = new JMenuItem(redoAction);
+        redoItem.setText("Redo");
+        queryPopup.add(redoItem);
+
+        final JMenuItem clearItem = new JMenuItem("Clear History");
+        clearItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                undoManager.discardAllEdits();
+            }
+        });
+        queryPopup.add(clearItem);
+
+        queryPopup.addSeparator();
+
         queryPopup.add(createMenuGroup("Properties", readSnippets("properties.txt")));
         queryPopup.add(createMenuGroup("Queries", readSnippets("queries.txt")));
         queryPopup.add(createMenuGroup("SELECT", readSnippets("select.txt")));
@@ -186,6 +240,22 @@ public class QueryFrame extends JFrame {
 
             private void maybeShowPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
+                    if (queryText.getSelectedText() != null) {
+                        cutItem.setEnabled(true);
+                        copyItem.setEnabled(true);
+
+                    } else {
+                        cutItem.setEnabled(false);
+                        copyItem.setEnabled(false);
+                    }
+
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    pasteItem.setEnabled(clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor));
+
+                    undoItem.setEnabled(undoManager.canUndo());
+                    redoItem.setEnabled(undoManager.canRedo());
+                    clearItem.setEnabled(undoManager.canUndo() || undoManager.canRedo());
+
                     queryPopup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -602,8 +672,8 @@ public class QueryFrame extends JFrame {
 
                 for (PropertyData<?> prop : qr.getProperties()) {
                     if (PropertyIds.OBJECT_ID.equals(prop.getId()) && (prop.getFirstValue() != null)) {
-                        resultTableModel.setValue(row, prop.getQueryName(), new ObjectIdImpl(prop.getFirstValue()
-                                .toString()));
+                        resultTableModel.setValue(row, prop.getQueryName(),
+                                new ObjectIdImpl(prop.getFirstValue().toString()));
                     } else {
                         resultTableModel.setValue(row, prop.getQueryName(), prop.getValues());
                     }
