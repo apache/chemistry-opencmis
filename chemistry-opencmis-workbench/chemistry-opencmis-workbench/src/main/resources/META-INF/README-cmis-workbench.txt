@@ -9,7 +9,7 @@ Please see the NOTICE and LICENSE files for details.
 Original icons by Piotr Kwiatkowski. Converted and modified for the CMIS Workbench.
 
 Get the latest released CMIS Workbench from here:
-http://chemistry.apache.org/java/download.html
+https://chemistry.apache.org/java/download.html
 
 
 
@@ -22,12 +22,16 @@ cmis.workbench.url               - preset URL
 cmis.workbench.user              - preset user name
 cmis.workbench.password          - preset password
 cmis.workbench.binding           - preset binding (atompub/webservices/browser)
-cmis.workbench.authentication    - preset authentication method (none/standard/ntlm)
+cmis.workbench.authentication    - preset authentication method (none/standard/ntlm/oauth/cert)
 cmis.workbench.compression       - preset compression (on/off)
 cmis.workbench.clientcompression - preset client compression (on/off)
 cmis.workbench.cookies           - preset cookies (on/off)
 cmis.workbench.connecttimeout    - preset the connect timeout (in seconds)
 cmis.workbench.readtimeout       - preset the read timeout (in seconds)
+cmis.workbench.language          - preset the language
+cmis.workbench.csrfheader        - preset the CSRF HTTP header
+
+cmis.workbench.logintab          - selects the login tab (0 for the leftmost tab)
 
 
 Folder operation context:
