@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
@@ -50,7 +51,12 @@ public class TextReport extends AbstractCmisTestReport {
         writer.write("***************************************************************" + NL);
         if (parameters != null) {
             for (Map.Entry<String, String> p : (new TreeMap<String, String>(parameters)).entrySet()) {
-                writer.write(p.getKey() + " = " + p.getValue() + NL);
+                String value = p.getValue();
+                if (SessionParameter.PASSWORD.endsWith(p.getKey())) {
+                    value = "*****";
+                }
+
+                writer.write(p.getKey() + " = " + value + NL);
             }
         }
         writer.write("***************************************************************" + NL);

@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.tck.CmisTest;
 import org.apache.chemistry.opencmis.tck.CmisTestGroup;
 import org.apache.chemistry.opencmis.tck.CmisTestResult;
@@ -68,8 +69,14 @@ public class XmlReport extends AbstractCmisTestReport {
             for (Map.Entry<String, String> p : (new TreeMap<String, String>(parameters)).entrySet()) {
                 xml.writeStartElement(TAG_PARAMETER);
                 xml.writeAttribute(ATTR_KEY, p.getKey());
-                if (p.getValue() != null) {
-                    xml.writeAttribute(ATTR_VALUE, p.getValue());
+
+                String value = p.getValue();
+                if (SessionParameter.PASSWORD.endsWith(p.getKey())) {
+                    value = "*****";
+                }
+
+                if (value != null) {
+                    xml.writeAttribute(ATTR_VALUE, value);
                 }
                 xml.writeEndElement();
             }

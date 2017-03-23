@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONArray;
 import org.apache.chemistry.opencmis.commons.impl.json.JSONObject;
@@ -53,7 +54,12 @@ public class JsonReport extends AbstractCmisTestReport {
 
         if (parameters != null) {
             for (Map.Entry<String, String> p : (new TreeMap<String, String>(parameters)).entrySet()) {
-                jsonParameters.put(p.getKey(), p.getValue());
+                String value = p.getValue();
+                if (SessionParameter.PASSWORD.endsWith(p.getKey())) {
+                    value = "*****";
+                }
+
+                jsonParameters.put(p.getKey(), value);
             }
         }
 
