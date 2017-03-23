@@ -1,4 +1,4 @@
-# #!/bin/sh
+#!/bin/sh
 
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +32,7 @@ fi
 
 SCRIPT_DIR=$(dirname "$0")
 
-pushd "$SCRIPT_DIR"
+pushd "$SCRIPT_DIR" > /dev/null
 
 cd "$SCRIPT_DIR/lib"
 
@@ -41,7 +41,7 @@ for i in *.jar; do
   WCP="$SCRIPT_DIR/lib/$i:${WCP}"
 done
 
-popd
+popd > /dev/null
 
 # use variable CUSTOM_JAVA_OPTS to set additional JAVA options
 

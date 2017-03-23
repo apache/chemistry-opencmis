@@ -102,6 +102,8 @@ public class SwingReport extends AbstractCmisTestReport {
         }
 
         private void createGUI() {
+            setIconImages(ClientHelper.getCmisIconImages());
+
             setPreferredSize(WorkbenchScale.scaleDimension(new Dimension(width, height)));
             setMinimumSize(WorkbenchScale.scaleDimension(new Dimension(width, height)));
 
