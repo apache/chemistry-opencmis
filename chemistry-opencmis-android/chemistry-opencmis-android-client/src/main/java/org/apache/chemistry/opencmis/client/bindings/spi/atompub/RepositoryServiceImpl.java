@@ -69,7 +69,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
         if (repositoryInfos.size() == 0) {
-            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
         }
 
         if (repositoryInfos.size() == 1) {
@@ -87,7 +87,7 @@ public class RepositoryServiceImpl extends AbstractAtomPubService implements Rep
             }
         }
 
-        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
     }
 
     @Override

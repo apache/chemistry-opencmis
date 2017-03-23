@@ -60,7 +60,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
         List<RepositoryInfo> repositoryInfos = getRepositoriesInternal(repositoryId);
 
         if (repositoryInfos.isEmpty()) {
-            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+            throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
         }
 
         // find the repository
@@ -74,7 +74,7 @@ public class RepositoryServiceImpl extends AbstractBrowserBindingService impleme
             }
         }
 
-        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "'not found!");
+        throw new CmisObjectNotFoundException("Repository '" + repositoryId + "' not found!");
     }
 
     @Override

@@ -63,7 +63,7 @@ public class QuerySmokeTest extends AbstractQueryTest {
 
             ObjectType type = session.getTypeDefinition(testType);
 
-            f = createResult(FAILURE, "Test type definition '" + testType + "'not found!");
+            f = createResult(FAILURE, "Test type definition '" + testType + "' not found!");
             addResult(assertNotNull(type, null, f));
             if (type == null) {
                 return;
