@@ -819,14 +819,7 @@ public class InMemoryQueryProcessor {
         List<JoinSpec> joins = queryObj.getJoins();
         if (null == secondaryTypeIds && joins.size() > 0) {
             throw new CmisInvalidArgumentException(
-                    "JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
-        } else if (null != secondaryTypeIds) {
-            for (JoinSpec join : joins) {
-                if (!join.kind.equals("LEFT")) {
-                    throw new CmisInvalidArgumentException(
-                            "JOINs are not supported with the exception of secondary types and a LEFT OUTER JOIN");
-                }
-            }
+                    "JOINs are not supported with the exception of secondary types");
         }
     }
 

@@ -1077,7 +1077,7 @@ public class EvalQueryTest extends AbstractServiceTest {
         log.debug("Start testSecondaryJoin...");
         // create documents with secondary types in addition
         dataCreator.createSecondaryTestDocuments();
-        String statement = "SELECT * FROM " + COMPLEX_TYPE + " LEFT JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
+        String statement = "SELECT * FROM " + COMPLEX_TYPE + " JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
                 + ".cmis:objectId = " + SECONDARY_TYPE + ".cmis:objectId WHERE cmis:name LIKE 'docwithsecondary%'";
         ObjectList res = doQuery(statement);
         assertEquals(2, res.getObjects().size());
@@ -1090,7 +1090,7 @@ public class EvalQueryTest extends AbstractServiceTest {
 
         // Test a query with secondary types matching only one document not
         // having this secondary type
-        statement = "SELECT * FROM " + COMPLEX_TYPE + " LEFT JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
+        statement = "SELECT * FROM " + COMPLEX_TYPE + " JOIN " + SECONDARY_TYPE + " ON " + COMPLEX_TYPE
                 + ".cmis:objectId = " + SECONDARY_TYPE + ".cmis:objectId WHERE cmis:name = 'alpha'";
         res = doQuery(statement);
         assertEquals(1, res.getObjects().size());
