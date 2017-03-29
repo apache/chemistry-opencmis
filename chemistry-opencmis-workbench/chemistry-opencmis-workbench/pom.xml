@@ -115,6 +115,7 @@
                                     <replacefilter token="@versionnumber@" value="${project.version}" />
                                 </replace>
                                 <chmod dir="${targetdir}/start" perm="+x" includes="**/*.sh" />
+                                <chmod dir="${targetdir}/start" perm="+x" includes="**/*.command" />
                              </target>
                         </configuration>
                         <goals>

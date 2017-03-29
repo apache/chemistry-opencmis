@@ -59,7 +59,24 @@
             <fileMode>0755</fileMode>
         </file>
         <file>
+            <source>target/start/workbench.command</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>target/start/create-shortcut.sh</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
             <source>target/start/workbench.bat</source>
+            <outputDirectory></outputDirectory>
+            <lineEnding>dos</lineEnding>
+        </file>
+        <file>
+            <source>target/start/create-shortcut.bat</source>
             <outputDirectory></outputDirectory>
             <lineEnding>dos</lineEnding>
         </file>
@@ -73,6 +90,16 @@
             <source>target/start/runscript.bat</source>
             <outputDirectory></outputDirectory>
             <lineEnding>dos</lineEnding>
+        </file>
+        <file>
+            <source>src/main/resources/images/icon.ico</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>cmis.ico</destName>
+        </file>
+        <file>
+            <source>src/main/resources/images/icon256.png</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>cmis.png</destName>
         </file>
     </files>
     <dependencySets>

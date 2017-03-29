@@ -1630,8 +1630,8 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
         List<String> algorithms = null;
 
         if (hashes != null) {
-            algorithms = new ArrayList<>(hashes.size());
-            messageDigests = new ArrayList<>(hashes.size());
+            algorithms = new ArrayList<String>(hashes.size());
+            messageDigests = new ArrayList<MessageDigest>(hashes.size());
 
             for (ContentStreamHash hash : hashes) {
                 if (hash.getAlgorithm() == null) {
