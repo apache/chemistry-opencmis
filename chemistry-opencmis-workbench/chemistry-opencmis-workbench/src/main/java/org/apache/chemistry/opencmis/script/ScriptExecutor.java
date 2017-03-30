@@ -71,7 +71,7 @@ public class ScriptExecutor {
 
             if (args.length < parameterScriptFile + 1) {
                 System.out.println("OpenCMIS Script Executor\n");
-                System.out.println("Usage: [-p] [-v] <path-to-session-parameters-file> <path-to-groovy-script-file>\n");
+                System.out.println("Usage: [-u] [-p] [-v] <path-to-session-parameters-file> <path-to-groovy-script-file>\n");
                 System.out.println("Parameters:\n");
                 System.out.println(" -u                                 ask for username");
                 System.out.println(" -p                                 ask for password");
