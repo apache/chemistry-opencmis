@@ -316,7 +316,7 @@ public interface QueryStatement extends Cloneable {
     String toQueryString();
 
     /**
-     * Executes the query with {@code searchAllVersions) set to {@code false}.
+     * Executes the query with {@code searchAllVersions} set to {@code false}.
      * 
      * @see Session#query(String, boolean)
      */
