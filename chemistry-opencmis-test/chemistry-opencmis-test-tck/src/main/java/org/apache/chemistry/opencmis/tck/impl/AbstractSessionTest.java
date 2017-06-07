@@ -2603,7 +2603,26 @@ public abstract class AbstractSessionTest extends AbstractCmisTest {
             }
 
             // check properties
-            if (!BaseTypeId.CMIS_SECONDARY.equals(type.getBaseTypeId())) {
+            if (BaseTypeId.CMIS_SECONDARY.equals(type.getBaseTypeId())) {
+
+                // secondary types should not have a property in the
+                // cmis namespace
+                // this may lead to inconsistencies
+                Map<String, PropertyDefinition<?>> propDefs = type.getPropertyDefinitions();
+                if (propDefs != null) {
+                    for (PropertyDefinition<?> propDef : propDefs.values()) {
+                        if (propDef == null) {
+                            addResult(results, createResult(FAILURE, "A property definition is null!"));
+                        } else if (propDef.getId() == null) {
+                            addResult(results, createResult(FAILURE, "A property definition ID is null!"));
+                        } else if (propDef.getId().startsWith("cmis:")) {
+                            f = createResult(WARNING,
+                                    "Found a property definition in the cmis namspace: " + propDef.getId());
+                            addResult(results, f);
+                        }
+                    }
+                }
+            } else {
 
                 f = createResult(FAILURE, "Type has no property definitions!");
                 addResult(results, assertNotNull(type.getPropertyDefinitions(), null, f));
