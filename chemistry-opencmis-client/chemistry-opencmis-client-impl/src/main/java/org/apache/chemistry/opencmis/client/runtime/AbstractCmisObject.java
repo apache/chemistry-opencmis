@@ -336,6 +336,12 @@ public abstract class AbstractCmisObject implements CmisObject, Serializable {
         }
     }
 
+    protected final void checkContext(OperationContext context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Invalid Operation Context!");
+        }
+    }
+
     // --- delete ---
 
     @Override

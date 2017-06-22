@@ -371,6 +371,8 @@ public class DocumentImpl extends AbstractFilableCmisObject implements Document 
 
     @Override
     public List<Document> getAllVersions(OperationContext context) {
+        checkContext(context);
+
         String objectId;
         String versionSeriesId;
 

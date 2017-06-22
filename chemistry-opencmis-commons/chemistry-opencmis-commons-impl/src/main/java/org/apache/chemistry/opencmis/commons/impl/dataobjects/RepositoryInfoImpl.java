@@ -60,6 +60,10 @@ public class RepositoryInfoImpl extends AbstractExtensionData implements Reposit
     }
 
     public RepositoryInfoImpl(RepositoryInfo data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Repository info is null!");
+        }
+
         id = data.getId();
         name = data.getName();
         description = data.getDescription();
