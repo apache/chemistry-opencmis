@@ -20,6 +20,8 @@ package org.apache.chemistry.opencmis.workbench;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Locale;
 import java.util.Map;
 
@@ -172,7 +174,7 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
         boolean cert = (System.getProperty(SYSPROP_AUTHENTICATION, "").toLowerCase(Locale.ENGLISH).equals("cert"));
         boolean none = !standard && !ntlm && !oauth && !cert;
         authenticationNoneButton = new JRadioButton("None", none);
-        authenticationStandardButton = new JRadioButton("Standard", standard);
+        authenticationStandardButton = new JRadioButton("Standard (basic auth)", standard);
         authenticationNTLMButton = new JRadioButton("NTLM", ntlm);
         authenticationOAuthButton = new JRadioButton("OAuth 2.0 (Bearer Token)", oauth);
         authenticationCertButton = new JRadioButton("Client Certificate", cert);
@@ -195,11 +197,47 @@ public class BasicLoginTab extends AbstractSpringLoginTab {
 
         pane.add(authenticatioLabel);
         pane.add(createHelp("<html>Select the authentication method.<br>"
+                + "Choose <b>None</b> for anonymous access to the repository.<br>"
                 + "The <b>Standard authentication</b> is Basic Auth and should work with most repositories.<br>"
                 + "The <b>NTLM authentication</b> should be used with caution! It's very likely that some CMIS operations will fail.<br>"
                 + "The <b>OAuth authentication</b> requires a bearer token in the username field. The token will not be refreshed when it expires. "
                 + "Use the OAuthAuthenticationProvider for full OAuth support.<br>"
                 + "The <b>Client Certificate authentication</b> requires a JKS key file path the username field and the passphrase in the password field."));
+
+        authenticationNoneButton.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    usernameField.setEnabled(false);
+                    passwordField.setEnabled(false);
+                }
+            }
+        });
+
+        ItemListener EnableBothListener = new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    usernameField.setEnabled(true);
+                    passwordField.setEnabled(true);
+                }
+            }
+        };
+
+        authenticationStandardButton.addItemListener(EnableBothListener);
+        authenticationNTLMButton.addItemListener(EnableBothListener);
+        authenticationCertButton.addItemListener(EnableBothListener);
+
+        authenticationOAuthButton.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    usernameField.setEnabled(true);
+                    passwordField.setEnabled(false);
+                }
+            }
+        });
+
         pane.add(authenticationContainer);
     }
 

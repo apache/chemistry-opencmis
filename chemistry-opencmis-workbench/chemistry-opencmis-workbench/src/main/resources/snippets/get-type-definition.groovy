@@ -16,10 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- 
-Folder folder = ...  // session.getObjectByPath("/")
-OperationContext ctxt = OperationContextUtils.createMaximumOperationContext()
 
-folder.getChildren(ctxt).each { child ->
-    println "${child.name} (${child.id}) [${child.type.id}]"
+ObjectType type = session.getTypeDefinition("cmis:document", true)
+
+println "${type.id}: ${type.displayName}"
+println "----------------------------------"
+
+type.propertyDefinitions.each { propDefEntry ->
+   println "  ${propDefEntry.value.id} [${propDefEntry.value.propertyType.value}]: ${propDefEntry.value.displayName}"
 }

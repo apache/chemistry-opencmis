@@ -17,7 +17,7 @@
  * under the License.
  */
 
-CmisObject cmisObject = ...
+CmisObject cmisObject = ... // session.getObject("...");
 
 def properties = [
     (PropertyIds.NAME): "new name"
