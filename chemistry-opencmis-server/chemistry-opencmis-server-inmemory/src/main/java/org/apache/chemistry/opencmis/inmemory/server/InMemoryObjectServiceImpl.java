@@ -141,7 +141,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         if (null != properties) {
             // overwrite all new properties
             for (PropertyData<?> prop : properties.getProperties().values()) {
-                newPD.addProperty(prop);
+                newPD.replaceProperty(prop);
             }
         }
 

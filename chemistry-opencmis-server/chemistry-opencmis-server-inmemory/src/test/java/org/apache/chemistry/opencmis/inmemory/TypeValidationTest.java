@@ -452,7 +452,7 @@ public class TypeValidationTest extends TestCase {
         List<PropertyData<?>> properties = new ArrayList<PropertyData<?>>();
         properties.add(FACTORY.createPropertyIdData(PropertyIds.NAME, "Document_1"));
         properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, typeIdPrimary));
-        properties.add(FACTORY.createPropertyIdData(PropertyIds.OBJECT_TYPE_ID, secondaryTypeIds));
+        properties.add(FACTORY.createPropertyIdData(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypeIds));
         properties.add(FACTORY.createPropertyBooleanData("BooleanProp", true));
         properties.add(FACTORY.createPropertyIntegerData(INT_PROP_TYPE, BigInteger.valueOf(0)));
         properties.add(FACTORY.createPropertyDecimalData(DECIMAL_PROP_TYPE, BigDecimal.valueOf(0.5)));

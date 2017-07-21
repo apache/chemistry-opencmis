@@ -24,7 +24,7 @@ package org.apache.chemistry.opencmis.commons.data;
 public interface MutableProperties extends Properties {
 
     /**
-     * Adds a property to the end of the property list.
+     * Adds a new property to the end of the property list.
      * 
      * @param property
      *            the property, {@code null} values are ignored
