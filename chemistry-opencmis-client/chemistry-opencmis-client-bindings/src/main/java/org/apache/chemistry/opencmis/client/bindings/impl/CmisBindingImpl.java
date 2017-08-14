@@ -95,7 +95,8 @@ public final class CmisBindingImpl implements CmisBinding, Serializable {
                 Object authProviderObj = null;
 
                 try {
-                    authProviderObj = ClassLoaderUtil.loadClass(authProviderClassName).newInstance();
+                    authProviderObj = ClassLoaderUtil.loadClass(authProviderClassName).getDeclaredConstructor()
+                            .newInstance();
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Could not load authentication provider: " + e, e);
                 }

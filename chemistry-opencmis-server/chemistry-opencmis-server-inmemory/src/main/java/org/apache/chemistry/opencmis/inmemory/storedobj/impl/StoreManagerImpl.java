@@ -109,9 +109,8 @@ public class StoreManagerImpl implements StoreManager {
      * Map from repository id to a object store.
      */
     private final Map<String, ObjectStore> fMapRepositoryToObjectStore = new HashMap<String, ObjectStore>();
-    
+
     private boolean relaxedParserMode = false;
-    
 
     public ObjectStoreImpl getStore(String repositoryId) {
         return (ObjectStoreImpl) fMapRepositoryToObjectStore.get(repositoryId);
@@ -139,8 +138,8 @@ public class StoreManagerImpl implements StoreManager {
     public void createAndInitRepository(String repositoryId, String typeCreatorClassName) {
         if (fMapRepositoryToObjectStore.containsKey(repositoryId)
                 || fMapRepositoryToTypeManager.containsKey(repositoryId)) {
-            throw new CmisInvalidArgumentException("Cannot add repository, repository " + repositoryId
-                    + " already exists.");
+            throw new CmisInvalidArgumentException(
+                    "Cannot add repository, repository " + repositoryId + " already exists.");
         }
 
         fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
@@ -152,11 +151,11 @@ public class StoreManagerImpl implements StoreManager {
 
     @Override
     public void addFlag(String flag) {
-    	if (flag.trim().equalsIgnoreCase("ParserModeRelaxed")) {
-    		relaxedParserMode = true;
-    	}
+        if (flag.trim().equalsIgnoreCase("ParserModeRelaxed")) {
+            relaxedParserMode = true;
+        }
     }
-    
+
     @Override
     public ObjectStore getObjectStore(String repositoryId) {
         return fMapRepositoryToObjectStore.get(repositoryId);
@@ -187,7 +186,7 @@ public class StoreManagerImpl implements StoreManager {
                     || td.getId().equals(BaseTypeId.CMIS_SECONDARY.value())) {
                 tdc = null; // filter new types for CMIS 1.0
             } else {
-            	// remove type mutability information:
+                // remove type mutability information:
                 MutableTypeDefinition tdm = typeFactory.copy(td, true);
                 tdm.setTypeMutability(null);
                 tdc = new TypeDefinitionContainerImpl(tdm);
@@ -236,7 +235,8 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions, boolean cmis11) {
+    public List<TypeDefinitionContainer> getRootTypes(String repositoryId, boolean includePropertyDefinitions,
+            boolean cmis11) {
         List<TypeDefinitionContainer> result;
         TypeManager typeManager = fMapRepositoryToTypeManager.get(repositoryId);
         if (null == typeManager) {
@@ -271,21 +271,22 @@ public class StoreManagerImpl implements StoreManager {
         }
         return result;
     }
-    
-    private List<TypeDefinitionContainer> cloneTypeDefinitionTree (List<TypeDefinitionContainer> tdcList, boolean includePropertyDefinitions, boolean cmis11) {
-    	List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>(tdcList.size());
-		for (TypeDefinitionContainer c : tdcList) {
-			MutableTypeDefinition td = typeFactory.copy(c.getTypeDefinition(), includePropertyDefinitions);
-			if (!cmis11) {
-				td.setTypeMutability(null);
-			}
-			TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
-			tdc.setChildren(cloneTypeDefinitionTree(c.getChildren(), includePropertyDefinitions, cmis11));
-			result.add(tdc);
-		}
-		return result;
-	}
-    
+
+    private List<TypeDefinitionContainer> cloneTypeDefinitionTree(List<TypeDefinitionContainer> tdcList,
+            boolean includePropertyDefinitions, boolean cmis11) {
+        List<TypeDefinitionContainer> result = new ArrayList<TypeDefinitionContainer>(tdcList.size());
+        for (TypeDefinitionContainer c : tdcList) {
+            MutableTypeDefinition td = typeFactory.copy(c.getTypeDefinition(), includePropertyDefinitions);
+            if (!cmis11) {
+                td.setTypeMutability(null);
+            }
+            TypeDefinitionContainerImpl tdc = new TypeDefinitionContainerImpl(td);
+            tdc.setChildren(cloneTypeDefinitionTree(c.getChildren(), includePropertyDefinitions, cmis11));
+            result.add(tdc);
+        }
+        return result;
+    }
+
     @Override
     public RepositoryInfo getRepositoryInfo(CallContext context, String repositoryId) {
         ObjectStore sm = fMapRepositoryToObjectStore.get(repositoryId);
@@ -316,12 +317,8 @@ public class StoreManagerImpl implements StoreManager {
 
             final String message = "Illegal class to create type system, must implement TypeCreator interface.";
             try {
-                obj = Class.forName(typeCreatorClassName).newInstance();
-            } catch (InstantiationException e) {
-                throw new CmisRuntimeException(message, e);
-            } catch (IllegalAccessException e) {
-                throw new CmisRuntimeException(message, e);
-            } catch (ClassNotFoundException e) {
+                obj = Class.forName(typeCreatorClassName).getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
                 throw new CmisRuntimeException(message, e);
             }
 
@@ -547,7 +544,7 @@ public class StoreManagerImpl implements StoreManager {
         final TypeDefinitionFactory typeFactory = TypeDefinitionFactory.newInstance();
         MutableTypeDefinition tdClone = typeFactory.copy(tdc.getTypeDefinition(), includePropertyDefinitions);
         if (!cmis11) {
-        	tdClone.setTypeMutability(null);
+            tdClone.setTypeMutability(null);
         }
         TypeDefinitionContainerImpl tdcClone = new TypeDefinitionContainerImpl(tdClone);
         if (null != parent) {
@@ -580,13 +577,14 @@ public class StoreManagerImpl implements StoreManager {
     }
 
     @Override
-    public ObjectList query(CallContext callContext, String user, String repositoryId, String statement, Boolean searchAllVersions,
-            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-            BigInteger maxItems, BigInteger skipCount) {
+    public ObjectList query(CallContext callContext, String user, String repositoryId, String statement,
+            Boolean searchAllVersions, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
+            String renditionFilter, BigInteger maxItems, BigInteger skipCount) {
         TypeManager tm = getTypeManager(repositoryId);
         ObjectStore objectStore = getObjectStore(repositoryId);
 
-        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId), callContext, relaxedParserMode);
+        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId), callContext,
+                relaxedParserMode);
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 

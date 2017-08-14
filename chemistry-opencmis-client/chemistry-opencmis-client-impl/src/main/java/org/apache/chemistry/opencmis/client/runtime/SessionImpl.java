@@ -231,7 +231,7 @@ public class SessionImpl implements Session {
                 objectFactoryClass = ClassLoaderUtil.loadClass(classname);
             }
 
-            Object of = objectFactoryClass.newInstance();
+            Object of = objectFactoryClass.getDeclaredConstructor().newInstance();
             if (!(of instanceof ObjectFactory)) {
                 throw new InstantiationException("Class does not implement ObjectFactory!");
             }
@@ -255,7 +255,7 @@ public class SessionImpl implements Session {
                 cacheClass = ClassLoaderUtil.loadClass(classname);
             }
 
-            Object of = cacheClass.newInstance();
+            Object of = cacheClass.getDeclaredConstructor().newInstance();
             if (!(of instanceof Cache)) {
                 throw new InstantiationException("Class does not implement Cache!");
             }

@@ -192,7 +192,7 @@ public abstract class AbstractRunner {
         }
 
         Class<?> clazz = ClassLoaderUtil.loadClass(groupClass);
-        Object o = clazz.newInstance();
+        Object o = clazz.getDeclaredConstructor().newInstance();
         CmisTestGroup group = null;
 
         if (o instanceof CmisTestGroup) {

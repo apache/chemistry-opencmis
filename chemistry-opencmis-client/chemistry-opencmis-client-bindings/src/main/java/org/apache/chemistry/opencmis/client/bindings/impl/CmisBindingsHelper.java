@@ -126,7 +126,7 @@ public final class CmisBindingsHelper {
             // ok, we have to create it...
             try {
                 String invokerName = (String) session.get(SessionParameter.HTTP_INVOKER_CLASS);
-                invoker = (HttpInvoker) ClassLoaderUtil.loadClass(invokerName).newInstance();
+                invoker = (HttpInvoker) ClassLoaderUtil.loadClass(invokerName).getDeclaredConstructor().newInstance();
             } catch (CmisBaseException e) {
                 throw e;
             } catch (Exception e) {
@@ -195,7 +195,8 @@ public final class CmisBindingsHelper {
             // ok, we have to create it...
             try {
                 String cacheName = (String) session.get(SessionParameter.TYPE_DEFINITION_CACHE_CLASS);
-                cache = (TypeDefinitionCache) ClassLoaderUtil.loadClass(cacheName).newInstance();
+                cache = (TypeDefinitionCache) ClassLoaderUtil.loadClass(cacheName).getDeclaredConstructor()
+                        .newInstance();
                 cache.initialize(session);
             } catch (CmisBaseException e) {
                 throw e;

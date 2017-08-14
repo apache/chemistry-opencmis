@@ -52,7 +52,8 @@ popd > /dev/null
 # export no_proxy=localhost,127.0.0.0,.local
 
 
+JAVA_VERSION_OPTS=$($JAVA -classpath $WCP org.apache.chemistry.opencmis.workbench.JavaDetector)
 JAVA_PROXY_CONF=$($JAVA -classpath $WCP org.apache.chemistry.opencmis.workbench.ProxyDetector -j -s)
-JAVA_OPTS="$JAVA_PROXY_CONF"
+JAVA_OPTS="$JAVA_VERSION_OPTS $JAVA_PROXY_CONF"
 
 exec $JAVA $JAVA_OPTS $CUSTOM_JAVA_OPTS -classpath $WCP org.apache.chemistry.opencmis.script.ScriptExecutor "$@"

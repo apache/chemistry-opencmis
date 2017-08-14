@@ -157,7 +157,7 @@ public final class TypeDefinitionFactory {
 
     protected MutableDocumentTypeDefinition createDocumentTypeDefinitionObject() {
         try {
-            return documentTypeDefinitionClass.newInstance();
+            return documentTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -174,7 +174,7 @@ public final class TypeDefinitionFactory {
 
     protected MutableFolderTypeDefinition createFolderTypeDefinitionObject() {
         try {
-            return folderTypeDefinitionClass.newInstance();
+            return folderTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -191,7 +191,7 @@ public final class TypeDefinitionFactory {
 
     protected MutablePolicyTypeDefinition createPolicyTypeDefinitionObject() {
         try {
-            return policyTypeDefinitionClass.newInstance();
+            return policyTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -209,7 +209,7 @@ public final class TypeDefinitionFactory {
 
     protected MutableRelationshipTypeDefinition createRelationshipTypeDefinitionObject() {
         try {
-            return relationshipTypeDefinitionClass.newInstance();
+            return relationshipTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -226,7 +226,7 @@ public final class TypeDefinitionFactory {
 
     protected MutableItemTypeDefinition createItemTypeDefinitionObject() {
         try {
-            return itemTypeDefinitionClass.newInstance();
+            return itemTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -244,7 +244,7 @@ public final class TypeDefinitionFactory {
 
     protected MutableSecondaryTypeDefinition createSecondaryTypeDefinitionObject() {
         try {
-            return secondaryTypeDefinitionClass.newInstance();
+            return secondaryTypeDefinitionClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Cannot create type defintion object: " + e.getMessage(), e);
         }
@@ -468,7 +468,8 @@ public final class TypeDefinitionFactory {
      * Creates a new mutable relationship type definition including all base
      * property definitions defined in the CMIS specification.
      */
-    public MutableRelationshipTypeDefinition createRelationshipTypeDefinition(CmisVersion cmisVersion, String parentId) {
+    public MutableRelationshipTypeDefinition createRelationshipTypeDefinition(CmisVersion cmisVersion,
+            String parentId) {
         MutableRelationshipTypeDefinition relationshipType = createRelationshipTypeDefinitionObject();
         relationshipType.setBaseTypeId(BaseTypeId.CMIS_RELATIONSHIP);
         relationshipType.setParentTypeId(parentId);
@@ -982,15 +983,14 @@ public final class TypeDefinitionFactory {
             Map<String, Set<String>> typeDefChildren, String typeId, int depth, boolean includePropertyDefinitions,
             CmisVersion cmisVersion) {
         TypeDefinitionContainerImpl result = new TypeDefinitionContainerImpl();
-        result.setTypeDefinition(includePropertyDefinitions ? copy(allTypes.get(typeId), true, cmisVersion) : copy(
-                allTypes.get(typeId), false, cmisVersion));
+        result.setTypeDefinition(includePropertyDefinitions ? copy(allTypes.get(typeId), true, cmisVersion)
+                : copy(allTypes.get(typeId), false, cmisVersion));
 
         if (depth != 0) {
             if (typeDefChildren.containsKey(typeId)) {
                 for (String child : typeDefChildren.get(typeId)) {
-                    result.getChildren().add(
-                            createTypeDefinitionContainer(allTypes, typeDefChildren, child, depth < 0 ? -1 : depth - 1,
-                                    includePropertyDefinitions, cmisVersion));
+                    result.getChildren().add(createTypeDefinitionContainer(allTypes, typeDefChildren, child,
+                            depth < 0 ? -1 : depth - 1, includePropertyDefinitions, cmisVersion));
                 }
             }
         }
@@ -1025,8 +1025,8 @@ public final class TypeDefinitionFactory {
         switch (sourceTypeDefintion.getBaseTypeId()) {
         case CMIS_DOCUMENT:
             result = createDocumentTypeDefinitionObject();
-            ((MutableDocumentTypeDefinition) result).setIsVersionable(((DocumentTypeDefinition) sourceTypeDefintion)
-                    .isVersionable());
+            ((MutableDocumentTypeDefinition) result)
+                    .setIsVersionable(((DocumentTypeDefinition) sourceTypeDefintion).isVersionable());
             ((MutableDocumentTypeDefinition) result)
                     .setContentStreamAllowed(((DocumentTypeDefinition) sourceTypeDefintion).getContentStreamAllowed());
             break;
@@ -1084,8 +1084,8 @@ public final class TypeDefinitionFactory {
         if (cmisVersion != CmisVersion.CMIS_1_0) {
             if (sourceTypeDefintion.getTypeMutability() != null) {
                 result.setTypeMutability(createTypeMutability(sourceTypeDefintion.getTypeMutability().canCreate(),
-                        sourceTypeDefintion.getTypeMutability().canUpdate(), sourceTypeDefintion.getTypeMutability()
-                                .canDelete()));
+                        sourceTypeDefintion.getTypeMutability().canUpdate(),
+                        sourceTypeDefintion.getTypeMutability().canDelete()));
             }
         }
 
@@ -1122,9 +1122,8 @@ public final class TypeDefinitionFactory {
             break;
         case DATETIME:
             result = new PropertyDateTimeDefinitionImpl();
-            ((PropertyDateTimeDefinitionImpl) result)
-                    .setDateTimeResolution(((PropertyDateTimeDefinition) sourcePropertyDefinition)
-                            .getDateTimeResolution());
+            ((PropertyDateTimeDefinitionImpl) result).setDateTimeResolution(
+                    ((PropertyDateTimeDefinition) sourcePropertyDefinition).getDateTimeResolution());
             ((PropertyDateTimeDefinitionImpl) result)
                     .setDefaultValue(copyDefaultValue((PropertyDateTimeDefinition) sourcePropertyDefinition));
             ((PropertyDateTimeDefinitionImpl) result)
@@ -1132,10 +1131,10 @@ public final class TypeDefinitionFactory {
             break;
         case DECIMAL:
             result = new PropertyDecimalDefinitionImpl();
-            ((PropertyDecimalDefinitionImpl) result).setMinValue(((PropertyDecimalDefinition) sourcePropertyDefinition)
-                    .getMinValue());
-            ((PropertyDecimalDefinitionImpl) result).setMaxValue(((PropertyDecimalDefinition) sourcePropertyDefinition)
-                    .getMaxValue());
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setMinValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMinValue());
+            ((PropertyDecimalDefinitionImpl) result)
+                    .setMaxValue(((PropertyDecimalDefinition) sourcePropertyDefinition).getMaxValue());
             ((PropertyDecimalDefinitionImpl) result)
                     .setPrecision(((PropertyDecimalDefinition) sourcePropertyDefinition).getPrecision());
             ((PropertyDecimalDefinitionImpl) result)
@@ -1157,10 +1156,10 @@ public final class TypeDefinitionFactory {
             break;
         case INTEGER:
             result = new PropertyIntegerDefinitionImpl();
-            ((PropertyIntegerDefinitionImpl) result).setMinValue(((PropertyIntegerDefinition) sourcePropertyDefinition)
-                    .getMinValue());
-            ((PropertyIntegerDefinitionImpl) result).setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition)
-                    .getMaxValue());
+            ((PropertyIntegerDefinitionImpl) result)
+                    .setMinValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMinValue());
+            ((PropertyIntegerDefinitionImpl) result)
+                    .setMaxValue(((PropertyIntegerDefinition) sourcePropertyDefinition).getMaxValue());
             ((PropertyIntegerDefinitionImpl) result)
                     .setDefaultValue(copyDefaultValue((PropertyIntegerDefinition) sourcePropertyDefinition));
             ((PropertyIntegerDefinitionImpl) result)
@@ -1168,8 +1167,8 @@ public final class TypeDefinitionFactory {
             break;
         case STRING:
             result = new PropertyStringDefinitionImpl();
-            ((PropertyStringDefinitionImpl) result).setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition)
-                    .getMaxLength()));
+            ((PropertyStringDefinitionImpl) result)
+                    .setMaxLength((((PropertyStringDefinition) sourcePropertyDefinition).getMaxLength()));
             ((PropertyStringDefinitionImpl) result)
                     .setDefaultValue(copyDefaultValue((PropertyStringDefinition) sourcePropertyDefinition));
             ((PropertyStringDefinitionImpl) result)
@@ -1211,8 +1210,8 @@ public final class TypeDefinitionFactory {
     /**
      * Copies the property definitions from a source type to a target type.
      */
-    protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target,
-            CmisVersion cmisVersion, boolean markAsInherited) {
+    protected void copyPropertyDefinitions(TypeDefinition source, MutableTypeDefinition target, CmisVersion cmisVersion,
+            boolean markAsInherited) {
         assert source != null;
         assert target != null;
 
@@ -1313,8 +1312,8 @@ public final class TypeDefinitionFactory {
             return null;
         }
 
-        Map<String, String> attrs = (element.getAttributes() != null ? new HashMap<String, String>(
-                element.getAttributes()) : null);
+        Map<String, String> attrs = (element.getAttributes() != null
+                ? new HashMap<String, String>(element.getAttributes()) : null);
 
         List<CmisExtensionElement> children = element.getChildren();
         if (isNotEmpty(children)) {
@@ -1348,9 +1347,9 @@ public final class TypeDefinitionFactory {
         type.addPropertyDefinition(createPropertyDefinition(PropertyIds.BASE_TYPE_ID, "Base Type Id", "Base Type Id",
                 PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.OBJECT_TYPE_ID, "Object Type Id",
-                "Object Type Id", PropertyType.ID, Cardinality.SINGLE, Updatability.ONCREATE, inherited, true, true,
-                false));
+        type.addPropertyDefinition(
+                createPropertyDefinition(PropertyIds.OBJECT_TYPE_ID, "Object Type Id", "Object Type Id",
+                        PropertyType.ID, Cardinality.SINGLE, Updatability.ONCREATE, inherited, true, true, false));
 
         if (cmisVersion != CmisVersion.CMIS_1_0) {
             type.addPropertyDefinition(createPropertyDefinition(PropertyIds.SECONDARY_OBJECT_TYPE_IDS,
@@ -1361,13 +1360,12 @@ public final class TypeDefinitionFactory {
         type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CREATED_BY, "Created By", "Created By",
                 PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CREATION_DATE, "Creation Date",
-                "Creation Date", PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
-                true, true));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CREATION_DATE, "Creation Date", "Creation Date",
+                PropertyType.DATETIME, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.LAST_MODIFIED_BY, "Last Modified By",
-                "Last Modified By", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
-                true, true));
+        type.addPropertyDefinition(
+                createPropertyDefinition(PropertyIds.LAST_MODIFIED_BY, "Last Modified By", "Last Modified By",
+                        PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, true));
 
         type.addPropertyDefinition(createPropertyDefinition(PropertyIds.LAST_MODIFICATION_DATE,
                 "Last Modification Date", "Last Modification Date", PropertyType.DATETIME, Cardinality.SINGLE,
@@ -1400,13 +1398,12 @@ public final class TypeDefinitionFactory {
                     Updatability.READONLY, inherited, false, true, false));
         }
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_LABEL, "Version Label",
-                "Version Label", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
-                true, false));
+        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_LABEL, "Version Label", "Version Label",
+                PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.VERSION_SERIES_ID, "Version Series Id",
-                "Version Series Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
-                true, false));
+        type.addPropertyDefinition(
+                createPropertyDefinition(PropertyIds.VERSION_SERIES_ID, "Version Series Id", "Version Series Id",
+                        PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, true, false));
 
         type.addPropertyDefinition(createPropertyDefinition(PropertyIds.IS_VERSION_SERIES_CHECKED_OUT,
                 "Is Verison Series Checked Out", "Is Verison Series Checked Out", PropertyType.BOOLEAN,
@@ -1436,9 +1433,9 @@ public final class TypeDefinitionFactory {
                 "Filename", PropertyType.STRING, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false,
                 false));
 
-        type.addPropertyDefinition(createPropertyDefinition(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id",
-                "Content Stream Id", PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false,
-                false, false));
+        type.addPropertyDefinition(
+                createPropertyDefinition(PropertyIds.CONTENT_STREAM_ID, "Content Stream Id", "Content Stream Id",
+                        PropertyType.ID, Cardinality.SINGLE, Updatability.READONLY, inherited, false, false, false));
     }
 
     protected void addFolderPropertyDefinitions(MutableFolderTypeDefinition type, CmisVersion cmisVersion,

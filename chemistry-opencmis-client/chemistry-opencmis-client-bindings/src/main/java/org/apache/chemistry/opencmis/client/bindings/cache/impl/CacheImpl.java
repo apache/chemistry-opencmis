@@ -308,7 +308,7 @@ public class CacheImpl implements Cache {
         Class<?> clazz = levels.get(level);
         CacheLevel cacheLevel = null;
         try {
-            cacheLevel = (CacheLevel) clazz.newInstance();
+            cacheLevel = (CacheLevel) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException("Cache level problem?!", e);
         }

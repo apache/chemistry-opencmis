@@ -76,7 +76,8 @@ public abstract class AbstractCmisHttpServlet extends HttpServlet {
         String callContextHandlerClass = config.getInitParameter(PARAM_CALL_CONTEXT_HANDLER);
         if (callContextHandlerClass != null) {
             try {
-                return (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass).newInstance();
+                return (CallContextHandler) ClassLoaderUtil.loadClass(callContextHandlerClass).getDeclaredConstructor()
+                        .newInstance();
             } catch (Exception e) {
                 throw new ServletException("Could not load call context handler: " + e, e);
             }

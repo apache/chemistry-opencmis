@@ -46,10 +46,8 @@ public final class StoreManagerFactory {
 
         Object obj = null;
         try {
-            obj = clazz.newInstance();
-        } catch (InstantiationException e) {
-            LOG.error("Failed to create StoredObjectCreator from class " + className, e);
-        } catch (IllegalAccessException e) {
+            obj = clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
             LOG.error("Failed to create StoredObjectCreator from class " + className, e);
         }
 

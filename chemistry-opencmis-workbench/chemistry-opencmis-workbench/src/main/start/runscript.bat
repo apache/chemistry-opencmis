@@ -25,7 +25,8 @@ rem set https_proxy=https://<proxy>:<port>
 rem set no_proxy=localhost,127.0.0.0,.local
 
 
+for /F "delims=/" %%x in ('"java -classpath .;%~dp0\lib\* org.apache.chemistry.opencmis.workbench.JavaDetector"') do set "JAVA_VERSION_OPTS=%%x"
 for /F "delims=/" %%x in ('"java -classpath .;%~dp0\lib\* org.apache.chemistry.opencmis.workbench.ProxyDetector -j -s"') do set "JAVA_PROXY_CONF=%%x"
-set JAVA_OPTS=%JAVA_PROXY_CONF%
+set JAVA_OPTS=%JAVA_VERSION_OPTS% %JAVA_PROXY_CONF%
 
 java %JAVA_OPTS% %CUSTOM_JAVA_OPTS% -classpath ".;%~dp0\lib\*" org.apache.chemistry.opencmis.script.ScriptExecutor %*

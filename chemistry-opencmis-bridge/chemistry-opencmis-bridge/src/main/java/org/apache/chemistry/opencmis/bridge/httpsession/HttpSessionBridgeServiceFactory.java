@@ -33,7 +33,7 @@ public class HttpSessionBridgeServiceFactory extends AbstractBridgeServiceFactor
     protected FilterCmisService createService(CallContext context) {
         HttpSessionCmisService service = null;
         try {
-            service = (HttpSessionCmisService) getServiceClass().newInstance();
+            service = (HttpSessionCmisService) getServiceClass().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new CmisRuntimeException("Could not create service instance: " + e, e);
         }

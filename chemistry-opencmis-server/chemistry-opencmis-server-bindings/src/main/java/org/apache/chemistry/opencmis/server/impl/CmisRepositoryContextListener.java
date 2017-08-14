@@ -122,7 +122,7 @@ public class CmisRepositoryContextListener implements ServletContextListener {
         // create a factory instance
         Object object = null;
         try {
-            object = ClassLoaderUtil.loadClass(className).newInstance();
+            object = ClassLoaderUtil.loadClass(className).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             LOG.warn("Could not create a services factory instance: {}", e.toString(), e);
             return null;

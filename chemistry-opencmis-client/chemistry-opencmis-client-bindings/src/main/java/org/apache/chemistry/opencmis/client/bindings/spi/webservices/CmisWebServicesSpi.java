@@ -117,7 +117,7 @@ public class CmisWebServicesSpi implements CmisSpi {
             Object portProviderObj = null;
 
             try {
-                portProviderObj = ClassLoaderUtil.loadClass(portProviderClass).newInstance();
+                portProviderObj = ClassLoaderUtil.loadClass(portProviderClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new IllegalArgumentException("Could not load port provider: " + e, e);
             }

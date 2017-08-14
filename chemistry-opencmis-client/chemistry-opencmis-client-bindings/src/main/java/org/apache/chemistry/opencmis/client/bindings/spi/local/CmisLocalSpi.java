@@ -85,7 +85,8 @@ public class CmisLocalSpi implements CmisSpi {
             }
 
             // create and initialize factory
-            factory = (CmisServiceFactory) ClassLoaderUtil.loadClass(serviceFactoryClassname).newInstance();
+            factory = (CmisServiceFactory) ClassLoaderUtil.loadClass(serviceFactoryClassname).getDeclaredConstructor()
+                    .newInstance();
             factory.init(parameters);
         } catch (Exception e) {
             throw new CmisConnectionException("Factory cannot be created: " + e.getMessage(), e);

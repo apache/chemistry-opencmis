@@ -61,7 +61,7 @@ public final class XMLUtils {
         try {
             // Woodstox is the only supported and tested StAX implementation
             WstxInputFactory wstxFactory = (WstxInputFactory) ClassLoaderUtil.loadClass(
-                    "com.ctc.wstx.stax.WstxInputFactory").newInstance();
+                    "com.ctc.wstx.stax.WstxInputFactory").getDeclaredConstructor().newInstance();
             wstxFactory.configureForSpeed();
 
             factory = wstxFactory;
@@ -93,7 +93,7 @@ public final class XMLUtils {
         try {
             // Woodstox is the only supported and tested StAX implementation
             WstxOutputFactory wstxFactory = (WstxOutputFactory) ClassLoaderUtil.loadClass(
-                    "com.ctc.wstx.stax.WstxOutputFactory").newInstance();
+                    "com.ctc.wstx.stax.WstxOutputFactory").getDeclaredConstructor().newInstance();
             wstxFactory.configureForSpeed();
             wstxFactory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
                     new InvalidCharHandler.ReplacingHandler(' '));
