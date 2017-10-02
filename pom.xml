@@ -158,7 +158,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>2.6.1</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.0.14</cxf.version>
+        <cxf.version>3.1.13</cxf.version>
         <okhttp.version>3.8.1</okhttp.version>
     </properties>
 
@@ -174,6 +174,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
+                    <configuration>
+                        <argLine>--add-modules java.xml.ws</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +186,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -318,6 +321,7 @@
             <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
@@ -409,6 +413,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M1</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -418,10 +423,10 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[1.8.0,)</version>
+                                    <version>[9,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
-                                    <version>[3.0,)</version>
+                                    <version>[3.5,)</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>

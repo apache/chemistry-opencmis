@@ -74,6 +74,7 @@
                         <Export-Package>
                             org.apache.chemistry.opencmis.client.bindings;version=${project.version},
                             org.apache.chemistry.opencmis.client.bindings.spi.*;version=${project.version},
+                            org.apache.chemistry.opencmis.client.bindings.cache.*;version=${project.version},
                             !org.apache.chemistry.opencmis.commons.impl.json.*,
                             !org.apache.chemistry.opencmis.commons.impl.jaxb.*,
                             !org.apache.http.*,
