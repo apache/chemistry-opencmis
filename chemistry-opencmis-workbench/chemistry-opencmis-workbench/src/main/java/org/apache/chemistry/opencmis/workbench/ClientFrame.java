@@ -133,7 +133,7 @@ public class ClientFrame extends JFrame implements WindowListener {
 
             if (icon != null) {
                 try {
-                    taskbarClass.getMethod("setIconImage​", Image.class).invoke(taskbar, icon.getImage());
+                    taskbarClass.getMethod("setIconImage", Image.class).invoke(taskbar, icon.getImage());
                     isDockImageSet = true;
                 } catch (Exception e) {
                     LOG.debug("Could not set taskbar icon!", e);
