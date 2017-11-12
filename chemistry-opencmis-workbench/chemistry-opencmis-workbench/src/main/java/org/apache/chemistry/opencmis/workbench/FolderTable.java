@@ -56,6 +56,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.workbench.icons.CheckedOutIcon;
 import org.apache.chemistry.opencmis.workbench.icons.DocumentIcon;
 import org.apache.chemistry.opencmis.workbench.icons.FolderIcon;
@@ -153,13 +154,25 @@ public class FolderTable extends JTable implements FolderListener {
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {
-                        DeleteWorker worker = new DeleteWorker(FolderTable.this, model.getCurrentObject()) {
-                            @Override
-                            protected void done() {
-                                super.done();
-                                LoadFolderWorker.reloadFolder(FolderTable.this, model);
-                            }
-                        };
+                        DeleteWorker worker = null;
+                        if (model.getCurrentObject() instanceof Folder) {
+                            worker = new DeleteWorker(FolderTable.this, (Folder) model.getCurrentObject(), true,
+                                    UnfileObject.DELETE, true) {
+                                @Override
+                                protected void done() {
+                                    super.done();
+                                    LoadFolderWorker.reloadFolder(FolderTable.this, model);
+                                }
+                            };
+                        } else {
+                            worker = new DeleteWorker(FolderTable.this, model.getCurrentObject()) {
+                                @Override
+                                protected void done() {
+                                    super.done();
+                                    LoadFolderWorker.reloadFolder(FolderTable.this, model);
+                                }
+                            };
+                        }
                         worker.executeTask();
                     }
                 }

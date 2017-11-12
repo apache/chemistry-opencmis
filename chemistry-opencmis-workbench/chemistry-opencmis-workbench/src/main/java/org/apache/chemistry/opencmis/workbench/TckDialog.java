@@ -254,19 +254,17 @@ public class TckDialog {
             mainPanel.add(configPanel, BorderLayout.LINE_END);
             add(mainPanel, BorderLayout.CENTER);
 
-            final JButton runButton = new JButton("Run TCK", new TckIcon(ClientHelper.BUTTON_ICON_SIZE,
-                    ClientHelper.BUTTON_ICON_SIZE));
+            final JButton runButton = new JButton("Run TCK",
+                    new TckIcon(ClientHelper.BUTTON_ICON_SIZE, ClientHelper.BUTTON_ICON_SIZE));
             runButton.setDefaultCapable(true);
             runButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    int answer = JOptionPane
-                            .showConfirmDialog(
-                            		TckSelectDialog.this,
-                                    "Running the TCK may take a long time and may add, remove and alter data in the repository!\n"
-                                            + "It also puts at a strain on the repository, performing several thousand calls!\n"
-                                            + "\nAre you sure you want to proceed?", "TCK", JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE);
+                    int answer = JOptionPane.showConfirmDialog(TckSelectDialog.this,
+                            "Running the TCK may take a long time and may add, remove and alter data in the repository!\n"
+                                    + "It also puts at a strain on the repository, performing several thousand calls!\n"
+                                    + "\nAre you sure you want to proceed?",
+                            "TCK", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                     if (answer == JOptionPane.YES_OPTION) {
                         Map<String, String> parameters = runner.getParameters();
@@ -614,10 +612,10 @@ public class TckDialog {
 
     private static class TckDialogRunner extends AbstractRunner {
         public TckDialogRunner(ClientModel model, TckDialog tckDialog) {
-            Map<String, String> parameters = new HashMap<String, String>(model.getClientSession()
-                    .getSessionParameters());
-            parameters.put(SessionParameter.REPOSITORY_ID, model.getClientSession().getSession().getRepositoryInfo()
-                    .getId());
+            Map<String, String> parameters = new HashMap<String, String>(
+                    model.getClientSession().getSessionParameters());
+            parameters.put(SessionParameter.REPOSITORY_ID,
+                    model.getClientSession().getSession().getRepositoryInfo().getId());
 
             setParameters(parameters);
         }
@@ -728,8 +726,8 @@ public class TckDialog {
             } catch (InterruptedException ie) {
                 runner.cancel();
             } catch (Exception e) {
-                JOptionPane
-                        .showMessageDialog(owner, "Error: " + e.getMessage(), "TCK Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(owner, "Error: " + e.getMessage(), "TCK Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
 
             return null;
