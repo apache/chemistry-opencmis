@@ -18,6 +18,9 @@
  */
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
@@ -45,6 +48,11 @@ public class UsernameTokenInterceptor extends AbstractCallContextInterceptor {
     protected static final String WSSE_USERNAME = "Username";
     protected static final String WSSE_PASSWORD = "Password";
     protected static final String WSSE_PASSWORD_TYPE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
+
+    @Override
+    public Set<QName> getUnderstoodHeaders() {
+        return Collections.singleton(WSSE_SECURITY);
+    }
 
     @Override
     public void handleMessage(SoapMessage message) {
