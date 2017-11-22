@@ -241,7 +241,7 @@ public abstract class AbstractService {
         if (ex != null) {
             if (ex instanceof CmisBaseException) {
                 fault.setCode(((CmisBaseException) ex).getCode());
-                fault.setMessage(ex.getMessage());
+                fault.setMessage(XMLUtils.cleanXmlString(ex.getMessage()));
 
                 if (ex instanceof CmisConstraintException) {
                     fault.setType(EnumServiceException.CONSTRAINT);
@@ -285,11 +285,11 @@ public abstract class AbstractService {
                             root.appendChild(entry);
 
                             Element key = doc.createElement("key");
-                            key.appendChild(doc.createTextNode(e.getKey()));
+                            key.appendChild(doc.createTextNode(XMLUtils.cleanXmlString(e.getKey())));
                             entry.appendChild(key);
 
                             Element value = doc.createElement("value");
-                            value.appendChild(doc.createTextNode(e.getValue()));
+                            value.appendChild(doc.createTextNode(XMLUtils.cleanXmlString(e.getValue())));
                             entry.appendChild(value);
                         }
 

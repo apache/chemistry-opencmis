@@ -267,7 +267,7 @@ public abstract class AbstractTckIT extends AbstractRunner {
                     assertTrue("The test '" + test.getName() + "' returned a failure: " + result.getMessage(),
                             result.getStatus() != CmisTestResultStatus.FAILURE);
                     assertTrue(
-                            "The test '" + test.getName() + "' returned at an unexcepted exception: "
+                            "The test '" + test.getName() + "' returned at an unexpected exception: "
                                     + result.getMessage(),
                             result.getStatus() != CmisTestResultStatus.UNEXPECTED_EXCEPTION);
                 }

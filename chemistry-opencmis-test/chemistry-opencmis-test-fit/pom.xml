@@ -92,7 +92,7 @@
                     <reuseForks>true</reuseForks>
                     <forkCount>1</forkCount>
                     <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                    <argLine>-ea:org.apache.chemistry --add-modules java.xml.ws</argLine>
+                    <argLine>-ea:org.apache.chemistry</argLine>
                     <systemPropertyVariables>
                         <systemProperty>
                             <name>org.apache.chemistry.opencmis.session.repository.id</name>

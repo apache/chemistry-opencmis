@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,8 +61,8 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            WstxInputFactory wstxFactory = (WstxInputFactory) ClassLoaderUtil.loadClass(
-                    "com.ctc.wstx.stax.WstxInputFactory").getDeclaredConstructor().newInstance();
+            WstxInputFactory wstxFactory = (WstxInputFactory) ClassLoaderUtil
+                    .loadClass("com.ctc.wstx.stax.WstxInputFactory").getDeclaredConstructor().newInstance();
             wstxFactory.configureForSpeed();
 
             factory = wstxFactory;
@@ -92,8 +93,8 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            WstxOutputFactory wstxFactory = (WstxOutputFactory) ClassLoaderUtil.loadClass(
-                    "com.ctc.wstx.stax.WstxOutputFactory").getDeclaredConstructor().newInstance();
+            WstxOutputFactory wstxFactory = (WstxOutputFactory) ClassLoaderUtil
+                    .loadClass("com.ctc.wstx.stax.WstxOutputFactory").getDeclaredConstructor().newInstance();
             wstxFactory.configureForSpeed();
             wstxFactory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
                     new InvalidCharHandler.ReplacingHandler(' '));
@@ -400,8 +401,8 @@ public final class XMLUtils {
     /**
      * Parses a stream and returns the DOM document.
      */
-    public static Document parseDomDocument(InputStream stream) throws ParserConfigurationException, SAXException,
-            IOException {
+    public static Document parseDomDocument(InputStream stream)
+            throws ParserConfigurationException, SAXException, IOException {
         return newDocumentBuilder().parse(stream);
     }
 
@@ -428,5 +429,16 @@ public final class XMLUtils {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
         return transformer;
+    }
+
+    // --------------------------
+    // ---- Misc ---
+    // --------------------------
+
+    private static Pattern CLEAN_PATTERN = Pattern
+            .compile("[^\\\\x09\\\\x0A\\\\x0D\\\\x20-\\\\xD7FF\\\\xE000-\\\\xFFFD\\\\x10000-\\\\x10‌​FFFF]");
+
+    public static String cleanXmlString(String s) {
+        return CLEAN_PATTERN.matcher(s).replaceAll(" ");
     }
 }

@@ -70,7 +70,7 @@ public final class ExceptionHelper {
                 Element node = doc.createElementNS("http://chemistry.apache.org/opencmis/exception", "stacktrace");
                 doc.appendChild(node);
 
-                node.appendChild(doc.createTextNode(st));
+                node.appendChild(doc.createTextNode(XMLUtils.cleanXmlString(st)));
 
                 return node;
             }

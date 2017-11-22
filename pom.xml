@@ -124,8 +124,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compile.source>1.7</maven.compile.source>
-        <maven.compile.target>1.7</maven.compile.target>
+        <maven.compile.source>1.8</maven.compile.source>
+        <maven.compile.target>1.8</maven.compile.target>
         <docs.start.url>https://chemistry.apache.org/java/opencmis.html</docs.start.url>
         <docs.download.directory>${project.build.directory}/downloaded-site</docs.download.directory>
         <!--
@@ -148,17 +148,17 @@
         <site.staging.url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</site.staging.url>
         <parentBasedir>${project.basedir}</parentBasedir>
 
-        <woodstox.version>4.4.1</woodstox.version>
-        <osgi.version>5.0.0</osgi.version>
+        <woodstox.version>5.0.3</woodstox.version>
+        <osgi.version>6.0.0</osgi.version>
         <felix.plugin.version>3.3.0</felix.plugin.version>
         <junit.version>4.12</junit.version>
-        <surefire.version>2.19.1</surefire.version>
-        <failsafe.version>2.19.1</failsafe.version>
+        <surefire.version>2.20.1</surefire.version>
+        <failsafe.version>2.20.1</failsafe.version>
         <jacoco.version>0.7.5.201505241946</jacoco.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.6.1</log4j.version>
+        <log4j.version>2.9.0</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.1.14</cxf.version>
+        <cxf.version>3.2.1</cxf.version>
         <okhttp.version>3.8.1</okhttp.version>
     </properties>
 

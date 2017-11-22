@@ -53,9 +53,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <!-- requires at least Java 7 -->
-                    <target>1.7</target>
-                    <source>1.7</source>
+                    <!-- requires at least Java 8 -->
+                    <target>1.8</target>
+                    <source>1.8</source>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>

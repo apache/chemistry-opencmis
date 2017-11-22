@@ -82,8 +82,8 @@ public class InvalidQueryTest extends AbstractQueryTest {
         } catch (CmisInvalidArgumentException e) {
             // excepted
         } catch (Exception ex) {
-            addResult(createResult(FAILURE, "This query is invalid and an unexcepted exception (" + ex.toString()
-                    + ") has been thrown: " + stmt, ex, false));
+            addResult(createResult(FAILURE, "This query is invalid and an unexpected exception (" + ex.toString()
+                    + ") has been thrown: \"" + stmt + "\"", ex, false));
         }
     }
 }
