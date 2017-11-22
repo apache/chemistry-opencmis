@@ -341,6 +341,12 @@ public class TestParserStrict extends AbstractParserTest {
         testLexerFail("TIME_LIT", "TIMESTAMP 123");
     }
 
+    // "timestamp'123'" OK
+    @Test
+    public void testTIME_LIT4() throws Exception {
+        testLexerOk("TIME_LIT", "TIMESTAMP'123'");
+    }
+
     // ----- Parser tests -----
 
     // literal:
@@ -754,6 +760,11 @@ public class TestParserStrict extends AbstractParserTest {
     @Test
     public void queryEsc1() throws Exception {
         testParserOk("query", "SELECT * FROM cmis:document " + "WHERE cmis:name LIKE 'abc\\%'");
+    }
+
+    @Test
+    public void queryDoubleQuotes() throws Exception {
+        testParserFail("query", "SELECT * FROM cmis:document WHERE cmis:name = \"a\"");
     }
 
 }

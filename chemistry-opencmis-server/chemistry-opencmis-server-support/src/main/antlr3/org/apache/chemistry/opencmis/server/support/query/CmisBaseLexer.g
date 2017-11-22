@@ -140,9 +140,9 @@ STRING_LIT
     :  QUOTE ( ESC | ~(BACKSL|QUOTE) )* QUOTE
 	;
 
-WS : ( ' ' | '\t' | '\r'? '\n' )* { $channel=HIDDEN; };
+WS : ( ' ' | '\t' | '\r'? '\n' )+ { $channel=HIDDEN; };
 
-TIME_LIT : TIMESTAMP WS STRING_LIT;
+TIME_LIT : TIMESTAMP WS? STRING_LIT;
 
 ID :
     ('a'..'z'|'A'..'Z'|'_')

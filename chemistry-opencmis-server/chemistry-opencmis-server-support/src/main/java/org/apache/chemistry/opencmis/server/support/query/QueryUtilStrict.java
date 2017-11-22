@@ -18,6 +18,10 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -54,6 +58,8 @@ public class QueryUtilStrict extends QueryUtilBase<CmisQueryWalker> {
     @Override
     public CommonTree parseStatement() throws RecognitionException {
         CharStream input = new ANTLRStringStream(statement);
+//    		InputStream lexerInput = new ByteArrayInputStream(statement.getBytes());
+//        CharStream input = new ANTLRInputStream(lexerInput, "UTF-8");
         CmisQlStrictLexer lexer = new CmisQlStrictLexer(input);
         tokens = new CommonTokenStream(lexer);
         CmisQlStrictParser parser = new CmisQlStrictParser(tokens);
