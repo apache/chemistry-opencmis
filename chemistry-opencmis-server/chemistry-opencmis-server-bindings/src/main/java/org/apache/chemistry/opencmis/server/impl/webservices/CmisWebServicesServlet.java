@@ -223,7 +223,7 @@ public class CmisWebServicesServlet extends CXFNonSpringServlet {
         pw.print("<h1>CMIS " + cmisVersion.value() + " Web Services</h1>");
         pw.print("<p>CMIS WSDL for all services: <a href=\"" + urlEscaped + "\">" + urlEscaped + "</a></p>");
 
-        pw.print("</html></body>");
+        pw.print("</body></html>");
         pw.flush();
     }
 
