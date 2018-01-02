@@ -251,14 +251,16 @@ public abstract class InfoPanel extends JPanel {
 
             Component comp = parent.getComponent(r * cols + 1);
             if (comp instanceof JTextField || comp instanceof JLabel) {
-                labelConstraints.setHeight(height);
                 valueConstraints.setConstraint(SpringLayout.BASELINE,
                         labelConstraints.getConstraint(SpringLayout.BASELINE));
             } else if (comp instanceof JSeparator) {
                 height = Spring.scale(height, 0.5f);
                 valueConstraints.setHeight(height);
-                valueConstraints.setY(Spring.sum(y, Spring.constant(minHeight / 4)));
+                valueConstraints.setY(Spring.sum(y, Spring.sum(Spring.scale(height, 0.5f),
+                        Spring.minus(Spring.constant((int) comp.getPreferredSize().getHeight() / 2)))));
             }
+
+            labelConstraints.setHeight(height);
 
             y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
         }
