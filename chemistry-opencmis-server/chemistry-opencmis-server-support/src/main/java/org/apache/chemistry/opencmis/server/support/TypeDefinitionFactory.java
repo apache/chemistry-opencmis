@@ -326,7 +326,7 @@ public final class TypeDefinitionFactory {
     /**
      * Creates a new type mutability object.
      */
-    public TypeMutability createTypeMutability(boolean canCreate, boolean canUpdate, boolean canDelete) {
+    public TypeMutability createTypeMutability(Boolean canCreate, Boolean canUpdate, Boolean canDelete) {
         TypeMutabilityImpl result = new TypeMutabilityImpl();
 
         result.setCanCreate(canCreate);
