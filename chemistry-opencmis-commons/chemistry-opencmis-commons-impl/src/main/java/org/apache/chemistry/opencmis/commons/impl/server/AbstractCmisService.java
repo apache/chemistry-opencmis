@@ -1165,7 +1165,7 @@ public abstract class AbstractCmisService implements CmisService, ObjectInfoHand
         info.setId(object.getId());
         info.setName(getStringProperty(object, PropertyIds.NAME));
         info.setCreatedBy(getStringProperty(object, PropertyIds.CREATED_BY));
-        info.setCreationDate(getDateTimeProperty(object, PropertyIds.CREATED_BY));
+        info.setCreationDate(getDateTimeProperty(object, PropertyIds.CREATION_DATE));
         info.setLastModificationDate(getDateTimeProperty(object, PropertyIds.LAST_MODIFICATION_DATE));
         info.setTypeId(getIdProperty(object, PropertyIds.OBJECT_TYPE_ID));
         info.setBaseType(object.getBaseTypeId());
