@@ -27,11 +27,20 @@ public class JavaDetector {
      * Main.
      */
     public static void main(String[] args) {
-        String javaVersion = System.getProperty("java.specification.version");
+        String javaVersionStr = System.getProperty("java.specification.version");
+        if (javaVersionStr == null) {
+            return;
+        }
 
-        if ("9".equals(javaVersion)) {
-            // Java 9
+        int javaVersion = 0;
 
+        try {
+            javaVersion = Integer.parseInt(javaVersionStr);
+        } catch (NumberFormatException nfe) {
+            // ignore
+        }
+
+        if (javaVersion == 9 || javaVersion == 10) {
             // enables Java EE APIs for the Web Services binding
             System.out.println("--add-modules java.se.ee");
         }

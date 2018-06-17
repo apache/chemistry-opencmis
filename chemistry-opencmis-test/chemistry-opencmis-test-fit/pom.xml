@@ -35,7 +35,7 @@
 
     <properties>
         <parentBasedir>../../</parentBasedir>
-        <tomcat.version>8.5.21</tomcat.version>
+        <tomcat.version>8.5.31</tomcat.version>
         <tomcat.juli.version>8.5.2</tomcat.juli.version>
         <overlay.groupId />
         <overlay.artifactId />
@@ -92,7 +92,7 @@
                     <reuseForks>true</reuseForks>
                     <forkCount>1</forkCount>
                     <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
-                    <argLine>-ea:org.apache.chemistry</argLine>
+                    <argLine>-ea:org.apache.chemistry --add-modules=java.xml.ws,java.xml.bind --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED</argLine>
                     <systemPropertyVariables>
                         <systemProperty>
                             <name>org.apache.chemistry.opencmis.session.repository.id</name>
