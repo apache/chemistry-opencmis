@@ -19,9 +19,9 @@
 package org.apache.chemistry.opencmis.server.impl.webservices;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
     private static final byte DASH = 0x2D;
 
     private final int messageMax;
-    private final InputStream orgStream;
+    private final ServletInputStream orgStream;
     private final ServletInputStream checkedStream;
     private final byte[] boundary;
 
@@ -157,6 +157,21 @@ public class ProtectionRequestWrapper extends HttpServletRequestWrapper {
         @Override
         public void close() throws IOException {
             orgStream.close();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return orgStream.isFinished();
+        }
+
+        @Override
+        public boolean isReady() {
+            return orgStream.isReady();
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            orgStream.setReadListener(readListener);
         }
 
         private void checkBoundary(int startPos) {

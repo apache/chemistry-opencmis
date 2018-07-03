@@ -48,7 +48,6 @@ public final class POSTHttpServletRequestWrapper extends QueryStringHttpServletR
     private BigInteger size;
     private InputStream stream;
 
-    @SuppressWarnings("unchecked")
     public POSTHttpServletRequestWrapper(HttpServletRequest request, TempStoreOutputStreamFactory streamFactory)
             throws IOException {
         super(request);

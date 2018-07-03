@@ -44,7 +44,7 @@ import org.apache.chemistry.opencmis.server.shared.AbstractCmisHttpServlet;
 import org.apache.chemistry.opencmis.server.shared.CallContextHandler;
 import org.apache.chemistry.opencmis.server.shared.CsrfManager;
 import org.apache.chemistry.opencmis.server.shared.Dispatcher;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;

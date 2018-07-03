@@ -50,7 +50,6 @@ public class ControlParser {
         parse();
     }
 
-    @SuppressWarnings("unchecked")
     private void parse() {
         // gather all controls
         Map<String, String[]> controls = request.getParameterMap();

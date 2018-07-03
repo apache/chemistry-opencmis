@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -86,6 +87,24 @@ public class HttpRequestMockHelper {
         @Override
         public int read(byte[] b) throws IOException {
             return stream.read(b);
+        }
+
+        @Override
+        public boolean isFinished() {
+            try {
+                return stream.available() == 0;
+            } catch (IOException e) {
+                return true;
+            }
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
         }
     }
 }

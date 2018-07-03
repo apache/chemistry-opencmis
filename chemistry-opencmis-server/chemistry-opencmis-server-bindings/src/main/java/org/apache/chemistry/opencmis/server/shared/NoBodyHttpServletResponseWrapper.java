@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -64,6 +65,16 @@ public class NoBodyHttpServletResponseWrapper extends HttpServletResponseWrapper
 
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
+            // ignore
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener listener) {
             // ignore
         }
     }

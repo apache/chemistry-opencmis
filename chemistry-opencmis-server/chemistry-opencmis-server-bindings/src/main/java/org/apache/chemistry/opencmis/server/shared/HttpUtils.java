@@ -40,7 +40,6 @@ public final class HttpUtils {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
         Map<String, String[]> parameters = request.getParameterMap();
 
         if (parameters != null) {

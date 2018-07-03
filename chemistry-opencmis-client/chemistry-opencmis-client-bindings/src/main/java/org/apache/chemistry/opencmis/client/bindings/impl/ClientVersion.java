@@ -25,7 +25,8 @@ public final class ClientVersion {
     public static final String OPENCMIS_USER_AGENT;
 
     static {
-        Package p = Package.getPackage("org.apache.chemistry.opencmis.client.bindings.impl");
+        Package p = ClientVersion.class.getClassLoader()
+                .getDefinedPackage("org.apache.chemistry.opencmis.client.bindings.impl");
         if (p == null) {
             OPENCMIS_VERSION = "?";
             OPENCMIS_CLIENT = "Apache-Chemistry-OpenCMIS";

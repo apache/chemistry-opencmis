@@ -86,7 +86,7 @@ import org.apache.chemistry.opencmis.server.shared.NoBodyHttpServletResponseWrap
 import org.apache.chemistry.opencmis.server.shared.QueryStringHttpServletRequestWrapper;
 import org.apache.chemistry.opencmis.server.shared.ServiceCall;
 import org.apache.chemistry.opencmis.server.shared.TempStoreOutputStreamFactory;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

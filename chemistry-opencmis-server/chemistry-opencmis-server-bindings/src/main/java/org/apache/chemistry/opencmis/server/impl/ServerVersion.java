@@ -24,7 +24,7 @@ public final class ServerVersion {
     public static final String OPENCMIS_SERVER;
 
     static {
-        Package p = Package.getPackage("org.apache.chemistry.opencmis.server.impl");
+        Package p = ServerVersion.class.getClassLoader().getDefinedPackage("org.apache.chemistry.opencmis.server.impl");
         if (p == null) {
             OPENCMIS_VERSION = "?";
             OPENCMIS_SERVER = "Apache-Chemistry-OpenCMIS";

@@ -18,10 +18,6 @@
  */
 package org.apache.chemistry.opencmis.server.support.query;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
