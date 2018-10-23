@@ -456,7 +456,7 @@ public class SimpleLoggingCmisServiceWrapper extends AbstractCmisServiceWrapper 
     @Override
     public List<ObjectData> getAppliedPolicies(String repositoryId, String objectId, String filter,
             ExtensionsData extension) {
-        log("getRepositoryInfos", repositoryId);
+        log("getAppliedPolicies", repositoryId);
         return getWrappedService().getAppliedPolicies(repositoryId, objectId, filter, extension);
     }
 
