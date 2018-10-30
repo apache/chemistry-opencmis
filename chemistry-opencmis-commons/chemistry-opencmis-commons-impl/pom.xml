@@ -104,7 +104,6 @@
                         </goals>
                         <configuration>
                             <fork>always</fork>
-                            <additionalJvmArgs>--add-modules java.se.ee --add-opens=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED --add-opens java.xml.bind/javax.xml.bind=ALL-UNNAMED --add-opens=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-opens=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED --add-opens=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</additionalJvmArgs>
                             <encoding>UTF-8</encoding>
                             <sourceRoot>${project.basedir}/target/generated</sourceRoot>
                             <wsdlOptions>

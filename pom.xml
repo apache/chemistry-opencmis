@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
@@ -25,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>18</version>
+        <version>21</version>
     </parent>
 
     <!-- Project Information -->
@@ -149,18 +148,18 @@
         <site.staging.url>${site.staging.protocol}://${site.staging.host}${site.staging.folder}</site.staging.url>
         <parentBasedir>${project.basedir}</parentBasedir>
 
-        <woodstox.version>5.0.3</woodstox.version>
+        <woodstox.version>5.1.0</woodstox.version>
         <osgi.version>6.0.0</osgi.version>
         <felix.plugin.version>3.3.0</felix.plugin.version>
         <junit.version>4.12</junit.version>
-        <surefire.version>2.21.0</surefire.version>
-        <failsafe.version>2.21.0</failsafe.version>
+        <surefire.version>2.22.1</surefire.version>
+        <failsafe.version>2.22.1</failsafe.version>
         <jacoco.version>0.7.5.201505241946</jacoco.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.11.0</log4j.version>
+        <log4j.version>2.11.1</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.2.5</cxf.version>
-        <okhttp.version>3.10.0</okhttp.version>
+        <cxf.version>3.2.6</cxf.version>
+        <okhttp.version>3.11.0</okhttp.version>
     </properties>
 
     <build>
@@ -322,7 +321,7 @@
             <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
@@ -366,7 +365,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.10</version>
+                <version>3.0.0</version>
                 <configuration>
                     <configLocation>src/main/resources/checkstyle.xml</configLocation>
                     <suppressionsLocation>src/main/resources/suppressions.xml</suppressionsLocation>
@@ -415,7 +414,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -425,7 +424,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[9,)</version>
+                                    <version>[10,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.5,)</version>
@@ -474,7 +473,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
+                <version>3.0.1</version>
                 <configuration>
                     <tags>
                         <tag>
