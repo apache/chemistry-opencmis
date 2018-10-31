@@ -61,11 +61,9 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            WstxInputFactory wstxFactory = (WstxInputFactory) ClassLoaderUtil
-                    .loadClass("com.ctc.wstx.stax.WstxInputFactory").getDeclaredConstructor().newInstance();
-            wstxFactory.configureForSpeed();
-
-            factory = wstxFactory;
+            factory = (XMLInputFactory) ClassLoaderUtil.loadClass("com.ctc.wstx.stax.WstxInputFactory")
+                    .getDeclaredConstructor().newInstance();
+            ((WstxInputFactory) factory).configureForSpeed();
         } catch (Exception e) {
             // other StAX implementations may work, too
             factory = XMLInputFactory.newInstance();
@@ -93,13 +91,12 @@ public final class XMLUtils {
 
         try {
             // Woodstox is the only supported and tested StAX implementation
-            WstxOutputFactory wstxFactory = (WstxOutputFactory) ClassLoaderUtil
-                    .loadClass("com.ctc.wstx.stax.WstxOutputFactory").getDeclaredConstructor().newInstance();
-            wstxFactory.configureForSpeed();
-            wstxFactory.setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
-                    new InvalidCharHandler.ReplacingHandler(' '));
+            factory = (XMLOutputFactory) ClassLoaderUtil.loadClass("com.ctc.wstx.stax.WstxOutputFactory")
+                    .getDeclaredConstructor().newInstance();
 
-            factory = wstxFactory;
+            ((WstxOutputFactory) factory).configureForSpeed();
+            ((WstxOutputFactory) factory).setProperty(WstxOutputProperties.P_OUTPUT_INVALID_CHAR_HANDLER,
+                    new InvalidCharHandler.ReplacingHandler(' '));
         } catch (Exception e) {
             // other StAX implementations may work, too
             factory = XMLOutputFactory.newInstance();
