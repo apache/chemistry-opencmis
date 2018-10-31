@@ -116,106 +116,98 @@ public class ConsoleHelper {
             // add menu
             JMenuBar consoleMenuBar = console.getFrame().getRootPane().getJMenuBar();
 
-            if (consoleMenuBar != null) { // workaround for a Java 9/Groovy
-                                          // issue (-> no menu bar)
-                                          // should be removed when the issue is
-                                          // fixed
+            JMenu cmisMenu = new JMenu("CMIS");
+            cmisMenu.setMnemonic(KeyEvent.VK_M);
+            consoleMenuBar.add(cmisMenu);
 
-                JMenu cmisMenu = new JMenu("CMIS");
-                cmisMenu.setMnemonic(KeyEvent.VK_M);
-                consoleMenuBar.add(cmisMenu);
+            addConsoleMenu(cmisMenu, "CMIS 1.0 Specification",
+                    new URI("https://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
+            addConsoleMenu(cmisMenu, "CMIS 1.1 Specification",
+                    new URI("https://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html"));
+            cmisMenu.addSeparator();
+            addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
+                    new URI("https://chemistry.apache.org/java/opencmis.html"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Code Samples",
+                    new URI("https://chemistry.apache.org/docs/cmis-samples/"));
+            addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc",
+                    new URI("https://chemistry.apache.org/java/javadoc/"));
+            cmisMenu.addSeparator();
+            JMenuItem menuItem = new JMenuItem("CMIS Session Details");
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AttributeSet style = console.getOutputStyle();
+                    console.clearOutput();
+                    console.appendOutputNl("Session ID:      " + groovySession.getBinding().getSessionId(), style);
+                    console.appendOutputNl("Repository ID:   " + groovySession.getRepositoryInfo().getId(), style);
+                    console.appendOutputNl("Repository name: " + groovySession.getRepositoryInfo().getName(), style);
+                    console.appendOutputNl("Binding:         " + groovySession.getBinding().getBindingType(), style);
+                    console.appendOutputNl("User:            " + user, style);
+                }
+            });
+            cmisMenu.add(menuItem);
 
-                addConsoleMenu(cmisMenu, "CMIS 1.0 Specification",
-                        new URI("https://docs.oasis-open.org/cmis/CMIS/v1.0/os/cmis-spec-v1.0.html"));
-                addConsoleMenu(cmisMenu, "CMIS 1.1 Specification",
-                        new URI("https://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html"));
-                cmisMenu.addSeparator();
-                addConsoleMenu(cmisMenu, "OpenCMIS Documentation",
-                        new URI("https://chemistry.apache.org/java/opencmis.html"));
-                addConsoleMenu(cmisMenu, "OpenCMIS Code Samples",
-                        new URI("https://chemistry.apache.org/docs/cmis-samples/"));
-                addConsoleMenu(cmisMenu, "OpenCMIS Client API JavaDoc",
-                        new URI("https://chemistry.apache.org/java/javadoc/"));
-                cmisMenu.addSeparator();
-                JMenuItem menuItem = new JMenuItem("CMIS Session Details");
-                menuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AttributeSet style = console.getOutputStyle();
-                        console.clearOutput();
-                        console.appendOutputNl("Session ID:      " + groovySession.getBinding().getSessionId(), style);
-                        console.appendOutputNl("Repository ID:   " + groovySession.getRepositoryInfo().getId(), style);
-                        console.appendOutputNl("Repository name: " + groovySession.getRepositoryInfo().getName(),
-                                style);
-                        console.appendOutputNl("Binding:         " + groovySession.getBinding().getBindingType(),
-                                style);
-                        console.appendOutputNl("User:            " + user, style);
-                    }
-                });
-                cmisMenu.add(menuItem);
+            JMenu snippetsMenu = new JMenu("Snippets");
+            snippetsMenu.setMnemonic(KeyEvent.VK_N);
+            consoleMenuBar.add(snippetsMenu);
 
-                JMenu snippetsMenu = new JMenu("Snippets");
-                snippetsMenu.setMnemonic(KeyEvent.VK_N);
-                consoleMenuBar.add(snippetsMenu);
+            for (FileEntry entry : readSnippetLibrary()) {
+                String snippet = ClientHelper.readFileAndRemoveHeader(entry.getFile());
 
-                for (FileEntry entry : readSnippetLibrary()) {
-                    String snippet = ClientHelper.readFileAndRemoveHeader(entry.getFile());
+                JMenuItem snippetItem = new JMenuItem(entry.getName());
+                snippetItem.addActionListener(new ConsoleInsertActionListener(console, snippet));
+                snippetsMenu.add(snippetItem);
+            }
 
-                    JMenuItem snippetItem = new JMenuItem(entry.getName());
-                    snippetItem.addActionListener(new ConsoleInsertActionListener(console, snippet));
-                    snippetsMenu.add(snippetItem);
+            // add popup menu
+
+            final JPopupMenu popup = new JPopupMenu();
+
+            final JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
+            cutItem.setText("Cut");
+            popup.add(cutItem);
+
+            final JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+            copyItem.setText("Copy");
+            popup.add(copyItem);
+
+            final JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+            pasteItem.setText("Paste");
+            popup.add(pasteItem);
+
+            console.getInputArea().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
                 }
 
-                // add popup menu
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    maybeShowPopup(e);
+                }
 
-                final JPopupMenu popup = new JPopupMenu();
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    maybeShowPopup(e);
+                }
 
-                final JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
-                cutItem.setText("Cut");
-                popup.add(cutItem);
+                private void maybeShowPopup(MouseEvent e) {
+                    if (e.isPopupTrigger()) {
+                        if (console.getInputArea().getSelectedText() != null) {
+                            cutItem.setEnabled(true);
+                            copyItem.setEnabled(true);
 
-                final JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
-                copyItem.setText("Copy");
-                popup.add(copyItem);
-
-                final JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
-                pasteItem.setText("Paste");
-                popup.add(pasteItem);
-
-                console.getInputArea().addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
-
-                    private void maybeShowPopup(MouseEvent e) {
-                        if (e.isPopupTrigger()) {
-                            if (console.getInputArea().getSelectedText() != null) {
-                                cutItem.setEnabled(true);
-                                copyItem.setEnabled(true);
-
-                            } else {
-                                cutItem.setEnabled(false);
-                                copyItem.setEnabled(false);
-                            }
-
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            pasteItem.setEnabled(clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor));
-
-                            popup.show(e.getComponent(), e.getX(), e.getY());
+                        } else {
+                            cutItem.setEnabled(false);
+                            copyItem.setEnabled(false);
                         }
+
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        pasteItem.setEnabled(clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor));
+
+                        popup.show(e.getComponent(), e.getX(), e.getY());
                     }
-                });
-            }
+                }
+            });
 
             // read source code
             if (file != null) {
