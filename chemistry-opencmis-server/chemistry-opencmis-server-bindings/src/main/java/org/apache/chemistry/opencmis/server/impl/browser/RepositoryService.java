@@ -158,7 +158,10 @@ public class RepositoryService {
                     cookieValue = createCookieValue(0, null, CmisInvalidArgumentException.EXCEPTION_NAME,
                             "Unknown transaction!");
                 } else {
-                    JSONValue.parse(cookieValue);
+                    if (!(JSONValue.parse(cookieValue) instanceof JSONObject)) {
+                        cookieValue = createCookieValue(0, null, CmisInvalidArgumentException.EXCEPTION_NAME,
+                                "Invalid cookie value!");
+                    }
                 }
             } catch (Exception pe) {
                 cookieValue = createCookieValue(0, null, CmisRuntimeException.EXCEPTION_NAME, "Cookie pasring error!");
