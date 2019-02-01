@@ -28,10 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
@@ -45,6 +49,7 @@ import org.apache.chemistry.opencmis.tck.CmisTestResultStatus;
 import org.apache.chemistry.opencmis.tck.impl.TestParameters;
 import org.apache.chemistry.opencmis.tck.report.TextReport;
 import org.apache.chemistry.opencmis.tck.runner.AbstractRunner;
+import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -133,7 +138,20 @@ public abstract class AbstractTckIT extends AbstractRunner {
         // Logger.getLogger("").setLevel(Level.INFO);
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 
-        tomcat = new Tomcat();
+        tomcat = new Tomcat() {
+            @Override
+            public void start() throws LifecycleException {
+                for (org.apache.catalina.Service service : getServer().findServices()) {
+                    for (Container container : service.getContainer().findChildren()) {
+                        for (Container subContainer : container.findChildren()) {
+                            ((StandardJarScanner) ((Context) subContainer).getJarScanner()).setScanClassPath(false);
+                        }
+                    }
+                }
+                super.start();
+            }
+        };
+
         tomcat.setBaseDir(tomcateBaseDir.getAbsolutePath());
         tomcat.setPort(getPort());
         // tomcat.setSilent(true);

@@ -158,7 +158,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>2.11.1</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.2.6</cxf.version>
+        <cxf.version>3.3.0</cxf.version>
         <okhttp.version>3.11.0</okhttp.version>
     </properties>
 
@@ -174,9 +174,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
-                    <configuration>
-                        <argLine>--add-modules java.xml.ws</argLine>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -424,7 +421,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[10,)</version>
+                                    <version>[11,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.5,)</version>
