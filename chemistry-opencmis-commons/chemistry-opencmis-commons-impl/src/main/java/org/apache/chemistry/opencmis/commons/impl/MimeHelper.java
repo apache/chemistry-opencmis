@@ -74,7 +74,7 @@ public final class MimeHelper {
      * <p>
      * This implementation always uses UTF-8 and no language.
      * <p>
-     * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
+     * See <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
      * 
      * @param value
@@ -113,7 +113,7 @@ public final class MimeHelper {
      * <p>
      * This implementation always uses UTF-8 and no language.
      * <p>
-     * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
+     * See <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
      * 
      * @param value
@@ -134,7 +134,7 @@ public final class MimeHelper {
      * Encodes the Content-Disposition header value according to RFC 2183 and
      * RFC 2231.
      * <p>
-     * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
+     * See <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
      * 
      * @param disposition
@@ -154,7 +154,7 @@ public final class MimeHelper {
      * Decodes a filename from the Content-Disposition header value according to
      * RFC 2183 and RFC 2231.
      * <p>
-     * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
+     * See <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
      * 
      * @param value
@@ -173,7 +173,7 @@ public final class MimeHelper {
      * <p>
      * Does not deal with continuation lines.
      * <p>
-     * See <a href="http://tools.ietf.org/html/rfc2231">RFC 2231</a> for
+     * See <a href="https://tools.ietf.org/html/rfc2231">RFC 2231</a> for
      * details.
      * 
      * @param value

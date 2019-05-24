@@ -61,9 +61,9 @@ import org.apache.chemistry.opencmis.commons.spi.CmisBinding;
  * specification for a list of all operations and their exceptions. Note that
  * some incompliant repositories might throw other exception than you expect.
  * <p>
- * Refer to the <a href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.0
+ * Refer to the <a href="https://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.0
  * specification</a> or the
- * <a href="http://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.1
+ * <a href="https://docs.oasis-open.org/cmis/CMIS/v1.0/os/">CMIS 1.1
  * specification</a> for details about the domain model, terms, concepts, base
  * types, properties, IDs and query names, query language, etc.
  * </p>

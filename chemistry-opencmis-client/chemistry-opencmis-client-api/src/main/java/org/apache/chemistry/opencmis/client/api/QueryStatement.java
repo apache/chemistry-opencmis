@@ -142,7 +142,8 @@ public interface QueryStatement extends Cloneable {
      * <p>
      * 
      * Summary:
-     * <table summary="Escaping Summary">
+     * <table class="chemistry-table">
+     * <caption>Escaping Summary</caption>
      * <tr>
      * <th>input</th>
      * <th>first level escaping</th>

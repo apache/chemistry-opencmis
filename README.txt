@@ -17,13 +17,13 @@ You can build OpenCMIS like this:
 
     mvn clean install
 
-You need Maven 3 with Java 8 (or higher) for the build.
+You need Maven 3.5 (or higher) with Java 12 (or higher) for the build.
 
 
 License (see also package specific LICENSE files)
 =================================================
 
-Collective work: Copyright 2010-2017 The Apache Software Foundation.
+Collective work: Copyright 2010-2019 The Apache Software Foundation.
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with

@@ -37,7 +37,7 @@
 
     <poweredBy>
       <logo name="Maven" href="http://maven.apache.org/"
-            img="http://maven.apache.org/images/logos/maven-feather.png"/>
+            img="https://maven.apache.org/images/logos/maven-feather.png"/>
     </poweredBy>
 
 
@@ -54,7 +54,7 @@
         <menu ref="reports" inherit="top" />
 
         <menu name="Chemistry" inherit="top">
-            <item name="Main Website" href="http://chemistry.apache.org" />
+            <item name="Main Website" href="https://chemistry.apache.org" />
         </menu>
     </body>
 </project>

@@ -152,14 +152,14 @@
         <osgi.version>6.0.0</osgi.version>
         <felix.plugin.version>3.3.0</felix.plugin.version>
         <junit.version>4.12</junit.version>
-        <surefire.version>2.22.1</surefire.version>
-        <failsafe.version>2.22.1</failsafe.version>
+        <surefire.version>2.22.2</surefire.version>
+        <failsafe.version>2.22.2</failsafe.version>
         <jacoco.version>0.7.5.201505241946</jacoco.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.11.1</log4j.version>
+        <log4j.version>2.11.2</log4j.version>
         <apacheclient.version>4.2.6</apacheclient.version>
-        <cxf.version>3.3.0</cxf.version>
-        <okhttp.version>3.11.0</okhttp.version>
+        <cxf.version>3.3.2</cxf.version>
+        <okhttp.version>3.14.2</okhttp.version>
     </properties>
 
     <build>
@@ -215,7 +215,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -224,7 +224,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -233,7 +233,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
+                    <version>3.0.0-M2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -318,7 +318,7 @@
             <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <target>${maven.compile.target}</target>
                     <source>${maven.compile.source}</source>
@@ -371,7 +371,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
+                <version>3.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -411,7 +411,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M2</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -421,7 +420,7 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[11,)</version>
+                                    <version>[12,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.5,)</version>
@@ -434,7 +433,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.12</version>
+                <version>0.13</version>
                 <configuration>
                     <licenses>
                         <license implementation="org.apache.rat.analysis.license.FullTextMatchingLicense">
@@ -454,6 +453,8 @@
                         <!-- general -->
                         <exclude>**/*.log</exclude>
                         <exclude>**/*.json</exclude>
+                        <exclude>**/.recommenders/**/*</exclude>
+                        <exclude>**/.project</exclude>
                         <exclude>/src/main/resources/META-INF/services/**/*</exclude>
                         <exclude>/src/main/webapp/WEB-INF/classes/META-INF/**/*</exclude>
                         <!-- client -->
@@ -470,7 +471,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.0</version>
                 <configuration>
                     <tags>
                         <tag>
@@ -481,6 +482,8 @@
                     </tags>
                     <locale>en</locale>
                     <encoding>utf-8</encoding>
+                    <source>8</source>
+                    <doclint>accessibility,html,reference,syntax</doclint>
                 </configuration>
             </plugin>
         </plugins>
@@ -513,7 +516,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.14.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <reportsDirectories>
@@ -525,12 +528,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.0.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.0.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -621,6 +624,11 @@
                     </tags>
                     <locale>en</locale>
                     <encoding>utf-8</encoding>
+                    <source>8</source>
+                    <doclint>accessibility,html,reference,syntax</doclint>
+                    <additionalOptions>
+                    	<additionalOption>--add-stylesheet ${parentBasedir}/src/main/javadoc/chemistry-javadoc.css</additionalOption>
+                    </additionalOptions>
                 </configuration>
             </plugin>
         </plugins>
@@ -715,15 +723,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>disable-java8-doclint</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <additionalparam>-Xdoclint:accessibility -Xdoclint:html -Xdoclint:reference -Xdoclint:syntax</additionalparam>
-            </properties>
         </profile>
     </profiles>
 </project>
