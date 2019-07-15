@@ -232,20 +232,11 @@ public class AtomEntryWriter {
     private void writeContent(XmlSerializer writer) throws IOException {
         @SuppressWarnings("resource")
         Base64.InputStream b64stream = new Base64.InputStream(stream, Base64.ENCODE);
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int numBytes;
 
-        char[] buffer = new char[BUFFER_SIZE];
-        int pos = 0;
-        int b;
-
-        while ((b = b64stream.read()) > -1) {
-            buffer[pos++] = (char) (b & 0xFF);
-            if (pos == buffer.length) {
-                writer.text(buffer, 0, buffer.length);
-                pos = 0;
-            }
-        }
-        if (pos > 0) {
-            writer.text(buffer, 0, pos);
+        while ((numBytes = b64stream.read(buffer, 0, BUFFER_SIZE)) >= 0) {
+            writer.text(new String(buffer, 0, numBytes, "ISO-8859-1"));
         }
     }
 
