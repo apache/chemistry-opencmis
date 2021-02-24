@@ -19,6 +19,7 @@
 package org.apache.chemistry.opencmis.workbench.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,6 +37,7 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
@@ -56,8 +58,11 @@ public abstract class CreateDialog extends JDialog {
     private final ClientModel model;
     private final JPanel panel;
     private final JPanel mandatoryOrOnCreatePropertiesPanel;
+    private final JPanel freeOrReadWritePropertiesPanel;
     private final JPanel actionPanel;
     private final Map<String, JComponent> mandatoryOrOnCreateProperties;
+    private JScrollPane scrollPane1;
+    private JScrollPane scrollPane2;
 
     public CreateDialog(Frame owner, String title, ClientModel model) {
         super(owner, title, true);
@@ -74,8 +79,15 @@ public abstract class CreateDialog extends JDialog {
                 WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)),
                 WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("Mandatory or OnCreate properties")))));
 
+        freeOrReadWritePropertiesPanel = new JPanel(new GridBagLayout());
+        freeOrReadWritePropertiesPanel.setBorder(WorkbenchScale.scaleBorder(BorderFactory.createCompoundBorder(
+                WorkbenchScale.scaleBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0)),
+                WorkbenchScale.scaleBorder(BorderFactory.createTitledBorder("Free or ReadWrite properties")))));
+
+        scrollPane1 = new JScrollPane();
+        scrollPane2 = new JScrollPane();
         actionPanel = new JPanel();
-        createRow(actionPanel, 10);
+        createRow(actionPanel, 11);
     }
 
     protected ClientModel getClientModel() {
@@ -153,6 +165,9 @@ public abstract class CreateDialog extends JDialog {
     protected final void updateMandatoryOrOnCreateFields(TypeDefinition type) {
         mandatoryOrOnCreateProperties.clear();
         mandatoryOrOnCreatePropertiesPanel.removeAll();
+        freeOrReadWritePropertiesPanel.removeAll();
+        panel.remove(scrollPane1);
+        panel.remove(scrollPane2);
 
         final Map<String, PropertyDefinition<?>> propertyDefinitions = type.getPropertyDefinitions();
         if (propertyDefinitions != null) {
@@ -170,12 +185,50 @@ public abstract class CreateDialog extends JDialog {
                     row++;
                 }
             }
+
+            row = 0;
+            for (PropertyDefinition<?> definition : propertyDefinitions.values()) {
+                if (
+                        (
+                                Boolean.FALSE.equals(definition.isRequired())
+                                        && Updatability.READWRITE.equals(definition.getUpdatability())
+                        )
+                                && !(
+                                PropertyIds.NAME.equals(definition.getId())
+                                        || PropertyIds.OBJECT_TYPE_ID.equals(definition.getId())
+                                        || PropertyIds.SOURCE_ID.equals(definition.getId())
+                                        || PropertyIds.TARGET_ID.equals(definition.getId())
+                        )
+                )
+                {
+                    JComponent child = createPropertyComponent(definition);
+                    mandatoryOrOnCreateProperties.put(definition.getId(), child);
+                    createRow(freeOrReadWritePropertiesPanel, definition.getDisplayName() + ":", child, row);
+                    row++;
+                }
+            }
         }
 
+        scrollPane1 = new JScrollPane(mandatoryOrOnCreatePropertiesPanel);
+        scrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane1.setPreferredSize(new Dimension(100, 200));
+
+        scrollPane2 = new JScrollPane(freeOrReadWritePropertiesPanel);
+        scrollPane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane2.setPreferredSize(new Dimension(100, 300));
+
         if (mandatoryOrOnCreatePropertiesPanel.getComponents().length > 0) {
-            createRow(mandatoryOrOnCreatePropertiesPanel, 9);
+            createRow(scrollPane1, 9);
         } else {
-            panel.remove(mandatoryOrOnCreatePropertiesPanel);
+            panel.remove(scrollPane1);
+        }
+
+        if (freeOrReadWritePropertiesPanel.getComponents().length > 0) {
+            createRow(scrollPane2, 10);
+        } else {
+            panel.remove(scrollPane2);
         }
 
         pack();
