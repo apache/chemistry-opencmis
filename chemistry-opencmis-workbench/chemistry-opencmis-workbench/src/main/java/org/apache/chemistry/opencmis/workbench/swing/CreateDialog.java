@@ -210,14 +210,14 @@ public abstract class CreateDialog extends JDialog {
         }
 
         scrollPane1 = new JScrollPane(mandatoryOrOnCreatePropertiesPanel);
-        scrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane1.setPreferredSize(new Dimension(100, 200));
+        scrollPane1.setPreferredSize(new Dimension(600, 200));
 
         scrollPane2 = new JScrollPane(freeOrReadWritePropertiesPanel);
-        scrollPane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane2.setPreferredSize(new Dimension(100, 300));
+        scrollPane2.setPreferredSize(new Dimension(600, 300));
 
         if (mandatoryOrOnCreatePropertiesPanel.getComponents().length > 0) {
             createRow(scrollPane1, 9);
